@@ -9,6 +9,7 @@ import (
 
 type Service interface {
 	CheckIfUserIsRegistered(chatId int64) bool
+	InsertUserToUserStates(chatId int64)
 }
 
 type Bot struct {

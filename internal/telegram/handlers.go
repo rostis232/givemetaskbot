@@ -18,7 +18,8 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 	case true:
 		msg = tgbotapi.NewMessage(message.Chat.ID, "You`re registered user")
 	case false:
-		msg = tgbotapi.NewMessage(message.Chat.ID, "You aren`t registered user")
+		msg = tgbotapi.NewMessage(message.Chat.ID, "You aren`t registered user. Registration...")
+		b.service.InsertUserToUserStates(message.Chat.ID)
 	}
 
 	_, err := b.bot.Send(msg)

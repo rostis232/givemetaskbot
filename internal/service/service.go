@@ -1,24 +1,30 @@
 package service
 
-import "github.com/rostis232/givemetaskbot/internal/entities"
+import (
+	"github.com/rostis232/givemetaskbot/internal/repository"
+)
 
-type Repository interface {
+type Authorisation interface {
+	CheckIfUserIsRegistered(chatId int64) bool
+	InsertUserToUserStates(chatId int64)
+}
+
+type Group interface {
+}
+
+type Task interface {
 }
 
 type Service struct {
-	repository Repository
+	Authorisation
+	Group
+	Task
 }
 
-func NewService(repository Repository) *Service {
-	return &Service{repository: repository}
-}
-
-func (s *Service) CheckIfUserIsRegistered(chatId int64) bool {
-	for _, v := range entities.UserStates {
-		if v.ChatId == chatId {
-			return true
-		}
+func NewService(repo *repository.Repository) *Service {
+	return &Service{
+		Authorisation: NewAuthService(repo.Authorisation),
+		Group:         NewGroupService(repo.Group),
+		Task:          NewTaskService(repo.Task),
 	}
-	//TODO: Check BD
-	return false
 }
