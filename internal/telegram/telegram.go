@@ -4,20 +4,17 @@ import (
 	"errors"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/rostis232/givemetaskbot/internal/keys"
+	"github.com/rostis232/givemetaskbot/internal/service"
 	"log"
 )
 
-type Service interface {
-	CheckIfUserIsRegistered(chatId int64) bool
-	InsertUserToUserStates(chatId int64)
-}
-
 type Bot struct {
 	bot     *tgbotapi.BotAPI
-	service Service
+	service *service.Service
 }
 
-func NewBot(token string, service Service) (*Bot, error) {
+func NewBot(token string, service *service.Service) (*Bot, error) {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
@@ -36,9 +33,11 @@ func (b *Bot) Start() error {
 	//	return errors.New(fmt.Sprintf("handling updates error: %s", err))
 	//}
 
-	go b.handleUpdates(updates)
+	//go b.handleUpdates(updates)
 
-	b.sendMessages()
+	b.handleUpdates(updates)
+
+	//b.sendMessages()
 
 	return nil
 }
@@ -53,6 +52,20 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 			} else {
 				if err := b.handleMessage(update.Message); err != nil {
 					return errors.New(fmt.Sprintf("handling message error: %s", err))
+				}
+			}
+
+		} else if update.CallbackQuery != nil {
+			switch {
+			case update.CallbackQuery.Data == keys.Register:
+				msg := b.service.Authorisation.Registration(update.CallbackQuery.Message.Chat.ID)
+				if _, err := b.bot.Send(msg); err != nil {
+					return err
+				}
+			case update.CallbackQuery.Data == keys.Info:
+				err := b.handleHelpCommand(update.CallbackQuery.Message)
+				if err != nil {
+					return err
 				}
 			}
 

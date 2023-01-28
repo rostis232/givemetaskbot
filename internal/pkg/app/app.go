@@ -13,18 +13,13 @@ type Bot interface {
 	Start() error
 }
 
-type Service interface {
-	CheckIfUserIsRegistered(chatId int64) bool
-	InsertUserToUserStates(chatId int64)
-}
-
 type Repository interface {
 }
 
 type App struct {
 	bot        Bot
 	repository *repository.Repository
-	service    Service
+	service    *service.Service
 }
 
 func NewApp() (*App, error) {
