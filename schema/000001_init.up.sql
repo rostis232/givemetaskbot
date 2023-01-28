@@ -1,6 +1,10 @@
 CREATE TABLE users (
                        chat_id SERIAL PRIMARY KEY NOT NULL,
-                       user_name VARCHAR(50)
+                       user_name VARCHAR(50),
+                       language VARCHAR(5),
+                       status INT DEFAULT 0,
+                       active_group INT,
+                       active_task INT
 );
 
 CREATE TABLE groups (

@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/rostis232/givemetaskbot/internal/keys"
+	"github.com/rostis232/givemetaskbot/internal/messages"
 	"github.com/rostis232/givemetaskbot/internal/service"
 	"log"
+	"strings"
 )
 
 type Bot struct {
@@ -56,20 +57,34 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 			}
 
 		} else if update.CallbackQuery != nil {
-			switch {
-			case update.CallbackQuery.Data == keys.Register:
-				msg := b.service.Authorisation.Registration(update.CallbackQuery.Message.Chat.ID)
-				if _, err := b.bot.Send(msg); err != nil {
-					return err
-				}
-			case update.CallbackQuery.Data == keys.Info:
-				err := b.handleHelpCommand(update.CallbackQuery.Message)
-				if err != nil {
-					return err
-				}
+			//callback := tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data)
+			//if _, err := b.bot.Request(callback); err != nil {
+			//	return err
+			//}
+
+			msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+
+			user, err := b.service.GetUser(update.CallbackQuery.Message.Chat.ID)
+			if err != nil {
+				log.Println(err)
+				continue
 			}
 
+			switch {
+			case strings.Contains(update.CallbackQuery.Data, "lang:"):
+				_, lng, ok := strings.Cut(update.CallbackQuery.Data, ":")
+				if !ok {
+					log.Println("error while cutting string with language")
+				}
+				msg, _ = b.service.SelectLanguage(user, messages.Language(lng))
+			}
+
+			if _, err := b.bot.Send(msg); err != nil {
+				log.Println(err)
+				continue
+			}
 		}
+
 	}
 	return nil
 }

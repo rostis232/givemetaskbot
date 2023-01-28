@@ -1,11 +1,13 @@
 package service
 
 import (
-	"database/sql"
+	"errors"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/rostis232/givemetaskbot/internal/entities"
 	"github.com/rostis232/givemetaskbot/internal/keyboards"
+	"github.com/rostis232/givemetaskbot/internal/messages"
 	"github.com/rostis232/givemetaskbot/internal/repository"
+	"github.com/rostis232/givemetaskbot/internal/state_service"
 	"log"
 )
 
@@ -17,29 +19,47 @@ func NewAuthService(repository repository.Authorisation) *AuthService {
 	return &AuthService{repository: repository}
 }
 
-func (u *AuthService) Registration(chatId int64) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(chatId, "")
-
+func (u *AuthService) GetUser(chatId int64) (entities.User, error) {
 	user, err := u.repository.GetUser(chatId)
-	switch {
-	case err == sql.ErrNoRows:
-		//If user isn`t in DB, we add his chatId with unregistered status into user state machine
-		newUser := entities.User{ChatId: chatId, Status: entities.UserUnregistered}
-		if err := u.repository.CreateUser(newUser); err != nil {
-			log.Println(err)
-		}
-		msg.Text = "Для реєстрації введіть ім'я, яке буде видно пов'язаним учасникам цього боту"
-		msg.ReplyMarkup = keyboards.RemoveKeyboard
-		return msg
-	case user.UserName == "" && user.Status == entities.UserUnregistered:
-		// If user is in DB, then we add his chatId, user struct with status don`t need
-		//registration to user state machine
-		msg.Text = "Для реєстрації введіть ім'я, яке буде видно пов'язаним учасникам цього боту"
-		msg.ReplyMarkup = keyboards.RemoveKeyboard
-		return msg
-	default:
-		msg.Text = "Ви вже зареєстрований користувач, або виникла непередбачувана помилка"
-		msg.ReplyMarkup = keyboards.RemoveKeyboard
-		return msg
+	return user, err
+}
+
+func (u *AuthService) NewUserRegistration(chatId int64) (tgbotapi.MessageConfig, error) {
+	msg := tgbotapi.NewMessage(chatId, "")
+	user := entities.User{
+		ChatId: chatId,
+		Status: state_service.Expecting_language,
 	}
+	if err := u.repository.NewUserRegistration(user); err != nil {
+		return msg, err
+	}
+
+	msg.Text = "Choose your language:"
+	msg.ReplyMarkup = keyboards.LanguageKeyboard
+
+	return msg, nil
+}
+
+func (u *AuthService) SelectLanguage(user entities.User, lng messages.Language) (tgbotapi.MessageConfig, error) {
+	msg := tgbotapi.NewMessage(user.ChatId, "")
+	err := errors.New("")
+
+	switch {
+	case user.Status == state_service.Expecting_language:
+		user.Status = state_service.Expecting_new_user_name
+		user.Language = lng
+		// user to repo
+		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageAfterFirstLanguageSelection, user.Language)
+		if err != nil && msg.Text != "" {
+			log.Println(err)
+			return msg, nil
+		} else if err != nil {
+			return tgbotapi.MessageConfig{}, err
+		} else {
+			return msg, nil
+		}
+
+	}
+
+	return msg, nil
 }

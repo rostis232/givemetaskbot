@@ -1,12 +1,12 @@
 package telegram
 
 import (
-	"errors"
+	"database/sql"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/rostis232/givemetaskbot/internal/keyboards"
 	"github.com/rostis232/givemetaskbot/internal/keys"
-	"github.com/rostis232/givemetaskbot/internal/user_state"
+	"github.com/rostis232/givemetaskbot/internal/messages"
 	"log"
 )
 
@@ -16,14 +16,18 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "")
 	//TODO: what with keyboard?
 	msg.ReplyMarkup = keyboards.RemoveKeyboard
-
-	user_status, ok := user_state.UsersStates[message.Chat.ID]
+	_, err := b.service.GetUser(message.Chat.ID)
 
 	switch {
+	case err == sql.ErrNoRows:
+		msg, err = b.service.NewUserRegistration(message.Chat.ID)
+		if err != nil {
+			return err
+		}
+	}
 
-	case !ok:
-		//no user in map: add user to map if it`s registered
-
+	if _, err = b.bot.Send(msg); err != nil {
+		return err
 	}
 
 	return nil
@@ -32,19 +36,29 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 	log.Printf("[%s] %s", message.From.UserName, message.Text)
 
+	msg := tgbotapi.NewMessage(message.Chat.ID, messages.UnknownCommand)
+	//TODO: what with keyboard?
+	msg.ReplyMarkup = keyboards.RemoveKeyboard
+	user, err := b.service.GetUser(message.Chat.ID)
+
 	switch message.Command() {
 	case keys.CommandStart:
-		if err := b.handleStartCommand(message); err != nil {
-			return errors.New(fmt.Sprintf("error while handling start command: %s", err))
+		switch {
+		case err == sql.ErrNoRows:
+			msg, err = b.service.NewUserRegistration(message.Chat.ID)
+			if err != nil {
+				return err
+			}
+		default:
+			msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageIfUserAlreadyExists, messages.Language(user.Language))
+			if err != nil {
+				msg.Text = fmt.Sprintf(messages.UnknownError, err)
+			}
 		}
-	case "help":
-		if err := b.handleHelpCommand(message); err != nil {
-			return errors.New(fmt.Sprintf("error while handling help command: %s", err))
-		}
-	default:
-		if err := b.handleUnknownCommand(message); err != nil {
-			return errors.New(fmt.Sprintf("error while handling unknown command: %s", err))
-		}
+	}
+
+	if _, err = b.bot.Send(msg); err != nil {
+		return err
 	}
 
 	return nil
@@ -63,39 +77,6 @@ func (b *Bot) handleStartCommand(message *tgbotapi.Message) error {
 			tgbotapi.NewInlineKeyboardButtonData("Довідка", keys.Info),
 		),
 	)
-	_, err := b.bot.Send(msg)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *Bot) handleHelpCommand(message *tgbotapi.Message) error {
-	var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonURL("1.com", "http://1.com"),
-			tgbotapi.NewInlineKeyboardButtonData("Test", fmt.Sprintf("chat_id=%d", message.Chat.ID)),
-			tgbotapi.NewInlineKeyboardButtonData("3", "3"),
-		),
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("4", "4"),
-			tgbotapi.NewInlineKeyboardButtonData("5", "5"),
-			tgbotapi.NewInlineKeyboardButtonData("6", "6"),
-		),
-	)
-	msg := tgbotapi.NewMessage(message.Chat.ID, "This bot will help you to organize your work")
-	msg.ReplyMarkup = numericKeyboard
-	_, err := b.bot.Send(msg)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (b *Bot) handleUnknownCommand(message *tgbotapi.Message) error {
-	msg := tgbotapi.NewMessage(message.Chat.ID, "Unknown command")
-	msg.ReplyToMessageID = message.MessageID
 	_, err := b.bot.Send(msg)
 	if err != nil {
 		return err

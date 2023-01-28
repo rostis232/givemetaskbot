@@ -12,7 +12,7 @@ const (
 )
 
 type Authorisation interface {
-	CreateUser(user entities.User) error
+	NewUserRegistration(user entities.User) error
 	GetUser(chatId int64) (entities.User, error)
 }
 
