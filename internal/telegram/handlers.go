@@ -30,6 +30,11 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 		if err != nil {
 			return err
 		}
+	case user.Status == state_service.Changing_user_name:
+		msg, err = b.service.SetUserName(&user, message)
+		if err != nil {
+			return err
+		}
 	}
 
 	if _, err = b.bot.Send(msg); err != nil {

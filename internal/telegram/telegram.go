@@ -124,6 +124,13 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 				}
 				msg = tgbotapi.NewMessage(user.ChatId, title)
 				msg.ReplyMarkup = keyboards.LanguageKeyboard
+			case update.CallbackQuery.Data == keys.GoToChangeUserName:
+				//Просимо ввести нове ім'я
+				msg, err = b.service.UserNameChanging(&user)
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
 			}
 
 			if _, err := b.bot.Send(msg); err != nil {

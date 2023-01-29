@@ -8,8 +8,8 @@ const (
 	JoinTheExistGroup      = "toExistGroup"
 	GoToMainMenu           = "main_menu"
 	GoToUserMenuSettings   = "GoToUserMenuSettings"
-	GoToUserSettingsMenu   = "GoToUserSettingsMenu"
 	GoToChangeLanguageMenu = "GoToChangeLanguageMenu"
+	GoToChangeUserName     = "GoToChangeUserName"
 	ChatIdPrefix           = "s4i-"
 	ChatIdSuffix           = 12345
 )

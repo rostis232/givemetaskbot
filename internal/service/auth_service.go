@@ -84,8 +84,9 @@ func (u *AuthService) SetUserName(user *entities.User, message *tgbotapi.Message
 		text, err = messages.ReturnMessageByLanguage(messages.MessageAfterFirstNameEntering, user.Language)
 		msg.Text = fmt.Sprintf(text, user.UserName)
 		msg.ReplyMarkup = keyboards.NewKeyboardChooseCreateOrJoinGroup(user)
-	default:
-		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageAfterLanguageUpdate, user.Language)
+	case user.Status == state_service.Changing_user_name:
+		text, err = messages.ReturnMessageByLanguage(messages.MessageAfterUserNameUpdate, user.Language)
+		msg.Text = fmt.Sprintf(text, user.UserName)
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	}
 
@@ -109,4 +110,20 @@ func (u *AuthService) ShowChatId(user *entities.User) (tgbotapi.MessageConfig, e
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 
 	return msg, nil
+}
+
+func (u *AuthService) UserNameChanging(user *entities.User) (tgbotapi.MessageConfig, error) {
+	title, err := messages.ReturnMessageByLanguage(messages.MessageBeforeNameChanging, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	user.Status = state_service.Changing_user_name
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+	msg := tgbotapi.NewMessage(user.ChatId, title)
+
+	return msg, nil
+
 }

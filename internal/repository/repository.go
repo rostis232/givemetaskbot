@@ -16,6 +16,7 @@ type Authorisation interface {
 	GetUser(chatId int64) (entities.User, error)
 	UpdateLanguage(user *entities.User) error
 	UpdateName(user *entities.User) error
+	UpdateStatus(user *entities.User) error
 }
 
 type Group interface {

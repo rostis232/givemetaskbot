@@ -21,6 +21,8 @@ const (
 	MainMenuTitle                      = "MainMenuTitle"
 	UserSettingsMenuTitle              = "UserSettingsMenuTitle"
 	ChangeLanguageKey                  = "ChangeLanguageKey"
+	ChangeUserName                     = "ChangeUserName"
+	MessageBeforeNameChanging          = "MessageBeforeNameChanging"
 )
 
 type MessageTitle string
@@ -43,12 +45,12 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Мова обрана. Для повернення до головного меню натисніть кнопку.",
 	},
 	MessageAfterFirstNameEntering: {
-		EN: "Congratulations, you now have a name: %s, which will be displayed to other members of this bot. Next, you can create a new group and become its leader, or join another group and become a subordinate.",
-		UA: "Вітаю, тепер ваше ім'я: %s, воно буде відображатись у інших учасників цього боту. Далі ви можете створити нову групу та стати її керівником, або приєднатися до іншої групи і стати у ній підлеглим.",
+		EN: "Congratulations, you now have a name:\n%s\nwhich will be displayed to other members of this bot. Next, you can create a new group and become its leader, or join another group and become a subordinate.",
+		UA: "Вітаю, тепер ваше ім'я:\n%s\nвоно буде відображатись у інших учасників цього боту. Далі ви можете створити нову групу та стати її керівником, або приєднатися до іншої групи і стати у ній підлеглим.",
 	},
 	MessageAfterUserNameUpdate: {
-		EN: "Congratulations, you now have a name: %s, which will be displayed to other members of this bot. To return to the main menu, press the button.",
-		UA: "Вітаю, тепер ваше ім'я: %s, воно буде відображатись у інших учасників цього боту. Для повернення до головного меню нажміть кнопку.",
+		EN: "Congratulations, you now have a name:\n%s\nwhich will be displayed to other members of this bot. To return to the main menu, press the button.",
+		UA: "Вітаю, тепер ваше ім'я:\n%s\nвоно буде відображатись у інших учасників цього боту. Для повернення до головного меню нажміть кнопку.",
 	},
 	ToMainMenuKey: {
 		EN: "Main Menu",
@@ -77,6 +79,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	ChangeLanguageKey: {
 		EN: "Change the language",
 		UA: "Змінити мову",
+	},
+	ChangeUserName: {
+		EN: "Change the name",
+		UA: "Змінити ім'я",
+	},
+	MessageBeforeNameChanging: {
+		EN: "Enter a new name:",
+		UA: "Введіть нове ім'я:",
 	},
 }
 

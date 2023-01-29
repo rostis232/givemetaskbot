@@ -51,3 +51,12 @@ func (a *AuthPostgres) UpdateName(user *entities.User) error {
 	}
 	return nil
 }
+
+func (a *AuthPostgres) UpdateStatus(user *entities.User) error {
+	query := fmt.Sprintf("UPDATE %s SET status = '%d' WHERE chat_id = %d;", UserTable, user.Status, user.ChatId)
+	row := a.db.QueryRow(query)
+	if err := row.Err(); err != nil {
+		return err
+	}
+	return nil
+}
