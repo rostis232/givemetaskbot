@@ -14,6 +14,8 @@ const (
 type Authorisation interface {
 	NewUserRegistration(user entities.User) error
 	GetUser(chatId int64) (entities.User, error)
+	UpdateLanguage(user entities.User) error
+	UpdateName(user entities.User) error
 }
 
 type Group interface {

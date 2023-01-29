@@ -13,4 +13,5 @@ const (
 	Changing_task_description
 	Adding_employee_to_group
 	Adding_employee_to_task
+	MainMenu
 )

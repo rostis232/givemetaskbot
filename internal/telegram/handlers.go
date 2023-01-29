@@ -7,6 +7,7 @@ import (
 	"github.com/rostis232/givemetaskbot/internal/keyboards"
 	"github.com/rostis232/givemetaskbot/internal/keys"
 	"github.com/rostis232/givemetaskbot/internal/messages"
+	"github.com/rostis232/givemetaskbot/internal/state_service"
 	"log"
 )
 
@@ -16,11 +17,16 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "")
 	//TODO: what with keyboard?
 	msg.ReplyMarkup = keyboards.RemoveKeyboard
-	_, err := b.service.GetUser(message.Chat.ID)
+	user, err := b.service.GetUser(message.Chat.ID)
 
 	switch {
 	case err == sql.ErrNoRows:
 		msg, err = b.service.NewUserRegistration(message.Chat.ID)
+		if err != nil {
+			return err
+		}
+	case user.Status == state_service.Expecting_new_user_name:
+		msg, err = b.service.SetUserName(user, message)
 		if err != nil {
 			return err
 		}
@@ -40,6 +46,9 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 	//TODO: what with keyboard?
 	msg.ReplyMarkup = keyboards.RemoveKeyboard
 	user, err := b.service.GetUser(message.Chat.ID)
+	if err != nil {
+		log.Println(err)
+	}
 
 	switch message.Command() {
 	case keys.CommandStart:
@@ -50,7 +59,7 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 				return err
 			}
 		default:
-			msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageIfUserAlreadyExists, messages.Language(user.Language))
+			msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageIfUserAlreadyExists, user.Language)
 			if err != nil {
 				msg.Text = fmt.Sprintf(messages.UnknownError, err)
 			}

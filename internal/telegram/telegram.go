@@ -1,7 +1,6 @@
 package telegram
 
 import (
-	"errors"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/rostis232/givemetaskbot/internal/messages"
@@ -48,11 +47,13 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 		if update.Message != nil { // If we got a message
 			if update.Message.IsCommand() {
 				if err := b.handleCommand(update.Message); err != nil {
-					return errors.New(fmt.Sprintf("handling command error: %s", err))
+					log.Println(fmt.Sprintf("handling command error: %s", err))
+					continue
 				}
 			} else {
 				if err := b.handleMessage(update.Message); err != nil {
-					return errors.New(fmt.Sprintf("handling message error: %s", err))
+					log.Println(fmt.Sprintf("handling message error: %s", err))
+					continue
 				}
 			}
 
@@ -67,16 +68,19 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 			user, err := b.service.GetUser(update.CallbackQuery.Message.Chat.ID)
 			if err != nil {
 				log.Println(err)
-				continue
 			}
 
 			switch {
-			case strings.Contains(update.CallbackQuery.Data, "lang:"):
+			case strings.Contains(update.CallbackQuery.Data, messages.LanguageKey):
 				_, lng, ok := strings.Cut(update.CallbackQuery.Data, ":")
 				if !ok {
 					log.Println("error while cutting string with language")
 				}
-				msg, _ = b.service.SelectLanguage(user, messages.Language(lng))
+				msg, err = b.service.SelectLanguage(user, messages.Language(lng))
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
 			}
 
 			if _, err := b.bot.Send(msg); err != nil {
