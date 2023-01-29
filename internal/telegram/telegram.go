@@ -76,7 +76,7 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 				if !ok {
 					log.Println("error while cutting string with language")
 				}
-				msg, err = b.service.SelectLanguage(user, messages.Language(lng))
+				msg, err = b.service.SelectLanguage(&user, messages.Language(lng))
 				if err != nil {
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)

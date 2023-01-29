@@ -26,7 +26,7 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 			return err
 		}
 	case user.Status == state_service.Expecting_new_user_name:
-		msg, err = b.service.SetUserName(user, message)
+		msg, err = b.service.SetUserName(&user, message)
 		if err != nil {
 			return err
 		}

@@ -31,7 +31,7 @@ func (u *AuthService) NewUserRegistration(chatId int64) (tgbotapi.MessageConfig,
 		ChatId: chatId,
 		Status: state_service.Expecting_language,
 	}
-	if err := u.repository.NewUserRegistration(user); err != nil {
+	if err := u.repository.NewUserRegistration(&user); err != nil {
 		return msg, err
 	}
 
@@ -41,7 +41,7 @@ func (u *AuthService) NewUserRegistration(chatId int64) (tgbotapi.MessageConfig,
 	return msg, nil
 }
 
-func (u *AuthService) SelectLanguage(user entities.User, lng messages.Language) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) SelectLanguage(user *entities.User, lng messages.Language) (tgbotapi.MessageConfig, error) {
 	msg := tgbotapi.NewMessage(user.ChatId, "")
 	err := errors.New("")
 
@@ -71,7 +71,7 @@ func (u *AuthService) SelectLanguage(user entities.User, lng messages.Language) 
 	return msg, nil
 }
 
-func (u *AuthService) SetUserName(user entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) SetUserName(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	msg := tgbotapi.NewMessage(user.ChatId, "")
 	err := errors.New("")
 	text := ""
@@ -81,10 +81,10 @@ func (u *AuthService) SetUserName(user entities.User, message *tgbotapi.Message)
 	case user.Status == state_service.Expecting_new_user_name:
 		text, err = messages.ReturnMessageByLanguage(messages.MessageAfterFirstNameEntering, user.Language)
 		msg.Text = fmt.Sprintf(text, user.UserName)
-		msg.ReplyMarkup = keyboards.NewKeyboardChooseCreateOrJoinGroup(&user)
+		msg.ReplyMarkup = keyboards.NewKeyboardChooseCreateOrJoinGroup(user)
 	default:
 		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageAfterLanguageUpdate, user.Language)
-		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(&user)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	}
 
 	user.Status = state_service.MainMenu

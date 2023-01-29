@@ -15,7 +15,7 @@ func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }
 
-func (a *AuthPostgres) NewUserRegistration(user entities.User) error {
+func (a *AuthPostgres) NewUserRegistration(user *entities.User) error {
 	query := fmt.Sprintf("INSERT INTO %s (chat_id, status) VALUES (%d, %d);", UserTable, user.ChatId, user.Status)
 	row := a.db.QueryRow(query)
 	if err := row.Err(); err != nil {
@@ -34,7 +34,7 @@ func (a *AuthPostgres) GetUser(chatId int64) (entities.User, error) {
 	return user, nil
 }
 
-func (a *AuthPostgres) UpdateLanguage(user entities.User) error {
+func (a *AuthPostgres) UpdateLanguage(user *entities.User) error {
 	query := fmt.Sprintf("UPDATE %s SET language = '%s', status = '%d' WHERE chat_id = %d;", UserTable, user.Language, user.Status, user.ChatId)
 	row := a.db.QueryRow(query)
 	if err := row.Err(); err != nil {
@@ -43,7 +43,7 @@ func (a *AuthPostgres) UpdateLanguage(user entities.User) error {
 	return nil
 }
 
-func (a *AuthPostgres) UpdateName(user entities.User) error {
+func (a *AuthPostgres) UpdateName(user *entities.User) error {
 	query := fmt.Sprintf("UPDATE %s SET user_name = '%s', status = '%d' WHERE chat_id = %d;", UserTable, user.UserName, user.Status, user.ChatId)
 	row := a.db.QueryRow(query)
 	if err := row.Err(); err != nil {
