@@ -18,6 +18,9 @@ const (
 	CreateNewGroupKey                  = "CreateNewGroupKey"
 	JoinToGroupKey                     = "JoinToGroupKey"
 	MessageWithChatId                  = "MessageWithChatId"
+	MainMenuTitle                      = "MainMenuTitle"
+	UserSettingsMenuTitle              = "UserSettingsMenuTitle"
+	ChangeLanguageKey                  = "ChangeLanguageKey"
 )
 
 type MessageTitle string
@@ -62,6 +65,18 @@ var Messages = map[MessageTitle]map[Language]string{
 	MessageWithChatId: {
 		EN: "To join the group, pass this code to the group leader:\n %s",
 		UA: "Для приєднання до групи передайте цей код керівнику групи:\n %s",
+	},
+	MainMenuTitle: {
+		EN: "Main Menu",
+		UA: "Головне меню",
+	},
+	UserSettingsMenuTitle: {
+		EN: "Profile Settings",
+		UA: "Налаштування профілю",
+	},
+	ChangeLanguageKey: {
+		EN: "Change the language",
+		UA: "Змінити мову",
 	},
 }
 

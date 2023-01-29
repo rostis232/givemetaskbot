@@ -3,9 +3,11 @@ package telegram
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/rostis232/givemetaskbot/internal/keyboards"
 	"github.com/rostis232/givemetaskbot/internal/keys"
 	"github.com/rostis232/givemetaskbot/internal/messages"
 	"github.com/rostis232/givemetaskbot/internal/service"
+	"github.com/rostis232/givemetaskbot/internal/state_service"
 	"log"
 	"strings"
 )
@@ -73,21 +75,55 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 
 			switch {
 			case strings.Contains(update.CallbackQuery.Data, messages.LanguageKey):
+				//Обробка вибору мови
+				showMainMenuKeyboard := true
+				if user.Status == state_service.Expecting_language {
+					showMainMenuKeyboard = false
+				}
 				_, lng, ok := strings.Cut(update.CallbackQuery.Data, ":")
 				if !ok {
 					log.Println("error while cutting string with language")
 				}
 				msg, err = b.service.SelectLanguage(&user, messages.Language(lng))
+				if showMainMenuKeyboard {
+					msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(&user)
+				}
 				if err != nil {
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
 				}
 			case update.CallbackQuery.Data == keys.JoinTheExistGroup:
+				//Показуємо код для приєднання до групи
 				msg, err = b.service.ShowChatId(&user)
 				if err != nil {
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
 				}
+			case update.CallbackQuery.Data == keys.GoToMainMenu:
+				//Показуємо головне меню
+				title, err := messages.ReturnMessageByLanguage(messages.MainMenuTitle, user.Language)
+				if err != nil {
+					log.Println(err)
+				}
+				msg = tgbotapi.NewMessage(user.ChatId, title)
+				msg.ReplyMarkup = keyboards.NewMainMenuKeyboard(&user)
+			case update.CallbackQuery.Data == keys.GoToUserMenuSettings:
+				//Показуємо меню налаштувань користувача
+				title, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
+				if err != nil {
+					log.Println(err)
+				}
+				msg = tgbotapi.NewMessage(user.ChatId, title)
+				msg.ReplyMarkup = keyboards.NewUserSettingsMenuKeyboard(&user)
+
+			case update.CallbackQuery.Data == keys.GoToChangeLanguageMenu:
+				//Показуємо меню зміни мови
+				title, err := messages.ReturnMessageByLanguage(messages.ChangeLanguageKey, user.Language)
+				if err != nil {
+					log.Println(err)
+				}
+				msg = tgbotapi.NewMessage(user.ChatId, title)
+				msg.ReplyMarkup = keyboards.LanguageKeyboard
 			}
 
 			if _, err := b.bot.Send(msg); err != nil {

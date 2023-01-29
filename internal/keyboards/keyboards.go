@@ -60,3 +60,31 @@ func NewKeyboardChooseCreateOrJoinGroup(user *entities.User) tgbotapi.InlineKeyb
 	)
 	return keyboard
 }
+
+func NewMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	userMenuTitle, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(userMenuTitle, keys.GoToUserMenuSettings),
+		),
+	)
+	return keyboard
+
+}
+
+func NewUserSettingsMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	changeLanguageKeyTitle, err := messages.ReturnMessageByLanguage(messages.ChangeLanguageKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(changeLanguageKeyTitle, keys.GoToChangeLanguageMenu),
+		),
+	)
+	return keyboard
+}
