@@ -8,8 +8,8 @@ import (
 const (
 	UnknownError                       = "Unknown error: %s. Contact with administrator @rostis232"
 	UnknownCommand                     = "Unknown command"
-	MessageForUnregisteredUsers        = MessageTitle("MessageForUnregisteredUsers")
-	MessageIfUserAlreadyExists         = MessageTitle("MessageIfUserAlreadyExists")
+	MessageForUnregisteredUsers        = "MessageForUnregisteredUsers"
+	MessageIfUserAlreadyExists         = "MessageIfUserAlreadyExists"
 	MessageAfterFirstLanguageSelection = "MessageAfterFirstLanguageSelection"
 	MessageAfterLanguageUpdate         = "MessageAfterLanguageUpdate"
 	MessageAfterFirstNameEntering      = "MessageAfterFirstNameEntering"
@@ -17,6 +17,7 @@ const (
 	ToMainMenuKey                      = "ToMainMenuKey"
 	CreateNewGroupKey                  = "CreateNewGroupKey"
 	JoinToGroupKey                     = "JoinToGroupKey"
+	MessageWithChatId                  = "MessageWithChatId"
 )
 
 type MessageTitle string
@@ -57,6 +58,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	JoinToGroupKey: {
 		EN: "Join the group",
 		UA: "Приєднатись до групи",
+	},
+	MessageWithChatId: {
+		EN: "To join the group, pass this code to the group leader:\n %s",
+		UA: "Для приєднання до групи передайте цей код керівнику групи:\n %s",
 	},
 }
 

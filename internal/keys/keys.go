@@ -7,4 +7,6 @@ const (
 	CreateNewGroup    = "createNewGroup"
 	JoinTheExistGroup = "toExistGroup"
 	GoToMainMenu      = "main_menu"
+	ChatIdPrefix      = "s4i:"
+	ChatIdSuffix      = 12345
 )

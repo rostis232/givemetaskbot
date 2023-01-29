@@ -3,6 +3,7 @@ package telegram
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/rostis232/givemetaskbot/internal/keys"
 	"github.com/rostis232/givemetaskbot/internal/messages"
 	"github.com/rostis232/givemetaskbot/internal/service"
 	"log"
@@ -77,6 +78,12 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 					log.Println("error while cutting string with language")
 				}
 				msg, err = b.service.SelectLanguage(&user, messages.Language(lng))
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
+			case update.CallbackQuery.Data == keys.JoinTheExistGroup:
+				msg, err = b.service.ShowChatId(&user)
 				if err != nil {
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)

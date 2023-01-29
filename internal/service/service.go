@@ -12,6 +12,7 @@ type Authorisation interface {
 	NewUserRegistration(chatId int64) (tgbotapi.MessageConfig, error)
 	SelectLanguage(user *entities.User, lng messages.Language) (tgbotapi.MessageConfig, error)
 	SetUserName(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error)
+	ShowChatId(user *entities.User) (tgbotapi.MessageConfig, error)
 }
 
 type Group interface {

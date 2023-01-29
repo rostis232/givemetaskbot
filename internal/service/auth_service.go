@@ -6,10 +6,12 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/rostis232/givemetaskbot/internal/entities"
 	"github.com/rostis232/givemetaskbot/internal/keyboards"
+	"github.com/rostis232/givemetaskbot/internal/keys"
 	"github.com/rostis232/givemetaskbot/internal/messages"
 	"github.com/rostis232/givemetaskbot/internal/repository"
 	"github.com/rostis232/givemetaskbot/internal/state_service"
 	"log"
+	"strconv"
 )
 
 type AuthService struct {
@@ -95,4 +97,16 @@ func (u *AuthService) SetUserName(user *entities.User, message *tgbotapi.Message
 	}
 
 	return msg, err
+}
+
+func (u *AuthService) ShowChatId(user *entities.User) (tgbotapi.MessageConfig, error) {
+	text, err := messages.ReturnMessageByLanguage(messages.MessageWithChatId, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	code := fmt.Sprintf(text, keys.ChatIdPrefix+strconv.Itoa(int(user.ChatId+keys.ChatIdSuffix)))
+	msg := tgbotapi.NewMessage(user.ChatId, code)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+
+	return msg, nil
 }
