@@ -17,24 +17,15 @@ type Authorisation interface {
 	MainMenu(user *entities.User) (tgbotapi.MessageConfig, error)
 	AskingForNewGroupTitle(user *entities.User) (tgbotapi.MessageConfig, error)
 	CreatingNewGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error)
-}
-
-type Group interface {
-}
-
-type Task interface {
+	AddingEmployeeToGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error)
 }
 
 type Service struct {
 	Authorisation
-	Group
-	Task
 }
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
 		Authorisation: NewAuthService(repo.Authorisation),
-		Group:         NewGroupService(repo.Group),
-		Task:          NewTaskService(repo.Task),
 	}
 }

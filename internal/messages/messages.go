@@ -25,6 +25,10 @@ const (
 	MessageBeforeNameChanging          = "MessageBeforeNameChanging"
 	MessageEnterNewGroupName           = "MessageEnterNewGroupName"
 	MessageCreatedNewGroup             = "MessageCreatedNewGroup"
+	MessageEmployeeCodeBroken          = "MessageEmployeeCodeBroken"
+	MessageNoEmployeeWithThisCode      = "MessageNoEmployeeWithThisCode"
+	MessageEmployeeCodeEqualsChiefCode = "MessageEmployeeCodeEqualsChiefCode"
+	MessageEmployeeAddingSuccess       = "MessageEmployeeAddingSuccess"
 )
 
 type MessageTitle string
@@ -97,6 +101,22 @@ var Messages = map[MessageTitle]map[Language]string{
 	MessageCreatedNewGroup: {
 		EN: "A new group has been created with the name:\n%s\nTo add a new group member, enter the code they provided or return to the main menu.",
 		UA: "Створено нову групу з назвою:\n%s\nЩоб додати нового учасника групи введіть наданий ним код або поверніться до головного меню.",
+	},
+	MessageEmployeeCodeBroken: {
+		EN: "The code you entered does not match the specified format. Check the code for correctness and try again or return to the main menu.",
+		UA: "Вказаний код не відповідає заданому формату. Перевірте правильність коду та спробуйте ще раз, або поверніться до головного меню.",
+	},
+	MessageNoEmployeeWithThisCode: {
+		EN: "The specified code does not match any user. Check the code for correctness and try again or return to the main menu.",
+		UA: "Вказаний код не відповідає жодному користувачу. Перевірте правильність коду та спробуйте ще раз, або поверніться до головного меню.",
+	},
+	MessageEmployeeCodeEqualsChiefCode: {
+		EN: "The code you enter corresponds to you as a user. Check that the code is correct and try again or return to the main menu.",
+		UA: "Введений код відповідає вам як користувачу. Перевірте правильність коду та спробуйте ще раз, або поверніться до головного меню.",
+	},
+	MessageEmployeeAddingSuccess: {
+		EN: "User\n%s\nhas been successfully added to the group. Add another user or return to the main menu:",
+		UA: "Користувача\n%s\nуспішно додано до групи. Додайте ще одного або поверніться до головного меню:",
 	},
 }
 

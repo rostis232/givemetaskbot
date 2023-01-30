@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	UserTable  = "users"
-	GroupTable = "groups"
-	TaskTable  = "tasks"
+	UserTable          = "users"
+	GroupTable         = "groups"
+	TaskTable          = "tasks"
+	GroupEmployeeTable = "group_employee"
 )
 
 type Authorisation interface {
@@ -18,24 +19,15 @@ type Authorisation interface {
 	UpdateName(user *entities.User) error
 	UpdateStatus(user *entities.User) error
 	CreateGroup(group *entities.Group) (int, error)
-}
-
-type Group interface {
-}
-
-type Task interface {
+	AddEmployeeToGroup(chief, employee *entities.User) error
 }
 
 type Repository struct {
 	Authorisation
-	Group
-	Task
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorisation: NewAuthPostgres(db),
-		Group:         NewGroupPostgres(db),
-		Task:          NewTaskPostgres(db),
 	}
 }

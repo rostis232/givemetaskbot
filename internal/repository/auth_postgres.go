@@ -72,3 +72,12 @@ func (a *AuthPostgres) CreateGroup(group *entities.Group) (int, error) {
 
 	return groupId, nil
 }
+
+func (a *AuthPostgres) AddEmployeeToGroup(chief, employee *entities.User) error {
+	query := fmt.Sprintf("INSERT INTO %s (group_id, employee_user_id) VALUES (%d, %d);", GroupEmployeeTable, chief.ActiveGroup, employee.UserId)
+	row := a.db.QueryRow(query)
+	if err := row.Err(); err != nil {
+		return err
+	}
+	return nil
+}

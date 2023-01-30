@@ -9,10 +9,11 @@ import (
 	"github.com/rostis232/givemetaskbot/internal/messages"
 	"github.com/rostis232/givemetaskbot/internal/state_service"
 	"log"
+	"strings"
 )
 
 func (b *Bot) handleMessage(message *tgbotapi.Message) error {
-	log.Printf("[%s] %s", message.From.UserName, message.Text)
+	log.Printf("[%s] %s - %d", message.From.UserName, message.Text, message.Chat.ID)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, "")
 	//TODO: what with keyboard?
@@ -40,6 +41,18 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 		if err != nil {
 			return err
 		}
+	case user.Status == state_service.Adding_employee_to_group:
+		//Adding employee to group
+		msg, err = b.service.AddingEmployeeToGroup(&user, message)
+		if err != nil {
+			return err
+		}
+	case strings.HasPrefix(message.Text, keys.ChatIdPrefix):
+		//Adding employee to group
+		msg, err = b.service.AddingEmployeeToGroup(&user, message)
+		if err != nil {
+			return err
+		}
 	}
 
 	if _, err = b.bot.Send(msg); err != nil {
@@ -50,7 +63,7 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) handleCommand(message *tgbotapi.Message) error {
-	log.Printf("[%s] %s", message.From.UserName, message.Text)
+	log.Printf("[%s] %s - %d", message.From.UserName, message.Text, message.Chat.ID)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, messages.UnknownCommand)
 	//TODO: what with keyboard?

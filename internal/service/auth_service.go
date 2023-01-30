@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -12,6 +13,7 @@ import (
 	"github.com/rostis232/givemetaskbot/internal/state_service"
 	"log"
 	"strconv"
+	"strings"
 )
 
 type AuthService struct {
@@ -184,8 +186,6 @@ func (u *AuthService) CreatingNewGroup(user *entities.User, message *tgbotapi.Me
 	user.Status = state_service.Adding_employee_to_group
 	user.ActiveGroup = groupId
 
-	log.Println(user.Status, user.ActiveGroup)
-
 	if err := u.repository.UpdateStatus(user); err != nil {
 		log.Println(err)
 		return tgbotapi.MessageConfig{}, err
@@ -194,5 +194,82 @@ func (u *AuthService) CreatingNewGroup(user *entities.User, message *tgbotapi.Me
 	msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(title, group.GroupName))
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 
+	return msg, nil
+}
+
+func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+	msg := tgbotapi.NewMessage(user.ChatId, messages.UnknownError)
+	err := errors.New("")
+	//Перевірка чи має код префікс
+	_, codeWithoutPrefix, cutting := strings.Cut(message.Text, keys.ChatIdPrefix)
+	if !cutting {
+		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageEmployeeCodeBroken, user.Language)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		if err != nil {
+			log.Println(err)
+			return msg, err
+		}
+		return msg, nil
+	}
+	//Конвертація коду
+	codeWithSuffix, err := strconv.Atoi(codeWithoutPrefix)
+	if err != nil {
+		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageEmployeeCodeBroken, user.Language)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		if err != nil {
+			log.Println(err)
+			return msg, err
+		}
+		return msg, nil
+	}
+	cleanCode := codeWithSuffix - keys.ChatIdSuffix
+	employee, err := u.repository.GetUser(int64(cleanCode))
+	//Перевірка, чи є користувачі з таким кодом
+	if err == sql.ErrNoRows {
+		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageNoEmployeeWithThisCode, user.Language)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		if err != nil {
+			log.Println(err)
+			return msg, err
+		}
+		return msg, err
+	}
+	if err != nil {
+		return msg, err
+	}
+	//Перевірка чи не ввів користувач свій код
+	if user.ChatId == employee.ChatId {
+		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageEmployeeCodeEqualsChiefCode, user.Language)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		if err != nil {
+			log.Println(err)
+			return msg, err
+		}
+		return msg, nil
+	}
+	//Перевірка, чи є у користувача активна група в статусі
+	if user.ActiveGroup == 0 {
+		if user.ActiveGroup == 0 {
+			text, err := messages.ReturnMessageByLanguage(messages.UnknownError, user.Language)
+			msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+			if err != nil {
+				log.Println(err)
+			}
+			msg.Text = fmt.Sprintf(text, "Wrong Active Group")
+		}
+	}
+
+	//Передати в репозиторій
+	if err := u.repository.AddEmployeeToGroup(user, &employee); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+
+	text, err := messages.ReturnMessageByLanguage(messages.MessageEmployeeAddingSuccess, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	msg.Text = fmt.Sprintf(text, employee.UserName)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	return msg, nil
 }
