@@ -53,10 +53,22 @@ func (a *AuthPostgres) UpdateName(user *entities.User) error {
 }
 
 func (a *AuthPostgres) UpdateStatus(user *entities.User) error {
-	query := fmt.Sprintf("UPDATE %s SET status = '%d' WHERE chat_id = %d;", UserTable, user.Status, user.ChatId)
+	query := fmt.Sprintf("UPDATE %s SET status = %d, active_group = %d, active_task = %d WHERE chat_id = %d;", UserTable, user.Status, user.ActiveGroup, user.ActiveTask, user.ChatId)
 	row := a.db.QueryRow(query)
 	if err := row.Err(); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (a *AuthPostgres) CreateGroup(group *entities.Group) (int, error) {
+	var groupId int
+
+	query := fmt.Sprintf("INSERT INTO %s (chief_user_id, group_name) VALUES (%d, '%s')  RETURNING group_id;", GroupTable, group.ChiefUserId, group.GroupName)
+	row := a.db.QueryRow(query)
+	if err := row.Scan(&groupId); err != nil {
+		return 0, err
+	}
+
+	return groupId, nil
 }

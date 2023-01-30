@@ -17,6 +17,7 @@ type Authorisation interface {
 	UpdateLanguage(user *entities.User) error
 	UpdateName(user *entities.User) error
 	UpdateStatus(user *entities.User) error
+	CreateGroup(group *entities.Group) (int, error)
 }
 
 type Group interface {

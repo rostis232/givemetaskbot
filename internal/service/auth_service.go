@@ -127,3 +127,72 @@ func (u *AuthService) UserNameChanging(user *entities.User) (tgbotapi.MessageCon
 	return msg, nil
 
 }
+
+func (u *AuthService) MainMenu(user *entities.User) (tgbotapi.MessageConfig, error) {
+	title, err := messages.ReturnMessageByLanguage(messages.MainMenuTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+
+	user.Status = state_service.MainMenu
+	user.ActiveGroup = 0
+	user.ActiveTask = 0
+
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+
+	msg := tgbotapi.NewMessage(user.ChatId, title)
+	msg.ReplyMarkup = keyboards.NewMainMenuKeyboard(user)
+
+	return msg, nil
+}
+
+func (u *AuthService) AskingForNewGroupTitle(user *entities.User) (tgbotapi.MessageConfig, error) {
+	title, err := messages.ReturnMessageByLanguage(messages.MessageEnterNewGroupName, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	user.Status = state_service.Expecting_new_group_name
+
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+
+	msg := tgbotapi.NewMessage(user.ChatId, title)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+
+	return msg, nil
+}
+
+func (u *AuthService) CreatingNewGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+	group := entities.Group{
+		ChiefUserId: user.UserId,
+		GroupName:   message.Text,
+	}
+	title, err := messages.ReturnMessageByLanguage(messages.MessageCreatedNewGroup, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	groupId, err := u.repository.CreateGroup(&group)
+	if err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+	user.Status = state_service.Adding_employee_to_group
+	user.ActiveGroup = groupId
+
+	log.Println(user.Status, user.ActiveGroup)
+
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+
+	msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(title, group.GroupName))
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+
+	return msg, nil
+}

@@ -23,6 +23,8 @@ const (
 	ChangeLanguageKey                  = "ChangeLanguageKey"
 	ChangeUserName                     = "ChangeUserName"
 	MessageBeforeNameChanging          = "MessageBeforeNameChanging"
+	MessageEnterNewGroupName           = "MessageEnterNewGroupName"
+	MessageCreatedNewGroup             = "MessageCreatedNewGroup"
 )
 
 type MessageTitle string
@@ -87,6 +89,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	MessageBeforeNameChanging: {
 		EN: "Enter a new name:",
 		UA: "Введіть нове ім'я:",
+	},
+	MessageEnterNewGroupName: {
+		EN: "Enter a name for the new group, or return to the main menu to cancel the operation:",
+		UA: "Введіть назву для нової групи, або поверніться до головного меню для скасування цієї операції:",
+	},
+	MessageCreatedNewGroup: {
+		EN: "A new group has been created with the name:\n%s\nTo add a new group member, enter the code they provided or return to the main menu.",
+		UA: "Створено нову групу з назвою:\n%s\nЩоб додати нового учасника групи введіть наданий ним код або поверніться до головного меню.",
 	},
 }
 

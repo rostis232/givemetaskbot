@@ -101,12 +101,14 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 				}
 			case update.CallbackQuery.Data == keys.GoToMainMenu:
 				//Показуємо головне меню
-				title, err := messages.ReturnMessageByLanguage(messages.MainMenuTitle, user.Language)
+				msg, err = b.service.MainMenu(&user)
 				if err != nil {
 					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
 				}
-				msg = tgbotapi.NewMessage(user.ChatId, title)
-				msg.ReplyMarkup = keyboards.NewMainMenuKeyboard(&user)
+
+				// old code
+
 			case update.CallbackQuery.Data == keys.GoToUserMenuSettings:
 				//Показуємо меню налаштувань користувача
 				title, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
@@ -127,6 +129,13 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 			case update.CallbackQuery.Data == keys.GoToChangeUserName:
 				//Просимо ввести нове ім'я
 				msg, err = b.service.UserNameChanging(&user)
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
+			case update.CallbackQuery.Data == keys.CreateNewGroup:
+				//Просимо ввести ім'я нової групи
+				msg, err = b.service.AskingForNewGroupTitle(&user)
 				if err != nil {
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)

@@ -9,23 +9,18 @@ import (
 )
 
 var (
-	StartKeyboard = tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton(keys.Register),
-			tgbotapi.NewKeyboardButton(keys.Info),
-		),
-	)
-
+	// LanguageKeyboard hold keys for language choosing
 	LanguageKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("Українська", messages.LanguageKey+string(messages.UA)),
 			tgbotapi.NewInlineKeyboardButtonData("English", messages.LanguageKey+string(messages.EN)),
 		),
 	)
-
+	// RemoveKeyboard removes any keyboards
 	RemoveKeyboard = tgbotapi.NewRemoveKeyboard(true)
 )
 
+// NewToMainMenuKeyboard returns new inline keyboard with only one button to MainMenu
 func NewToMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	keyText, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
 	if err != nil {
@@ -39,6 +34,8 @@ func NewToMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	return toMainMenuKeyboard
 }
 
+// NewKeyboardChooseCreateOrJoinGroup returns new inline keyboard with two keys: create new
+// group or join to exist group
 func NewKeyboardChooseCreateOrJoinGroup(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	keyCreate, err := messages.ReturnMessageByLanguage(messages.CreateNewGroupKey, user.Language)
 	if err != nil {
@@ -61,6 +58,7 @@ func NewKeyboardChooseCreateOrJoinGroup(user *entities.User) tgbotapi.InlineKeyb
 	return keyboard
 }
 
+// NewMainMenuKeyboard returns new inline keyboard for Main Menu
 func NewMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	userMenuTitle, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
 	if err != nil {
@@ -75,6 +73,7 @@ func NewMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 
 }
 
+// NewUserSettingsMenuKeyboard returns new inline keyboard for User Settings Menu
 func NewUserSettingsMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	changeLanguageKeyTitle, err := messages.ReturnMessageByLanguage(messages.ChangeLanguageKey, user.Language)
 	if err != nil {

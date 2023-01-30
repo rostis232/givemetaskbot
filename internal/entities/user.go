@@ -10,6 +10,6 @@ type User struct {
 	UserName    string            `db:"user_name,omitempty"`
 	Language    messages.Language `db:"language,omitempty"`
 	Status      int               `db:"status,omitempty"`
-	ActiveGroup int64             `db:"active_group,omitempty"`
-	ActiveTask  int64             `db:"active_task,omitempty"`
+	ActiveGroup int               `db:"active_group,omitempty"`
+	ActiveTask  int               `db:"active_task,omitempty"`
 }

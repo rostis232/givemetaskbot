@@ -35,6 +35,11 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 		if err != nil {
 			return err
 		}
+	case user.Status == state_service.Expecting_new_group_name:
+		msg, err = b.service.CreatingNewGroup(&user, message)
+		if err != nil {
+			return err
+		}
 	}
 
 	if _, err = b.bot.Send(msg); err != nil {

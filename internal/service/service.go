@@ -14,6 +14,9 @@ type Authorisation interface {
 	SetUserName(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error)
 	ShowChatId(user *entities.User) (tgbotapi.MessageConfig, error)
 	UserNameChanging(user *entities.User) (tgbotapi.MessageConfig, error)
+	MainMenu(user *entities.User) (tgbotapi.MessageConfig, error)
+	AskingForNewGroupTitle(user *entities.User) (tgbotapi.MessageConfig, error)
+	CreatingNewGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error)
 }
 
 type Group interface {
