@@ -16,6 +16,8 @@ import (
 	"strings"
 )
 
+var MsgChan = make(chan tgbotapi.MessageConfig)
+
 type AuthService struct {
 	repository repository.Authorisation
 }

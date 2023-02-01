@@ -10,6 +10,7 @@ import (
 	"github.com/rostis232/givemetaskbot/internal/state_service"
 	"log"
 	"strings"
+	"sync"
 )
 
 type Bot struct {
@@ -38,14 +39,17 @@ func (b *Bot) Start() error {
 
 	//go b.handleUpdates(updates)
 
-	b.handleUpdates(updates)
-
-	//b.sendMessages()
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+	go b.handleUpdates(updates, wg)
+	wg.Add(1)
+	go b.sendMessages(wg)
+	wg.Wait()
 
 	return nil
 }
 
-func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
+func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup) error {
 	for update := range updates {
 		if update.Message != nil { // If we got a message
 			if update.Message.IsCommand() {
@@ -154,6 +158,7 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 		}
 
 	}
+	wg.Done()
 	return nil
 }
 
@@ -163,12 +168,12 @@ func (b *Bot) initUpdatesChannel() tgbotapi.UpdatesChannel {
 	return b.bot.GetUpdatesChan(u)
 }
 
-func (b *Bot) sendMessages() {
-	for {
-		//for _, v := range repository.ChatIDs {
-		//	msg := tgbotapi.NewMessage(v, "Still there?")
-		//	b.bot.Send(msg)
-		//}
-		//time.Sleep(time.Minute)
+func (b *Bot) sendMessages(wg *sync.WaitGroup) {
+	for i := range service.MsgChan {
+		if _, err := b.bot.Send(i); err != nil {
+			log.Println(err)
+			continue
+		}
 	}
+	wg.Done()
 }
