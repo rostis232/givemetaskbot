@@ -273,3 +273,14 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	return msg, nil
 }
+
+func (u *AuthService) GroupsMenu(user *entities.User) (tgbotapi.MessageConfig, error) {
+	title, err := messages.ReturnMessageByLanguage(messages.GroupMenuTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	msg := tgbotapi.NewMessage(user.ChatId, title)
+	msg.ReplyMarkup = keyboards.NewGroupMenuKeyboard(user)
+
+	return msg, nil
+}

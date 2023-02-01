@@ -107,8 +107,6 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
 				}
 
-				// old code
-
 			case update.CallbackQuery.Data == keys.GoToUserMenuSettings:
 				//Показуємо меню налаштувань користувача
 				title, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
@@ -136,6 +134,13 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 			case update.CallbackQuery.Data == keys.CreateNewGroup:
 				//Просимо ввести ім'я нової групи
 				msg, err = b.service.AskingForNewGroupTitle(&user)
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
+			case update.CallbackQuery.Data == keys.GoToGroupsMenu:
+				//Меню груп
+				msg, err = b.service.GroupsMenu(&user)
 				if err != nil {
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)

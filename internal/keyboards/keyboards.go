@@ -64,9 +64,16 @@ func NewMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	if err != nil {
 		log.Println(err)
 	}
+	groupMenuTitle, err := messages.ReturnMessageByLanguage(messages.GroupMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(userMenuTitle, keys.GoToUserMenuSettings),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(groupMenuTitle, keys.GoToGroupsMenu),
 		),
 	)
 	return keyboard
@@ -99,5 +106,28 @@ func NewUserSettingsMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMar
 			tgbotapi.NewInlineKeyboardButtonData(keyText, keys.GoToMainMenu),
 		),
 	)
+	return keyboard
+}
+
+func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	createNewGroupKey, err := messages.ReturnMessageByLanguage(messages.CreateNewGroupKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+
+	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(createNewGroupKey, keys.CreateNewGroup),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
+		),
+	)
+
 	return keyboard
 }

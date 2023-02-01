@@ -29,6 +29,8 @@ const (
 	MessageNoEmployeeWithThisCode      = "MessageNoEmployeeWithThisCode"
 	MessageEmployeeCodeEqualsChiefCode = "MessageEmployeeCodeEqualsChiefCode"
 	MessageEmployeeAddingSuccess       = "MessageEmployeeAddingSuccess"
+	GroupMenuKey                       = "GroupMenuKey"
+	GroupMenuTitle                     = "GroupMenuTitle"
 )
 
 type MessageTitle string
@@ -117,6 +119,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	MessageEmployeeAddingSuccess: {
 		EN: "User\n%s\nhas been successfully added to the group. Add another user or return to the main menu:",
 		UA: "Користувача\n%s\nуспішно додано до групи. Додайте ще одного або поверніться до головного меню:",
+	},
+	GroupMenuKey: {
+		EN: "Groups menu",
+		UA: "Меню груп",
+	},
+	GroupMenuTitle: {
+		EN: "Groups menu",
+		UA: "Меню груп",
 	},
 }
 
