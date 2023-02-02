@@ -35,6 +35,9 @@ const (
 	RenameGroupKey                     = "RenameGroupKey"
 	RenameGroupTitle                   = "RenameGroupTitle"
 	MessageNewGroupNameAccepted        = "MessageNewGroupNameAccepted"
+	ShowAllEmployeesFromGroupWithIdKey = "ShowAllEmployeesFromGroupWithIdKey"
+	AddNewEmployeeToExistingGroup      = "AddNewEmployeeToExistingGroup"
+	NoEmployeesInTheGroup              = "NoEmployeesInTheGroup"
 )
 
 type MessageTitle string
@@ -147,6 +150,18 @@ var Messages = map[MessageTitle]map[Language]string{
 	MessageNewGroupNameAccepted: {
 		EN: "Group name changed to %s",
 		UA: "Змінено назву групи на %s",
+	},
+	ShowAllEmployeesFromGroupWithIdKey: {
+		EN: "Display group members",
+		UA: "Відобразити учасників групи",
+	},
+	AddNewEmployeeToExistingGroup: {
+		EN: "To add a new group member, enter the code they provided or return to the main menu.",
+		UA: "Щоб додати нового учасника групи введіть наданий ним код або поверніться до головного меню.",
+	},
+	NoEmployeesInTheGroup: {
+		EN: "No users in the group",
+		UA: "В групі відсутні користувачі",
 	},
 }
 

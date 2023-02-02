@@ -142,15 +142,24 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 }
 
 func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.InlineKeyboardMarkup {
-	changeName, err := messages.ReturnMessageByLanguage(messages.RenameGroupKey, user.Language)
+	changeNameTitle, err := messages.ReturnMessageByLanguage(messages.RenameGroupKey, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
+	changeNameKey := keys.RenameGroupWithId + strconv.Itoa(int(group.Id))
 
-	key := keys.RenameGroupWithId + strconv.Itoa(int(group.Id))
+	showEmployeesTitle, err := messages.ReturnMessageByLanguage(messages.ShowAllEmployeesFromGroupWithIdKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	showEmployeesKey := keys.ShowAllEmployeesFromGroupWithId + strconv.Itoa(int(group.Id))
+
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(changeName, key),
+			tgbotapi.NewInlineKeyboardButtonData(changeNameTitle, changeNameKey),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(showEmployeesTitle, showEmployeesKey),
 		),
 	)
 	return keyboard

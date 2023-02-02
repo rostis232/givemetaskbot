@@ -171,6 +171,21 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup)
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
 				}
+			case strings.Contains(update.CallbackQuery.Data, keys.ShowAllEmployeesFromGroupWithId):
+				//Отримано запит на відображення всіх учасників групи
+				_, groupId, ok := strings.Cut(update.CallbackQuery.Data, keys.ShowAllEmployeesFromGroupWithId)
+				if !ok {
+					log.Println("Помилка отримання ID групи")
+				}
+				groupIdInt, err := strconv.Atoi(groupId)
+				if err != nil {
+					log.Println("Помилка отримання ID групи")
+				}
+				msg, err = b.service.ShowAllEmploysFromGroup(&user, groupIdInt)
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
 			}
 
 			if msg.Text != "" {

@@ -97,3 +97,10 @@ func (a *AuthPostgres) UpdateGroupName(user *entities.User, newGroupName string)
 	}
 	return nil
 }
+
+func (a *AuthPostgres) ShowAllEmploysFromGroup(user *entities.User) ([]entities.User, error) {
+	var allEmployees []entities.User
+	query := fmt.Sprintf("SELECT ut.user_id, ut.chat_id, ut.user_name, ut.language, ut.status, ut.active_group, ut.active_task FROM %s ge INNER JOIN %s ut ON ge.employee_user_id = ut.user_id WHERE group_id = %d;", GroupEmployeeTable, UserTable, user.ActiveGroup)
+	err := a.db.Select(&allEmployees, query)
+	return allEmployees, err
+}

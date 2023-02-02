@@ -336,3 +336,42 @@ func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) 
 
 	return msg, nil
 }
+
+func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, groupId int) (tgbotapi.MessageConfig, error) {
+	user.Status = state_service.Adding_employee_to_group
+	user.ActiveGroup = groupId
+	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user)
+	if err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+
+	if allEmployees == nil {
+		text, err := messages.ReturnMessageByLanguage(messages.NoEmployeesInTheGroup, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		MsgChan <- msg
+	} else {
+		for _, e := range allEmployees {
+			msg := tgbotapi.NewMessage(user.ChatId, e.UserName)
+			MsgChan <- msg
+		}
+	}
+
+	//надсилаємо останнє повідомлення, в якому пропонуємо ввести нового користувача або повернутись до головного меню
+	text, err := messages.ReturnMessageByLanguage(messages.AddNewEmployeeToExistingGroup, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msg
+	return tgbotapi.MessageConfig{}, err
+}

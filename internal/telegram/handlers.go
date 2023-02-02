@@ -54,6 +54,7 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 			return err
 		}
 	case user.Status == state_service.Changing_group_name && user.ActiveGroup != 0:
+		//Changing name of existing group
 		msg, err = b.service.UpdateGroupName(&user, message.Text)
 		if err != nil {
 			return err
