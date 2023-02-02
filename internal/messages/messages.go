@@ -34,6 +34,7 @@ const (
 	ShowAllChiefsGroups                = "ShowAllChiefsGroups"
 	RenameGroupKey                     = "RenameGroupKey"
 	RenameGroupTitle                   = "RenameGroupTitle"
+	MessageNewGroupNameAccepted        = "MessageNewGroupNameAccepted"
 )
 
 type MessageTitle string
@@ -140,9 +141,12 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Змінити назву",
 	},
 	RenameGroupTitle: {
-		//TODO: translate
 		EN: "Enter a new name for the group, or return to the main menu",
 		UA: "Введіть нову назву для групи, або поверніться до головного меню",
+	},
+	MessageNewGroupNameAccepted: {
+		EN: "Group name changed to %s",
+		UA: "Змінено назву групи на %s",
 	},
 }
 

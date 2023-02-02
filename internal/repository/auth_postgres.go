@@ -89,6 +89,11 @@ func (a *AuthPostgres) GetAllChiefsGroups(user *entities.User) ([]entities.Group
 	return allGroups, err
 }
 
-func (a *AuthPostgres) UpdateGroupName(user *entities.User) error {
+func (a *AuthPostgres) UpdateGroupName(user *entities.User, newGroupName string) error {
+	query := fmt.Sprintf("UPDATE %s SET group_name = '%s' WHERE group_id = %d;", GroupTable, newGroupName, user.ActiveGroup)
+	row := a.db.QueryRow(query)
+	if err := row.Err(); err != nil {
+		return err
+	}
 	return nil
 }

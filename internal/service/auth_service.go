@@ -319,3 +319,20 @@ func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, groupId int
 	return msg, err
 
 }
+
+func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) (tgbotapi.MessageConfig, error) {
+	if err := u.repository.UpdateGroupName(user, newGroupName); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+
+	text, err := messages.ReturnMessageByLanguage(messages.MessageNewGroupNameAccepted, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	text = fmt.Sprintf(text, newGroupName)
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+
+	return msg, nil
+}

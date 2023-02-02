@@ -21,6 +21,7 @@ type Authorisation interface {
 	GroupsMenu(user *entities.User) (tgbotapi.MessageConfig, error)
 	ShowAllChiefsGroups(user *entities.User) (tgbotapi.MessageConfig, error)
 	AskingForUpdatedGroupName(user *entities.User, groupId int) (tgbotapi.MessageConfig, error)
+	UpdateGroupName(user *entities.User, newGroupName string) (tgbotapi.MessageConfig, error)
 }
 
 type Service struct {

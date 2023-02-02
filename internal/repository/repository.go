@@ -21,7 +21,7 @@ type Authorisation interface {
 	CreateGroup(group *entities.Group) (int, error)
 	AddEmployeeToGroup(chief, employee *entities.User) error
 	GetAllChiefsGroups(user *entities.User) ([]entities.Group, error)
-	UpdateGroupName(user *entities.User) error
+	UpdateGroupName(user *entities.User, newGroupName string) error
 }
 
 type Repository struct {
