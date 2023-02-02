@@ -81,3 +81,14 @@ func (a *AuthPostgres) AddEmployeeToGroup(chief, employee *entities.User) error 
 	}
 	return nil
 }
+
+func (a *AuthPostgres) GetAllChiefsGroups(user *entities.User) ([]entities.Group, error) {
+	var allGroups []entities.Group
+	query := fmt.Sprintf("SELECT * FROM %s WHERE chief_user_id = %d;", GroupTable, user.UserId)
+	err := a.db.Select(&allGroups, query)
+	return allGroups, err
+}
+
+func (a *AuthPostgres) UpdateGroupName(user *entities.User) error {
+	return nil
+}

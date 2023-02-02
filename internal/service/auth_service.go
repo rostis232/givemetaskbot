@@ -286,3 +286,36 @@ func (u *AuthService) GroupsMenu(user *entities.User) (tgbotapi.MessageConfig, e
 
 	return msg, nil
 }
+
+func (u *AuthService) ShowAllChiefsGroups(user *entities.User) (tgbotapi.MessageConfig, error) {
+	allGroups, err := u.repository.GetAllChiefsGroups(user)
+	if err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+	for _, g := range allGroups {
+		msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
+		msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, &g)
+		MsgChan <- msg
+	}
+	return tgbotapi.MessageConfig{}, err
+}
+
+func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, groupId int) (tgbotapi.MessageConfig, error) {
+	text, err := messages.ReturnMessageByLanguage(messages.RenameGroupTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	user.ActiveGroup = groupId
+	user.Status = state_service.Changing_group_name
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+
+	return msg, err
+
+}

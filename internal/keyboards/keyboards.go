@@ -6,6 +6,7 @@ import (
 	"github.com/rostis232/givemetaskbot/internal/keys"
 	"github.com/rostis232/givemetaskbot/internal/messages"
 	"log"
+	"strconv"
 )
 
 var (
@@ -109,8 +110,13 @@ func NewUserSettingsMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMar
 	return keyboard
 }
 
+// NewGroupMenuKeyboard returns new inline keyboard gor Groups Menu
 func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	createNewGroupKey, err := messages.ReturnMessageByLanguage(messages.CreateNewGroupKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	showAllChiefsGroups, err := messages.ReturnMessageByLanguage(messages.ShowAllChiefsGroups, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
@@ -125,9 +131,27 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 			tgbotapi.NewInlineKeyboardButtonData(createNewGroupKey, keys.CreateNewGroup),
 		),
 		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(showAllChiefsGroups, keys.ShowAllChiefsGroups),
+		),
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
 		),
 	)
 
+	return keyboard
+}
+
+func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.InlineKeyboardMarkup {
+	changeName, err := messages.ReturnMessageByLanguage(messages.RenameGroupKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+
+	key := keys.RenameGroupWithId + strconv.Itoa(int(group.Id))
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(changeName, key),
+		),
+	)
 	return keyboard
 }

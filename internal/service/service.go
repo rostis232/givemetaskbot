@@ -19,6 +19,8 @@ type Authorisation interface {
 	CreatingNewGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error)
 	AddingEmployeeToGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error)
 	GroupsMenu(user *entities.User) (tgbotapi.MessageConfig, error)
+	ShowAllChiefsGroups(user *entities.User) (tgbotapi.MessageConfig, error)
+	AskingForUpdatedGroupName(user *entities.User, groupId int) (tgbotapi.MessageConfig, error)
 }
 
 type Service struct {

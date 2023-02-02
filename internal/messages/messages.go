@@ -31,6 +31,9 @@ const (
 	MessageEmployeeAddingSuccess       = "MessageEmployeeAddingSuccess"
 	GroupMenuKey                       = "GroupMenuKey"
 	GroupMenuTitle                     = "GroupMenuTitle"
+	ShowAllChiefsGroups                = "ShowAllChiefsGroups"
+	RenameGroupKey                     = "RenameGroupKey"
+	RenameGroupTitle                   = "RenameGroupTitle"
 )
 
 type MessageTitle string
@@ -127,6 +130,19 @@ var Messages = map[MessageTitle]map[Language]string{
 	GroupMenuTitle: {
 		EN: "Groups menu",
 		UA: "Меню груп",
+	},
+	ShowAllChiefsGroups: {
+		EN: "Show all groups",
+		UA: "Показати всі групи",
+	},
+	RenameGroupKey: {
+		EN: "Change the name",
+		UA: "Змінити назву",
+	},
+	RenameGroupTitle: {
+		//TODO: translate
+		EN: "Enter a new name for the group, or return to the main menu",
+		UA: "Введіть нову назву для групи, або поверніться до головного меню",
 	},
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/rostis232/givemetaskbot/internal/service"
 	"github.com/rostis232/givemetaskbot/internal/state_service"
 	"log"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -149,12 +150,36 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup)
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
 				}
+			case update.CallbackQuery.Data == keys.ShowAllChiefsGroups:
+				msg, err = b.service.ShowAllChiefsGroups(&user)
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
+			case strings.Contains(update.CallbackQuery.Data, keys.RenameGroupWithId):
+				//Запит нового імені для групи, що вже існує
+				_, groupId, ok := strings.Cut(update.CallbackQuery.Data, keys.RenameGroupWithId)
+				if !ok {
+					log.Println("Помилка отримання ID групи")
+				}
+				groupIdInt, err := strconv.Atoi(groupId)
+				if err != nil {
+					log.Println("Помилка отримання ID групи")
+				}
+				msg, err = b.service.AskingForUpdatedGroupName(&user, groupIdInt)
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
 			}
 
-			if _, err := b.bot.Send(msg); err != nil {
-				log.Println(err)
-				continue
+			if msg.Text != "" {
+				if _, err := b.bot.Send(msg); err != nil {
+					log.Println(err)
+					continue
+				}
 			}
+
 		}
 
 	}

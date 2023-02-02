@@ -13,4 +13,6 @@ const (
 	ChatIdPrefix           = "s4i-"
 	ChatIdSuffix           = 12345
 	GoToGroupsMenu         = "go_to_groups_menu"
+	ShowAllChiefsGroups    = "ShowAllChiefsGroups"
+	RenameGroupWithId      = "RenameGroupWithId-"
 )
