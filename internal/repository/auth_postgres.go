@@ -104,3 +104,13 @@ func (a *AuthPostgres) ShowAllEmploysFromGroup(user *entities.User) ([]entities.
 	err := a.db.Select(&allEmployees, query)
 	return allEmployees, err
 }
+
+func (a *AuthPostgres) GetGroupById(id int) (entities.Group, error) {
+	group := entities.Group{}
+	query := fmt.Sprintf("SELECT * FROM %s WHERE group_id = %d", GroupTable, id)
+	if err := a.db.Get(&group, query); err != nil {
+		return entities.Group{}, err
+	}
+
+	return group, nil
+}

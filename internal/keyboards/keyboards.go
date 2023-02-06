@@ -91,6 +91,10 @@ func NewUserSettingsMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMar
 	if err != nil {
 		log.Println(err)
 	}
+	keyJoin, err := messages.ReturnMessageByLanguage(messages.JoinToGroupKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
 	keyText, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -104,13 +108,16 @@ func NewUserSettingsMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMar
 			tgbotapi.NewInlineKeyboardButtonData(changeUserNameKeyTitle, keys.GoToChangeUserName),
 		),
 		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(keyJoin, keys.JoinTheExistGroup),
+		),
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(keyText, keys.GoToMainMenu),
 		),
 	)
 	return keyboard
 }
 
-// NewGroupMenuKeyboard returns new inline keyboard gor Groups Menu
+// NewGroupMenuKeyboard returns new inline keyboard for Groups Menu
 func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	createNewGroupKey, err := messages.ReturnMessageByLanguage(messages.CreateNewGroupKey, user.Language)
 	if err != nil {
@@ -120,7 +127,10 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	if err != nil {
 		log.Println(err)
 	}
-
+	keyJoin, err := messages.ReturnMessageByLanguage(messages.JoinToGroupKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
 	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -134,6 +144,9 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 			tgbotapi.NewInlineKeyboardButtonData(showAllChiefsGroups, keys.ShowAllChiefsGroups),
 		),
 		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(keyJoin, keys.JoinTheExistGroup),
+		),
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
 		),
 	)
@@ -141,6 +154,7 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	return keyboard
 }
 
+// NewMenuForEvenGroup returns new inline keyboard for even group after showing all groups in Group Menu
 func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.InlineKeyboardMarkup {
 	changeNameTitle, err := messages.ReturnMessageByLanguage(messages.RenameGroupKey, user.Language)
 	if err != nil {
@@ -162,5 +176,61 @@ func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.In
 			tgbotapi.NewInlineKeyboardButtonData(showEmployeesTitle, showEmployeesKey),
 		),
 	)
+	return keyboard
+}
+
+func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboardMarkup {
+	deleteTitle, err := messages.ReturnMessageByLanguage(messages.DeleteEmployeeFromGroupKeyText, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	copyTitle, err := messages.ReturnMessageByLanguage(messages.CopyEmployeeToAnotherGroupKeyText, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	moveTitle, err := messages.ReturnMessageByLanguage(messages.MoveEmployeeToAnotherGroupKeyText, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(deleteTitle, "data"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(copyTitle, "data1"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(moveTitle, "data2"),
+		),
+	)
+	return keyboard
+}
+
+func NewGroupCreatingKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	createNewGroupKey, err := messages.ReturnMessageByLanguage(messages.CreateNewGroupKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyJoin, err := messages.ReturnMessageByLanguage(messages.JoinToGroupKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(createNewGroupKey, keys.CreateNewGroup),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(keyJoin, keys.JoinTheExistGroup),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
+		),
+	)
+
 	return keyboard
 }

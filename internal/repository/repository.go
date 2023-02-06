@@ -23,6 +23,7 @@ type Authorisation interface {
 	GetAllChiefsGroups(user *entities.User) ([]entities.Group, error)
 	UpdateGroupName(user *entities.User, newGroupName string) error
 	ShowAllEmploysFromGroup(user *entities.User) ([]entities.User, error)
+	GetGroupById(id int) (entities.Group, error)
 }
 
 type Repository struct {

@@ -293,11 +293,24 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) (tgbotapi.Message
 		log.Println(err)
 		return tgbotapi.MessageConfig{}, err
 	}
-	for _, g := range allGroups {
-		msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
-		msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, &g)
+
+	if allGroups == nil {
+		//Якщо немає груп пишемо відповідне повідомлення
+		text, err := messages.ReturnMessageByLanguage(messages.NoGroups, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewGroupCreatingKeyboard(user)
 		MsgChan <- msg
+	} else {
+		for _, g := range allGroups {
+			msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
+			msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, &g)
+			MsgChan <- msg
+		}
 	}
+
 	return tgbotapi.MessageConfig{}, err
 }
 
@@ -350,16 +363,24 @@ func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, groupId int) 
 		return tgbotapi.MessageConfig{}, err
 	}
 
+	group, err := u.repository.GetGroupById(user.ActiveGroup)
+	if err != nil {
+		log.Println(err)
+	}
+
 	if allEmployees == nil {
+		//Якщо немає користувачів пишемо відповідне повідомлення
 		text, err := messages.ReturnMessageByLanguage(messages.NoEmployeesInTheGroup, user.Language)
 		if err != nil {
 			log.Println(err)
 		}
-		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(text, group.GroupName))
 		MsgChan <- msg
 	} else {
+		//В іншому випадку направляємо перелік користувачів
 		for _, e := range allEmployees {
 			msg := tgbotapi.NewMessage(user.ChatId, e.UserName)
+			msg.ReplyMarkup = keyboards.NewMenuForEvenEmployee(user, &e)
 			MsgChan <- msg
 		}
 	}
@@ -370,7 +391,7 @@ func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, groupId int) 
 		log.Println(err)
 	}
 
-	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(text, group.GroupName))
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	MsgChan <- msg
 	return tgbotapi.MessageConfig{}, err

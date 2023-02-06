@@ -38,6 +38,10 @@ const (
 	ShowAllEmployeesFromGroupWithIdKey = "ShowAllEmployeesFromGroupWithIdKey"
 	AddNewEmployeeToExistingGroup      = "AddNewEmployeeToExistingGroup"
 	NoEmployeesInTheGroup              = "NoEmployeesInTheGroup"
+	DeleteEmployeeFromGroupKeyText     = "DeleteEmployeeFromGroupKeyText"
+	CopyEmployeeToAnotherGroupKeyText  = "CopyEmployeeToAnotherGroupKeyText"
+	MoveEmployeeToAnotherGroupKeyText  = "MoveEmployeeToAnotherGroupKeyText"
+	NoGroups                           = "NoGroups"
 )
 
 type MessageTitle string
@@ -156,12 +160,28 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Відобразити учасників групи",
 	},
 	AddNewEmployeeToExistingGroup: {
-		EN: "To add a new group member, enter the code they provided or return to the main menu.",
-		UA: "Щоб додати нового учасника групи введіть наданий ним код або поверніться до головного меню.",
+		EN: "To add a new member to group '%s', enter the code they provided or return to the main menu.",
+		UA: "Щоб додати нового учасника до групи '%s' введіть наданий ним код або поверніться до головного меню.",
 	},
 	NoEmployeesInTheGroup: {
-		EN: "No users in the group",
-		UA: "В групі відсутні користувачі",
+		EN: "No users in the group '%s'",
+		UA: "В групі '%s' відсутні користувачі",
+	},
+	DeleteEmployeeFromGroupKeyText: {
+		EN: "Remove from the group",
+		UA: "Видалити з групи",
+	},
+	CopyEmployeeToAnotherGroupKeyText: {
+		EN: "Add a member to another group",
+		UA: "Додати учасника до іншої групи",
+	},
+	MoveEmployeeToAnotherGroupKeyText: {
+		EN: "Move a member to another group",
+		UA: "Перемістити учасника до іншої групи",
+	},
+	NoGroups: {
+		EN: "There are no groups. Create a new group, or return to the Main Menu.",
+		UA: "Групи відсутні. Створіть нову групу, або поверніться до головного меню.",
 	},
 }
 
