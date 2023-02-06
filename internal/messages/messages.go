@@ -42,6 +42,7 @@ const (
 	CopyEmployeeToAnotherGroupKeyText  = "CopyEmployeeToAnotherGroupKeyText"
 	MoveEmployeeToAnotherGroupKeyText  = "MoveEmployeeToAnotherGroupKeyText"
 	NoGroups                           = "NoGroups"
+	ShownMembersOfTheGroupWithName     = "ShownMembersOfTheGroupWithName"
 )
 
 type MessageTitle string
@@ -165,7 +166,7 @@ var Messages = map[MessageTitle]map[Language]string{
 	},
 	NoEmployeesInTheGroup: {
 		EN: "No users in the group '%s'",
-		UA: "В групі '%s' відсутні користувачі",
+		UA: "В групі '%s' відсутні учасники",
 	},
 	DeleteEmployeeFromGroupKeyText: {
 		EN: "Remove from the group",
@@ -182,6 +183,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	NoGroups: {
 		EN: "There are no groups. Create a new group, or return to the Main Menu.",
 		UA: "Групи відсутні. Створіть нову групу, або поверніться до головного меню.",
+	},
+	ShownMembersOfTheGroupWithName: {
+		EN: "Members of the group '%s':",
+		UA: "Учасники групи '%s':",
 	},
 }
 

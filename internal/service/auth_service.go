@@ -377,6 +377,13 @@ func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, groupId int) 
 		msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(text, group.GroupName))
 		MsgChan <- msg
 	} else {
+		text, err := messages.ReturnMessageByLanguage(messages.ShownMembersOfTheGroupWithName, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(text, group.GroupName))
+		MsgChan <- msg
+
 		//В іншому випадку направляємо перелік користувачів
 		for _, e := range allEmployees {
 			msg := tgbotapi.NewMessage(user.ChatId, e.UserName)
