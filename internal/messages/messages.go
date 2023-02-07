@@ -43,6 +43,8 @@ const (
 	MoveEmployeeToAnotherGroupKeyText  = "MoveEmployeeToAnotherGroupKeyText"
 	NoGroups                           = "NoGroups"
 	ShownMembersOfTheGroupWithName     = "ShownMembersOfTheGroupWithName"
+	YouAreDeletedFromGroup             = "YouAreDeletedFromGroup"
+	EmployeeHaveBeenDeletedFromGroup   = "EmployeeHaveBeenDeletedFromGroup"
 )
 
 type MessageTitle string
@@ -187,6 +189,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	ShownMembersOfTheGroupWithName: {
 		EN: "Members of the group '%s':",
 		UA: "Учасники групи '%s':",
+	},
+	YouAreDeletedFromGroup: {
+		EN: "You have been removed from the group: %s",
+		UA: "Вас видалено з групи: %s",
+	},
+	EmployeeHaveBeenDeletedFromGroup: {
+		EN: "Member %s has been removed from group %s.",
+		UA: "Учасника %s видалено з групи %s.",
 	},
 }
 

@@ -16,4 +16,7 @@ const (
 	ShowAllChiefsGroups             = "ShowAllChiefsGroups"
 	RenameGroupWithId               = "RenameGroupWithId-"
 	ShowAllEmployeesFromGroupWithId = "ShowAllEmployeesFromGroupWithId-"
+	EmployeeIDtoDeleteFromGroup     = "EmployeeIDtoDeleteFromGroup-"
+	EmployeeIDtoCopyToANotherGroup  = "EmployeeIDtoCopyToANotherGroup-"
+	EmployeeIDtoMoveToANotherGroup  = "EmployeeIDtoMoveToANotherGroup-"
 )

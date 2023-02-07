@@ -23,6 +23,7 @@ type Authorisation interface {
 	AskingForUpdatedGroupName(user *entities.User, groupId int) (tgbotapi.MessageConfig, error)
 	UpdateGroupName(user *entities.User, newGroupName string) (tgbotapi.MessageConfig, error)
 	ShowAllEmploysFromGroup(user *entities.User, groupId int) (tgbotapi.MessageConfig, error)
+	DeleteEmployeeFromGroup(user *entities.User, receivedData string) (tgbotapi.MessageConfig, error)
 }
 
 type Service struct {

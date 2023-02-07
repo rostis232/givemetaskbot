@@ -34,12 +34,6 @@ func (b *Bot) Start() error {
 
 	updates := b.initUpdatesChannel()
 
-	//if err := b.handleUpdates(updates); err != nil {
-	//	return errors.New(fmt.Sprintf("handling updates error: %s", err))
-	//}
-
-	//go b.handleUpdates(updates)
-
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 	go b.handleUpdates(updates, wg)
@@ -66,10 +60,6 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup)
 			}
 
 		} else if update.CallbackQuery != nil {
-			//callback := tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data)
-			//if _, err := b.bot.Request(callback); err != nil {
-			//	return err
-			//}
 
 			msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
 
@@ -186,6 +176,14 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup)
 					log.Println(err)
 					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
 				}
+			case strings.Contains(update.CallbackQuery.Data, keys.EmployeeIDtoDeleteFromGroup):
+				//Отримано запит на видалення учасника групи
+				msg, err = b.service.DeleteEmployeeFromGroup(&user, update.CallbackQuery.Data)
+				if err != nil {
+					log.Println(err)
+					msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, messages.UnknownError)
+				}
+
 			}
 
 			if msg.Text != "" {

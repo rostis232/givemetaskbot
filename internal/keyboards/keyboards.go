@@ -192,15 +192,19 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 	if err != nil {
 		log.Println(err)
 	}
+	deleteKey := keys.EmployeeIDtoDeleteFromGroup + strconv.Itoa(int(employee.UserId))
+	copyKey := keys.EmployeeIDtoCopyToANotherGroup + strconv.Itoa(int(employee.UserId))
+	moveKey := keys.EmployeeIDtoMoveToANotherGroup + strconv.Itoa(int(employee.UserId))
+
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(deleteTitle, "data"),
+			tgbotapi.NewInlineKeyboardButtonData(deleteTitle, deleteKey),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(copyTitle, "data1"),
+			tgbotapi.NewInlineKeyboardButtonData(copyTitle, copyKey),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(moveTitle, "data2"),
+			tgbotapi.NewInlineKeyboardButtonData(moveTitle, moveKey),
 		),
 	)
 	return keyboard

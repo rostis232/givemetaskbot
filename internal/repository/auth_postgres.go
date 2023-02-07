@@ -24,9 +24,19 @@ func (a *AuthPostgres) NewUserRegistration(user *entities.User) error {
 	return nil
 }
 
-func (a *AuthPostgres) GetUser(chatId int64) (entities.User, error) {
+func (a *AuthPostgres) GetUserByChatId(chatId int64) (entities.User, error) {
 	user := entities.User{}
 	query := fmt.Sprintf("SELECT * FROM %s WHERE chat_id = %d", UserTable, chatId)
+	if err := a.db.Get(&user, query); err != nil {
+		return entities.User{}, err
+	}
+
+	return user, nil
+}
+
+func (a *AuthPostgres) GetUserByUserId(userId int64) (entities.User, error) {
+	user := entities.User{}
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id = %d", UserTable, userId)
 	if err := a.db.Get(&user, query); err != nil {
 		return entities.User{}, err
 	}
@@ -113,4 +123,13 @@ func (a *AuthPostgres) GetGroupById(id int) (entities.Group, error) {
 	}
 
 	return group, nil
+}
+
+func (a *AuthPostgres) DeleteEmployeeFromGroup(employee *entities.User, group *entities.Group) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE employee_user_id = %d AND group_id = %d;", GroupEmployeeTable, employee.UserId, group.Id)
+	row := a.db.QueryRow(query)
+	if err := row.Err(); err != nil {
+		return err
+	}
+	return nil
 }

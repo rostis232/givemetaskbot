@@ -27,7 +27,7 @@ func NewAuthService(repository repository.Authorisation) *AuthService {
 }
 
 func (u *AuthService) GetUser(chatId int64) (entities.User, error) {
-	user, err := u.repository.GetUser(chatId)
+	user, err := u.repository.GetUserByChatId(chatId)
 	return user, err
 }
 
@@ -225,7 +225,7 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 		return msg, nil
 	}
 	cleanCode := codeWithSuffix - keys.ChatIdSuffix
-	employee, err := u.repository.GetUser(int64(cleanCode))
+	employee, err := u.repository.GetUserByChatId(int64(cleanCode))
 	//Перевірка, чи є користувачі з таким кодом
 	if err == sql.ErrNoRows {
 		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageNoEmployeeWithThisCode, user.Language)
@@ -402,4 +402,41 @@ func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, groupId int) 
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	MsgChan <- msg
 	return tgbotapi.MessageConfig{}, err
+}
+
+func (u *AuthService) DeleteEmployeeFromGroup(user *entities.User, receivedData string) (tgbotapi.MessageConfig, error) {
+	_, employeeUserIdString, ok := strings.Cut(receivedData, keys.EmployeeIDtoDeleteFromGroup)
+	if !ok {
+		log.Println("Помилка отримання chatID працівника")
+	}
+	group, err := u.repository.GetGroupById(user.ActiveGroup)
+	if err != nil {
+		log.Println(err)
+	}
+	employeeUserIdInt, err := strconv.Atoi(employeeUserIdString)
+	if err != nil {
+		log.Println("Помилка визначення ID")
+	}
+	employee, err := u.repository.GetUserByUserId(int64(employeeUserIdInt))
+	if err != nil {
+		log.Println("Помилка отримання даних працівника з БД")
+	}
+
+	if err := u.repository.DeleteEmployeeFromGroup(&employee, &group); err != nil {
+		log.Printf("Error while deleting user from group: %s", err)
+		return tgbotapi.MessageConfig{}, err
+	}
+	messageToEmployee, err := messages.ReturnMessageByLanguage(messages.YouAreDeletedFromGroup, employee.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	msgToEmployee := tgbotapi.NewMessage(employee.ChatId, fmt.Sprintf(messageToEmployee, group.GroupName))
+	MsgChan <- msgToEmployee
+	messageToChief, err := messages.ReturnMessageByLanguage(messages.EmployeeHaveBeenDeletedFromGroup, employee.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	msgToChief := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(messageToChief, employee.UserName, group.GroupName))
+	MsgChan <- msgToChief
+	return tgbotapi.MessageConfig{}, nil
 }
