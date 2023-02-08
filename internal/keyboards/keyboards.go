@@ -127,6 +127,10 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	if err != nil {
 		log.Println(err)
 	}
+	showAllEmployeeGroups, err := messages.ReturnMessageByLanguage(messages.ShowAllEmployeeGroups, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
 	keyJoin, err := messages.ReturnMessageByLanguage(messages.JoinToGroupKey, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -142,6 +146,9 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(showAllChiefsGroups, keys.ShowAllChiefsGroups),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(showAllEmployeeGroups, keys.ShowAllEmployeeGroups),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(keyJoin, keys.JoinTheExistGroup),

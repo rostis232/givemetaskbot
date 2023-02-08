@@ -20,6 +20,7 @@ type Authorisation interface {
 	AddingEmployeeToGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error)
 	GroupsMenu(user *entities.User) (tgbotapi.MessageConfig, error)
 	ShowAllChiefsGroups(user *entities.User) (tgbotapi.MessageConfig, error)
+	ShowAllEmployeeGroups(user *entities.User) error
 	AskingForUpdatedGroupName(user *entities.User, groupId int) (tgbotapi.MessageConfig, error)
 	UpdateGroupName(user *entities.User, newGroupName string) (tgbotapi.MessageConfig, error)
 	ShowAllEmploysFromGroup(user *entities.User, groupId int) (tgbotapi.MessageConfig, error)

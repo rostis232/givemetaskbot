@@ -19,4 +19,5 @@ const (
 	EmployeeIDtoDeleteFromGroup     = "EmployeeIDtoDeleteFromGroup-"
 	EmployeeIDtoCopyToANotherGroup  = "EmployeeIDtoCopyToANotherGroup-"
 	EmployeeIDtoMoveToANotherGroup  = "EmployeeIDtoMoveToANotherGroup-"
+	ShowAllEmployeeGroups           = "ShowAllEmployeeGroups"
 )

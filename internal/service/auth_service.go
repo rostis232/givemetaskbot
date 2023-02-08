@@ -327,6 +327,29 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) (tgbotapi.Message
 	return tgbotapi.MessageConfig{}, err
 }
 
+func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
+	allGroups, err := u.repository.GetAllEmployeeGroups(user)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	if allGroups == nil || len(allGroups) == 0 {
+		//Якщо немає груп пишемо відповідне повідомлення
+		text, err := messages.ReturnMessageByLanguage(messages.NoGroups, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		MsgChan <- msg
+	} else {
+		for _, g := range allGroups {
+			msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
+			MsgChan <- msg
+		}
+	}
+	return nil
+}
+
 func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, groupId int) (tgbotapi.MessageConfig, error) {
 	text, err := messages.ReturnMessageByLanguage(messages.RenameGroupTitle, user.Language)
 	if err != nil {

@@ -190,6 +190,12 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 			log.Println(err)
 			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
+	case callbackQuery.Data == keys.ShowAllEmployeeGroups:
+		err = b.service.ShowAllEmployeeGroups(&user)
+		if err != nil {
+			log.Println(err)
+			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
+		}
 	case strings.Contains(callbackQuery.Data, keys.RenameGroupWithId):
 		//Запит нового імені для групи, що вже існує
 		_, groupId, ok := strings.Cut(callbackQuery.Data, keys.RenameGroupWithId)

@@ -22,6 +22,7 @@ type Authorisation interface {
 	CreateGroup(group *entities.Group) (int, error)
 	AddEmployeeToGroup(chief, employee *entities.User) error
 	GetAllChiefsGroups(user *entities.User) ([]entities.Group, error)
+	GetAllEmployeeGroups(user *entities.User) ([]entities.Group, error)
 	UpdateGroupName(user *entities.User, newGroupName string) error
 	ShowAllEmploysFromGroup(user *entities.User) ([]entities.User, error)
 	GetGroupById(id int) (entities.Group, error)

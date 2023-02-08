@@ -99,6 +99,13 @@ func (a *AuthPostgres) GetAllChiefsGroups(user *entities.User) ([]entities.Group
 	return allGroups, err
 }
 
+func (a *AuthPostgres) GetAllEmployeeGroups(user *entities.User) ([]entities.Group, error) {
+	var allGroups []entities.Group
+	query := fmt.Sprintf("SELECT gt.group_id, gt.chief_user_id, gt.group_name FROM %s gt INNER JOIN %s ge ON gt.group_id = ge.group_id WHERE employee_user_id = %d;", GroupTable, GroupEmployeeTable, user.UserId)
+	err := a.db.Select(&allGroups, query)
+	return allGroups, err
+}
+
 func (a *AuthPostgres) UpdateGroupName(user *entities.User, newGroupName string) error {
 	query := fmt.Sprintf("UPDATE %s SET group_name = '%s' WHERE group_id = %d;", GroupTable, newGroupName, user.ActiveGroup)
 	row := a.db.QueryRow(query)

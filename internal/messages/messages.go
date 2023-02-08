@@ -46,6 +46,7 @@ const (
 	YouAreDeletedFromGroup             = "YouAreDeletedFromGroup"
 	EmployeeHaveBeenDeletedFromGroup   = "EmployeeHaveBeenDeletedFromGroup"
 	AddNewGroupFromGroupListMenu       = "AddNewGroupFromGroupListMenu"
+	ShowAllEmployeeGroups              = "ShowAllEmployeeGroups"
 )
 
 type MessageTitle string
@@ -144,8 +145,8 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Меню груп",
 	},
 	ShowAllChiefsGroups: {
-		EN: "Show all groups",
-		UA: "Показати всі групи",
+		EN: "Show all groups (as a leader)",
+		UA: "Показати всі групи (як керівник)",
 	},
 	RenameGroupKey: {
 		EN: "Change the name",
@@ -202,6 +203,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	AddNewGroupFromGroupListMenu: {
 		EN: "To create a new group, enter its name or return to the main menu.",
 		UA: "Щоб створити нову групу введіть її назву або поверніться до головного меню.",
+	},
+	ShowAllEmployeeGroups: {
+		EN: "Show all groups (as a member)",
+		UA: "Показати всі групи (як учасник)",
 	},
 }
 
