@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -105,141 +104,78 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
-	msg := tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
-
 	user, err := b.service.GetUser(callbackQuery.Message.Chat.ID)
 	if err != nil {
 		log.Println(err)
+		return err
 	}
 
 	switch {
 	case strings.Contains(callbackQuery.Data, messages.LanguageKey):
 		//Обробка вибору мови
-		showMainMenuKeyboard := true
-		if user.Status == state_service.Expecting_language {
-			showMainMenuKeyboard = false
-		}
-		_, lng, ok := strings.Cut(callbackQuery.Data, ":")
-		if !ok {
-			log.Println("error while cutting string with language")
-		}
-		msg, err = b.service.SelectLanguage(&user, messages.Language(lng))
-		if showMainMenuKeyboard {
-			msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(&user)
-		}
-		if err != nil {
+		if err = b.service.SelectLanguage(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case callbackQuery.Data == keys.JoinTheExistGroup:
 		//Показуємо код для приєднання до групи
-		msg, err = b.service.ShowChatId(&user)
-		if err != nil {
+		if err = b.service.ShowChatId(&user); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case callbackQuery.Data == keys.GoToMainMenu:
 		//Показуємо головне меню
-		msg, err = b.service.MainMenu(&user)
-		if err != nil {
+		if err = b.service.MainMenu(&user); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
-
 	case callbackQuery.Data == keys.GoToUserMenuSettings:
 		//Показуємо меню налаштувань користувача
-		title, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
-		if err != nil {
+		if err = b.service.UserMenuSettings(&user); err != nil {
 			log.Println(err)
 		}
-		msg = tgbotapi.NewMessage(user.ChatId, title)
-		msg.ReplyMarkup = keyboards.NewUserSettingsMenuKeyboard(&user)
-
 	case callbackQuery.Data == keys.GoToChangeLanguageMenu:
 		//Показуємо меню зміни мови
-		title, err := messages.ReturnMessageByLanguage(messages.ChangeLanguageKey, user.Language)
-		if err != nil {
+		if err = b.service.ChangeLanguageMenu(&user); err != nil {
 			log.Println(err)
 		}
-		msg = tgbotapi.NewMessage(user.ChatId, title)
-		msg.ReplyMarkup = keyboards.LanguageKeyboard
 	case callbackQuery.Data == keys.GoToChangeUserName:
 		//Просимо ввести нове ім'я
-		msg, err = b.service.UserNameChanging(&user)
-		if err != nil {
+		if err = b.service.UserNameChanging(&user); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case callbackQuery.Data == keys.CreateNewGroup:
 		//Просимо ввести ім'я нової групи
-		msg, err = b.service.AskingForNewGroupTitle(&user)
-		if err != nil {
+		if err = b.service.AskingForNewGroupTitle(&user); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case callbackQuery.Data == keys.GoToGroupsMenu:
 		//Меню груп
-		msg, err = b.service.GroupsMenu(&user)
-		if err != nil {
+		if err = b.service.GroupsMenu(&user); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case callbackQuery.Data == keys.ShowAllChiefsGroups:
-		msg, err = b.service.ShowAllChiefsGroups(&user)
-		if err != nil {
+		if err = b.service.ShowAllChiefsGroups(&user); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case callbackQuery.Data == keys.ShowAllEmployeeGroups:
 		err = b.service.ShowAllEmployeeGroups(&user)
 		if err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case strings.Contains(callbackQuery.Data, keys.RenameGroupWithId):
 		//Запит нового імені для групи, що вже існує
-		_, groupId, ok := strings.Cut(callbackQuery.Data, keys.RenameGroupWithId)
-		if !ok {
-			log.Println("Помилка отримання ID групи")
-		}
-		groupIdInt, err := strconv.Atoi(groupId)
-		if err != nil {
-			log.Println("Помилка отримання ID групи")
-		}
-		msg, err = b.service.AskingForUpdatedGroupName(&user, groupIdInt)
-		if err != nil {
+
+		if err = b.service.AskingForUpdatedGroupName(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case strings.Contains(callbackQuery.Data, keys.ShowAllEmployeesFromGroupWithId):
-		//Отримано запит на відображення всіх учасників групи
-		_, groupId, ok := strings.Cut(callbackQuery.Data, keys.ShowAllEmployeesFromGroupWithId)
-		if !ok {
-			log.Println("Помилка отримання ID групи")
-		}
-		groupIdInt, err := strconv.Atoi(groupId)
-		if err != nil {
-			log.Println("Помилка отримання ID групи")
-		}
-		msg, err = b.service.ShowAllEmploysFromGroup(&user, groupIdInt)
-		if err != nil {
+		//Отримано запит на показ всіх учасників групи
+		if err = b.service.ShowAllEmploysFromGroup(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
 		}
 	case strings.Contains(callbackQuery.Data, keys.EmployeeIDtoDeleteFromGroup):
 		//Отримано запит на видалення учасника групи
-		msg, err = b.service.DeleteEmployeeFromGroup(&user, callbackQuery.Data)
+		err = b.service.DeleteEmployeeFromGroup(&user, callbackQuery.Data)
 		if err != nil {
 			log.Println(err)
-			msg = tgbotapi.NewMessage(callbackQuery.Message.Chat.ID, messages.UnknownError)
-		}
-
-	}
-
-	if msg.Text != "" {
-		if _, err := b.bot.Send(msg); err != nil {
-			log.Println(err)
-			return err
 		}
 	}
 	return nil

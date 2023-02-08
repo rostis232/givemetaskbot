@@ -47,34 +47,40 @@ func (u *AuthService) NewUserRegistration(chatId int64) (tgbotapi.MessageConfig,
 	return msg, nil
 }
 
-func (u *AuthService) SelectLanguage(user *entities.User, lng messages.Language) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) SelectLanguage(user *entities.User, callbackQueryData string) error {
 	msg := tgbotapi.NewMessage(user.ChatId, "")
 	err := errors.New("")
+
+	_, lng, ok := strings.Cut(callbackQueryData, ":")
+	if !ok {
+		log.Println("error while cutting string with language")
+	}
 
 	switch {
 	case user.Status == state_service.Expecting_language:
 		user.Status = state_service.Expecting_new_user_name
 
-		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageAfterFirstLanguageSelection, lng)
+		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageAfterFirstLanguageSelection, messages.Language(lng))
 		if err != nil {
 			log.Println(err)
 		}
 	default:
 		user.Status = state_service.MainMenu
 
-		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageAfterLanguageUpdate, lng)
+		msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageAfterLanguageUpdate, messages.Language(lng))
 		if err != nil {
 			log.Println(err)
 		}
-
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	}
-	user.Language = lng
+	user.Language = messages.Language(lng)
 	if err := u.repository.UpdateLanguage(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 
-	return msg, nil
+	MsgChan <- msg
+	return nil
 }
 
 func (u *AuthService) SetUserName(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
@@ -104,19 +110,24 @@ func (u *AuthService) SetUserName(user *entities.User, message *tgbotapi.Message
 	return msg, err
 }
 
-func (u *AuthService) ShowChatId(user *entities.User) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) ShowChatId(user *entities.User) error {
 	text, err := messages.ReturnMessageByLanguage(messages.MessageWithChatId, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
-	code := fmt.Sprintf(text, keys.ChatIdPrefix+strconv.Itoa(int(user.ChatId+keys.ChatIdSuffix)))
-	msg := tgbotapi.NewMessage(user.ChatId, code)
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	MsgChan <- msg
+
+	code := keys.ChatIdPrefix + strconv.Itoa(int(user.ChatId+keys.ChatIdSuffix))
+	msg = tgbotapi.NewMessage(user.ChatId, code)
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 
-	return msg, nil
+	MsgChan <- msg
+
+	return nil
 }
 
-func (u *AuthService) UserNameChanging(user *entities.User) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) UserNameChanging(user *entities.User) error {
 	title, err := messages.ReturnMessageByLanguage(messages.MessageBeforeNameChanging, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -124,15 +135,14 @@ func (u *AuthService) UserNameChanging(user *entities.User) (tgbotapi.MessageCon
 	user.Status = state_service.Changing_user_name
 	if err := u.repository.UpdateStatus(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 	msg := tgbotapi.NewMessage(user.ChatId, title)
-
-	return msg, nil
-
+	MsgChan <- msg
+	return nil
 }
 
-func (u *AuthService) MainMenu(user *entities.User) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) MainMenu(user *entities.User) error {
 	title, err := messages.ReturnMessageByLanguage(messages.MainMenuTitle, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -144,16 +154,40 @@ func (u *AuthService) MainMenu(user *entities.User) (tgbotapi.MessageConfig, err
 
 	if err := u.repository.UpdateStatus(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 
 	msg := tgbotapi.NewMessage(user.ChatId, title)
 	msg.ReplyMarkup = keyboards.NewMainMenuKeyboard(user)
 
-	return msg, nil
+	MsgChan <- msg
+
+	return nil
 }
 
-func (u *AuthService) AskingForNewGroupTitle(user *entities.User) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) UserMenuSettings(user *entities.User) error {
+	title, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	msg := tgbotapi.NewMessage(user.ChatId, title)
+	msg.ReplyMarkup = keyboards.NewUserSettingsMenuKeyboard(user)
+	MsgChan <- msg
+	return nil
+}
+
+func (u *AuthService) ChangeLanguageMenu(user *entities.User) error {
+	title, err := messages.ReturnMessageByLanguage(messages.ChangeLanguageKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	msg := tgbotapi.NewMessage(user.ChatId, title)
+	msg.ReplyMarkup = keyboards.LanguageKeyboard
+	MsgChan <- msg
+	return nil
+}
+
+func (u *AuthService) AskingForNewGroupTitle(user *entities.User) error {
 	title, err := messages.ReturnMessageByLanguage(messages.MessageEnterNewGroupName, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -162,13 +196,13 @@ func (u *AuthService) AskingForNewGroupTitle(user *entities.User) (tgbotapi.Mess
 
 	if err := u.repository.UpdateStatus(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 
 	msg := tgbotapi.NewMessage(user.ChatId, title)
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
-
-	return msg, nil
+	MsgChan <- msg
+	return nil
 }
 
 func (u *AuthService) CreatingNewGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
@@ -276,29 +310,27 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 	return msg, nil
 }
 
-func (u *AuthService) GroupsMenu(user *entities.User) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) GroupsMenu(user *entities.User) error {
 	title, err := messages.ReturnMessageByLanguage(messages.GroupMenuTitle, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
 	msg := tgbotapi.NewMessage(user.ChatId, title)
 	msg.ReplyMarkup = keyboards.NewGroupMenuKeyboard(user)
-
-	return msg, nil
+	MsgChan <- msg
+	return nil
 }
 
-func (u *AuthService) ShowAllChiefsGroups(user *entities.User) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) ShowAllChiefsGroups(user *entities.User) error {
 	user.Status = state_service.Expecting_new_group_name
-
 	if err := u.repository.UpdateStatus(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
-
 	allGroups, err := u.repository.GetAllChiefsGroups(user)
 	if err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 
 	if allGroups == nil || len(allGroups) == 0 {
@@ -324,7 +356,7 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) (tgbotapi.Message
 	msg := tgbotapi.NewMessage(user.ChatId, text)
 	msg.ReplyMarkup = keyboards.NewGroupCreatingKeyboard(user)
 	MsgChan <- msg
-	return tgbotapi.MessageConfig{}, err
+	return err
 }
 
 func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
@@ -350,23 +382,30 @@ func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
 	return nil
 }
 
-func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, groupId int) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, callbackQueryData string) error {
+	_, groupId, ok := strings.Cut(callbackQueryData, keys.RenameGroupWithId)
+	if !ok {
+		log.Println("Error while getting group ID")
+	}
+	groupIdInt, err := strconv.Atoi(groupId)
+	if err != nil {
+		log.Printf("Error while converting group ID from string to int: %s", err)
+	}
+
 	text, err := messages.ReturnMessageByLanguage(messages.RenameGroupTitle, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
-	user.ActiveGroup = groupId
+	user.ActiveGroup = groupIdInt
 	user.Status = state_service.Changing_group_name
 	if err := u.repository.UpdateStatus(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
-
 	msg := tgbotapi.NewMessage(user.ChatId, text)
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
-
-	return msg, err
-
+	MsgChan <- msg
+	return err
 }
 
 func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) (tgbotapi.MessageConfig, error) {
@@ -386,17 +425,25 @@ func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) 
 	return msg, nil
 }
 
-func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, groupId int) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, callbackQueryData string) error {
+	_, groupId, ok := strings.Cut(callbackQueryData, keys.ShowAllEmployeesFromGroupWithId)
+	if !ok {
+		log.Println("Помилка отримання ID групи")
+	}
+	groupIdInt, err := strconv.Atoi(groupId)
+	if err != nil {
+		log.Println("Помилка отримання ID групи")
+	}
 	user.Status = state_service.Adding_employee_to_group
-	user.ActiveGroup = groupId
+	user.ActiveGroup = groupIdInt
 	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user)
 	if err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 	if err := u.repository.UpdateStatus(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 
 	group, err := u.repository.GetGroupById(user.ActiveGroup)
@@ -437,10 +484,10 @@ func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, groupId int) 
 	msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(text, group.GroupName))
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	MsgChan <- msg
-	return tgbotapi.MessageConfig{}, err
+	return err
 }
 
-func (u *AuthService) DeleteEmployeeFromGroup(user *entities.User, receivedData string) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) DeleteEmployeeFromGroup(user *entities.User, receivedData string) error {
 	_, employeeUserIdString, ok := strings.Cut(receivedData, keys.EmployeeIDtoDeleteFromGroup)
 	if !ok {
 		log.Println("Помилка отримання chatID працівника")
@@ -448,19 +495,21 @@ func (u *AuthService) DeleteEmployeeFromGroup(user *entities.User, receivedData 
 	group, err := u.repository.GetGroupById(user.ActiveGroup)
 	if err != nil {
 		log.Println(err)
+		return err
 	}
 	employeeUserIdInt, err := strconv.Atoi(employeeUserIdString)
 	if err != nil {
 		log.Println("Помилка визначення ID")
+		return err
 	}
 	employee, err := u.repository.GetUserByUserId(int64(employeeUserIdInt))
 	if err != nil {
 		log.Println("Помилка отримання даних працівника з БД")
+		return err
 	}
-
 	if err := u.repository.DeleteEmployeeFromGroup(&employee, &group); err != nil {
 		log.Printf("Error while deleting user from group: %s", err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 	messageToEmployee, err := messages.ReturnMessageByLanguage(messages.YouAreDeletedFromGroup, employee.Language)
 	if err != nil {
@@ -474,5 +523,5 @@ func (u *AuthService) DeleteEmployeeFromGroup(user *entities.User, receivedData 
 	}
 	msgToChief := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(messageToChief, employee.UserName, group.GroupName))
 	MsgChan <- msgToChief
-	return tgbotapi.MessageConfig{}, nil
+	return nil
 }

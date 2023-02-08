@@ -89,8 +89,8 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Приєднатись до групи",
 	},
 	MessageWithChatId: {
-		EN: "To join the group, pass this code to the group leader:\n %s",
-		UA: "Для приєднання до групи передайте цей код керівнику групи:\n %s",
+		EN: "To join the group, pass this code to the group leader:",
+		UA: "Для приєднання до групи передайте цей код керівнику групи:",
 	},
 	MainMenuTitle: {
 		EN: "Main Menu",

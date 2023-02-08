@@ -74,8 +74,8 @@ func (a *AuthPostgres) UpdateStatus(user *entities.User) error {
 func (a *AuthPostgres) CreateGroup(group *entities.Group) (int, error) {
 	var groupId int
 
-	query := fmt.Sprintf("INSERT INTO %s (chief_user_id, group_name) VALUES (%d, '%s')  RETURNING group_id;", GroupTable, group.ChiefUserId, group.GroupName)
-	row := a.db.QueryRow(query)
+	query := fmt.Sprintf("INSERT INTO %s (chief_user_id, group_name) VALUES ($1, $2)  RETURNING group_id;", GroupTable)
+	row := a.db.QueryRow(query, group.ChiefUserId, group.GroupName)
 	if err := row.Scan(&groupId); err != nil {
 		return 0, err
 	}
