@@ -23,47 +23,36 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 
 	switch {
 	case err == sql.ErrNoRows:
-		msg, err = b.service.NewUserRegistration(message.Chat.ID)
-		if err != nil {
+		if err = b.service.NewUserRegistration(message.Chat.ID); err != nil {
 			return err
 		}
 	case user.Status == state_service.Expecting_new_user_name:
-		msg, err = b.service.SetUserName(&user, message)
-		if err != nil {
+		if err = b.service.SetUserName(&user, message); err != nil {
 			return err
 		}
 	case user.Status == state_service.Changing_user_name:
-		msg, err = b.service.SetUserName(&user, message)
-		if err != nil {
+		if err = b.service.SetUserName(&user, message); err != nil {
 			return err
 		}
 	case user.Status == state_service.Expecting_new_group_name:
-		msg, err = b.service.CreatingNewGroup(&user, message)
-		if err != nil {
+		if err = b.service.CreatingNewGroup(&user, message); err != nil {
 			return err
 		}
 	case user.Status == state_service.Adding_employee_to_group:
 		//Adding employee to group
-		msg, err = b.service.AddingEmployeeToGroup(&user, message)
-		if err != nil {
+		if err = b.service.AddingEmployeeToGroup(&user, message); err != nil {
 			return err
 		}
 	case strings.HasPrefix(message.Text, keys.ChatIdPrefix):
 		//Adding employee to group
-		msg, err = b.service.AddingEmployeeToGroup(&user, message)
-		if err != nil {
+		if err = b.service.AddingEmployeeToGroup(&user, message); err != nil {
 			return err
 		}
 	case user.Status == state_service.Changing_group_name && user.ActiveGroup != 0:
 		//Changing name of existing group
-		msg, err = b.service.UpdateGroupName(&user, message.Text)
-		if err != nil {
+		if err = b.service.UpdateGroupName(&user, message.Text); err != nil {
 			return err
 		}
-	}
-
-	if _, err = b.bot.Send(msg); err != nil {
-		return err
 	}
 
 	return nil
@@ -72,9 +61,6 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 	log.Printf("[%s] %s - %d", message.From.UserName, message.Text, message.Chat.ID)
 
-	msg := tgbotapi.NewMessage(message.Chat.ID, messages.UnknownCommand)
-	//TODO: what with keyboard?
-	msg.ReplyMarkup = keyboards.RemoveKeyboard
 	user, err := b.service.GetUser(message.Chat.ID)
 	if err != nil {
 		log.Println(err)
@@ -84,20 +70,19 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 	case keys.CommandStart:
 		switch {
 		case err == sql.ErrNoRows:
-			msg, err = b.service.NewUserRegistration(message.Chat.ID)
-			if err != nil {
+			if err = b.service.NewUserRegistration(message.Chat.ID); err != nil {
 				return err
 			}
 		default:
-			msg.Text, err = messages.ReturnMessageByLanguage(messages.MessageIfUserAlreadyExists, user.Language)
+			text, err := messages.ReturnMessageByLanguage(messages.MessageIfUserAlreadyExists, user.Language)
 			if err != nil {
-				msg.Text = fmt.Sprintf(messages.UnknownError, err)
+				text = fmt.Sprintf(messages.UnknownError, err)
+			}
+			msg := tgbotapi.NewMessage(message.Chat.ID, text)
+			if _, err = b.bot.Send(msg); err != nil {
+				return err
 			}
 		}
-	}
-
-	if _, err = b.bot.Send(msg); err != nil {
-		return err
 	}
 
 	return nil
@@ -106,6 +91,7 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 	user, err := b.service.GetUser(callbackQuery.Message.Chat.ID)
 	if err != nil {
+		//TODO: Add handling situation when user is unregistered
 		log.Println(err)
 		return err
 	}

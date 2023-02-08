@@ -31,20 +31,19 @@ func (u *AuthService) GetUser(chatId int64) (entities.User, error) {
 	return user, err
 }
 
-func (u *AuthService) NewUserRegistration(chatId int64) (tgbotapi.MessageConfig, error) {
-	msg := tgbotapi.NewMessage(chatId, "")
+func (u *AuthService) NewUserRegistration(chatId int64) error {
 	user := entities.User{
 		ChatId: chatId,
 		Status: state_service.Expecting_language,
 	}
 	if err := u.repository.NewUserRegistration(&user); err != nil {
-		return msg, err
+		log.Printf("Error while new user registration: %s", err)
+		return err
 	}
-
-	msg.Text = "Choose your language:"
+	msg := tgbotapi.NewMessage(chatId, "Choose your language:\nОберіть мову:")
 	msg.ReplyMarkup = keyboards.LanguageKeyboard
-
-	return msg, nil
+	MsgChan <- msg
+	return nil
 }
 
 func (u *AuthService) SelectLanguage(user *entities.User, callbackQueryData string) error {
@@ -83,7 +82,7 @@ func (u *AuthService) SelectLanguage(user *entities.User, callbackQueryData stri
 	return nil
 }
 
-func (u *AuthService) SetUserName(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) SetUserName(user *entities.User, message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(user.ChatId, "")
 	err := errors.New("")
 	text := ""
@@ -104,10 +103,10 @@ func (u *AuthService) SetUserName(user *entities.User, message *tgbotapi.Message
 
 	if err := u.repository.UpdateName(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
-
-	return msg, err
+	MsgChan <- msg
+	return err
 }
 
 func (u *AuthService) ShowChatId(user *entities.User) error {
@@ -205,7 +204,7 @@ func (u *AuthService) AskingForNewGroupTitle(user *entities.User) error {
 	return nil
 }
 
-func (u *AuthService) CreatingNewGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) CreatingNewGroup(user *entities.User, message *tgbotapi.Message) error {
 	group := entities.Group{
 		ChiefUserId: user.UserId,
 		GroupName:   message.Text,
@@ -217,23 +216,23 @@ func (u *AuthService) CreatingNewGroup(user *entities.User, message *tgbotapi.Me
 	groupId, err := u.repository.CreateGroup(&group)
 	if err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 	user.Status = state_service.Adding_employee_to_group
 	user.ActiveGroup = groupId
 
 	if err := u.repository.UpdateStatus(user); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 
 	msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(title, group.GroupName))
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
-
-	return msg, nil
+	MsgChan <- msg
+	return nil
 }
 
-func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(user.ChatId, messages.UnknownError)
 	err := errors.New("")
 	//Перевірка чи має код префікс
@@ -243,9 +242,11 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		if err != nil {
 			log.Println(err)
-			return msg, err
+			MsgChan <- msg
+			return err
 		}
-		return msg, nil
+		MsgChan <- msg
+		return nil
 	}
 	//Конвертація коду
 	codeWithSuffix, err := strconv.Atoi(codeWithoutPrefix)
@@ -254,9 +255,11 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		if err != nil {
 			log.Println(err)
-			return msg, err
+			MsgChan <- msg
+			return err
 		}
-		return msg, nil
+		MsgChan <- msg
+		return nil
 	}
 	cleanCode := codeWithSuffix - keys.ChatIdSuffix
 	employee, err := u.repository.GetUserByChatId(int64(cleanCode))
@@ -266,12 +269,15 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		if err != nil {
 			log.Println(err)
-			return msg, err
+			MsgChan <- msg
+			return err
 		}
-		return msg, err
+		MsgChan <- msg
+		return err
 	}
 	if err != nil {
-		return msg, err
+		MsgChan <- msg
+		return err
 	}
 	//Перевірка чи не ввів користувач свій код
 	if user.ChatId == employee.ChatId {
@@ -279,9 +285,11 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		if err != nil {
 			log.Println(err)
-			return msg, err
+			MsgChan <- msg
+			return err
 		}
-		return msg, nil
+		MsgChan <- msg
+		return nil
 	}
 	//Перевірка, чи є у користувача активна група в статусі
 	if user.ActiveGroup == 0 {
@@ -298,7 +306,7 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 	//Передати в репозиторій
 	if err := u.repository.AddEmployeeToGroup(user, &employee); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 
 	text, err := messages.ReturnMessageByLanguage(messages.MessageEmployeeAddingSuccess, user.Language)
@@ -307,7 +315,8 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 	}
 	msg.Text = fmt.Sprintf(text, employee.UserName)
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
-	return msg, nil
+	MsgChan <- msg
+	return nil
 }
 
 func (u *AuthService) GroupsMenu(user *entities.User) error {
@@ -408,10 +417,10 @@ func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, callbackQue
 	return err
 }
 
-func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) (tgbotapi.MessageConfig, error) {
+func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) error {
 	if err := u.repository.UpdateGroupName(user, newGroupName); err != nil {
 		log.Println(err)
-		return tgbotapi.MessageConfig{}, err
+		return err
 	}
 
 	text, err := messages.ReturnMessageByLanguage(messages.MessageNewGroupNameAccepted, user.Language)
@@ -421,8 +430,8 @@ func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) 
 	text = fmt.Sprintf(text, newGroupName)
 	msg := tgbotapi.NewMessage(user.ChatId, text)
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
-
-	return msg, nil
+	MsgChan <- msg
+	return nil
 }
 
 func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, callbackQueryData string) error {
