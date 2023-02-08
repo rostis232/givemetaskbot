@@ -52,16 +52,12 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup)
 					continue
 				}
 			}
-
 		} else if update.CallbackQuery != nil {
-
 			if err := b.handleCallback(update.CallbackQuery); err != nil {
 				log.Println(fmt.Sprintf("handling callback error: %s", err))
 				continue
 			}
-
 		}
-
 	}
 	wg.Done()
 	return nil

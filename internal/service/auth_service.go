@@ -288,20 +288,26 @@ func (u *AuthService) GroupsMenu(user *entities.User) (tgbotapi.MessageConfig, e
 }
 
 func (u *AuthService) ShowAllChiefsGroups(user *entities.User) (tgbotapi.MessageConfig, error) {
+	user.Status = state_service.Expecting_new_group_name
+
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return tgbotapi.MessageConfig{}, err
+	}
+
 	allGroups, err := u.repository.GetAllChiefsGroups(user)
 	if err != nil {
 		log.Println(err)
 		return tgbotapi.MessageConfig{}, err
 	}
 
-	if allGroups == nil {
+	if allGroups == nil || len(allGroups) == 0 {
 		//Якщо немає груп пишемо відповідне повідомлення
 		text, err := messages.ReturnMessageByLanguage(messages.NoGroups, user.Language)
 		if err != nil {
 			log.Println(err)
 		}
 		msg := tgbotapi.NewMessage(user.ChatId, text)
-		msg.ReplyMarkup = keyboards.NewGroupCreatingKeyboard(user)
 		MsgChan <- msg
 	} else {
 		for _, g := range allGroups {
@@ -310,7 +316,14 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) (tgbotapi.Message
 			MsgChan <- msg
 		}
 	}
-
+	//Пропозиція додати нову групу чи повернутись до головного меню
+	text, err := messages.ReturnMessageByLanguage(messages.AddNewGroupFromGroupListMenu, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewGroupCreatingKeyboard(user)
+	MsgChan <- msg
 	return tgbotapi.MessageConfig{}, err
 }
 

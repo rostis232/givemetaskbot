@@ -45,6 +45,7 @@ const (
 	ShownMembersOfTheGroupWithName     = "ShownMembersOfTheGroupWithName"
 	YouAreDeletedFromGroup             = "YouAreDeletedFromGroup"
 	EmployeeHaveBeenDeletedFromGroup   = "EmployeeHaveBeenDeletedFromGroup"
+	AddNewGroupFromGroupListMenu       = "AddNewGroupFromGroupListMenu"
 )
 
 type MessageTitle string
@@ -183,8 +184,8 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Перемістити учасника до іншої групи",
 	},
 	NoGroups: {
-		EN: "There are no groups. Create a new group, or return to the Main Menu.",
-		UA: "Групи відсутні. Створіть нову групу, або поверніться до головного меню.",
+		EN: "There are no groups.",
+		UA: "Групи відсутні.",
 	},
 	ShownMembersOfTheGroupWithName: {
 		EN: "Members of the group '%s':",
@@ -197,6 +198,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	EmployeeHaveBeenDeletedFromGroup: {
 		EN: "Member %s has been removed from group %s.",
 		UA: "Учасника %s видалено з групи %s.",
+	},
+	AddNewGroupFromGroupListMenu: {
+		EN: "To create a new group, enter its name or return to the main menu.",
+		UA: "Щоб створити нову групу введіть її назву або поверніться до головного меню.",
 	},
 }
 
