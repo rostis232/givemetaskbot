@@ -99,10 +99,9 @@ func (a *AuthPostgres) GetAllChiefsGroups(user *entities.User) ([]entities.Group
 }
 
 func (a *AuthPostgres) GetAllEmployeeGroups(user *entities.User) ([]entities.Group, error) {
-	//TODO: Change SQL request!!!
 	var allGroups []entities.Group
-	query := fmt.Sprintf("SELECT gt.group_id, gt.chief_user_id, gt.group_name FROM %s gt INNER JOIN %s ge ON gt.group_id = ge.group_id WHERE employee_user_id = %d;", GroupTable, GroupEmployeeTable, user.UserId)
-	err := a.db.Select(&allGroups, query)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE group_id IN (SELECT group_id FROM %s WHERE employee_user_id = $1 GROUP BY group_id);", GroupTable, GroupEmployeeTable)
+	err := a.db.Select(&allGroups, query, user.UserId)
 	return allGroups, err
 }
 
@@ -116,10 +115,9 @@ func (a *AuthPostgres) UpdateGroupName(user *entities.User, newGroupName string)
 }
 
 func (a *AuthPostgres) ShowAllEmploysFromGroup(user *entities.User) ([]entities.User, error) {
-	//TODO: Change SQL request!!!
 	var allEmployees []entities.User
-	query := fmt.Sprintf("SELECT ut.user_id, ut.chat_id, ut.user_name, ut.language, ut.status, ut.active_group, ut.active_task FROM %s ge INNER JOIN %s ut ON ge.employee_user_id = ut.user_id WHERE group_id = %d;", GroupEmployeeTable, UserTable, user.ActiveGroup)
-	err := a.db.Select(&allEmployees, query)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id IN (SELECT employee_user_id FROM %s WHERE group_id = $1);", UserTable, GroupEmployeeTable)
+	err := a.db.Select(&allEmployees, query, user.ActiveGroup)
 	return allEmployees, err
 }
 
@@ -129,7 +127,6 @@ func (a *AuthPostgres) GetGroupById(id int) (entities.Group, error) {
 	if err := a.db.Get(&group, query, id); err != nil {
 		return entities.Group{}, err
 	}
-
 	return group, nil
 }
 
