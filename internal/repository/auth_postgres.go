@@ -145,3 +145,12 @@ func (a *AuthPostgres) GetGroupsWithoutSelectedEmployee(id int) ([]entities.Grou
 	err := a.db.Select(&allGroups, query, id)
 	return allGroups, err
 }
+
+func (a *AuthPostgres) DeleteGroup(id int) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE group_id = $1", GroupTable)
+	row := a.db.QueryRow(query, id)
+	if err := row.Err(); err != nil {
+		return err
+	}
+	return nil
+}

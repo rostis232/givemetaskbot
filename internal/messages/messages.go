@@ -6,49 +6,55 @@ import (
 )
 
 const (
-	UnknownError                          = "Unknown error: %s. Contact with administrator @rostis232"
-	UnknownCommand                        = "Unknown command"
-	MessageForUnregisteredUsers           = "MessageForUnregisteredUsers"
-	MessageIfUserAlreadyExists            = "MessageIfUserAlreadyExists"
-	MessageAfterFirstLanguageSelection    = "MessageAfterFirstLanguageSelection"
-	MessageAfterLanguageUpdate            = "MessageAfterLanguageUpdate"
-	MessageAfterFirstNameEntering         = "MessageAfterFirstNameEntering"
-	MessageAfterUserNameUpdate            = "MessageAfterUserNameUpdate"
-	ToMainMenuKey                         = "ToMainMenuKey"
-	CreateNewGroupKey                     = "CreateNewGroupKey"
-	JoinToGroupKey                        = "JoinToGroupKey"
-	MessageWithChatId                     = "MessageWithChatId"
-	MainMenuTitle                         = "MainMenuTitle"
-	UserSettingsMenuTitle                 = "UserSettingsMenuTitle"
-	ChangeLanguageKey                     = "ChangeLanguageKey"
-	ChangeUserName                        = "ChangeUserName"
-	MessageBeforeNameChanging             = "MessageBeforeNameChanging"
-	MessageEnterNewGroupName              = "MessageEnterNewGroupName"
-	MessageCreatedNewGroup                = "MessageCreatedNewGroup"
-	MessageEmployeeCodeBroken             = "MessageEmployeeCodeBroken"
-	MessageNoEmployeeWithThisCode         = "MessageNoEmployeeWithThisCode"
-	MessageEmployeeCodeEqualsChiefCode    = "MessageEmployeeCodeEqualsChiefCode"
-	MessageEmployeeAddingSuccess          = "MessageEmployeeAddingSuccess"
-	GroupMenuKey                          = "GroupMenuKey"
-	GroupMenuTitle                        = "GroupMenuTitle"
-	ShowAllChiefsGroups                   = "ShowAllChiefsGroups"
-	RenameGroupKey                        = "RenameGroupKey"
-	RenameGroupTitle                      = "RenameGroupTitle"
-	MessageNewGroupNameAccepted           = "MessageNewGroupNameAccepted"
-	ShowAllEmployeesFromGroupWithIdKey    = "ShowAllEmployeesFromGroupWithIdKey"
-	AddNewEmployeeToExistingGroup         = "AddNewEmployeeToExistingGroup"
-	NoEmployeesInTheGroup                 = "NoEmployeesInTheGroup"
-	DeleteEmployeeFromGroupKeyText        = "DeleteEmployeeFromGroupKeyText"
-	CopyEmployeeToAnotherGroupKeyText     = "CopyEmployeeToAnotherGroupKeyText"
-	MoveEmployeeToAnotherGroupKeyText     = "MoveEmployeeToAnotherGroupKeyText"
-	NoGroups                              = "NoGroups"
-	ShownMembersOfTheGroupWithName        = "ShownMembersOfTheGroupWithName"
-	YouAreDeletedFromGroup                = "YouAreDeletedFromGroup"
-	EmployeeHaveBeenDeletedFromGroup      = "EmployeeHaveBeenDeletedFromGroup"
-	AddNewGroupFromGroupListMenu          = "AddNewGroupFromGroupListMenu"
-	ShowAllEmployeeGroups                 = "ShowAllEmployeeGroups"
-	MessageWhenCopyEmployeeToAnotherGroup = "MessageWhenCopyEmployeeToAnotherGroup"
-	CopeEmployeeKey                       = "CopeEmployeeKey"
+	UnknownError                                       = "Unknown error: %s. Contact with administrator @rostis232"
+	UnknownCommand                                     = "Unknown command"
+	MessageForUnregisteredUsers                        = "MessageForUnregisteredUsers"
+	MessageIfUserAlreadyExists                         = "MessageIfUserAlreadyExists"
+	MessageAfterFirstLanguageSelection                 = "MessageAfterFirstLanguageSelection"
+	MessageAfterLanguageUpdate                         = "MessageAfterLanguageUpdate"
+	MessageAfterFirstNameEntering                      = "MessageAfterFirstNameEntering"
+	MessageAfterUserNameUpdate                         = "MessageAfterUserNameUpdate"
+	ToMainMenuKey                                      = "ToMainMenuKey"
+	CreateNewGroupKey                                  = "CreateNewGroupKey"
+	JoinToGroupKey                                     = "JoinToGroupKey"
+	MessageWithChatId                                  = "MessageWithChatId"
+	MainMenuTitle                                      = "MainMenuTitle"
+	UserSettingsMenuTitle                              = "UserSettingsMenuTitle"
+	ChangeLanguageKey                                  = "ChangeLanguageKey"
+	ChangeUserName                                     = "ChangeUserName"
+	MessageBeforeNameChanging                          = "MessageBeforeNameChanging"
+	MessageEnterNewGroupName                           = "MessageEnterNewGroupName"
+	MessageCreatedNewGroup                             = "MessageCreatedNewGroup"
+	MessageEmployeeCodeBroken                          = "MessageEmployeeCodeBroken"
+	MessageNoEmployeeWithThisCode                      = "MessageNoEmployeeWithThisCode"
+	MessageEmployeeCodeEqualsChiefCode                 = "MessageEmployeeCodeEqualsChiefCode"
+	MessageEmployeeAddingSuccess                       = "MessageEmployeeAddingSuccess"
+	GroupMenuKey                                       = "GroupMenuKey"
+	GroupMenuTitle                                     = "GroupMenuTitle"
+	ShowAllChiefsGroups                                = "ShowAllChiefsGroups"
+	RenameGroupKey                                     = "RenameGroupKey"
+	RenameGroupTitle                                   = "RenameGroupTitle"
+	MessageNewGroupNameAccepted                        = "MessageNewGroupNameAccepted"
+	ShowAllEmployeesFromGroupWithIdKey                 = "ShowAllEmployeesFromGroupWithIdKey"
+	AddNewEmployeeToExistingGroup                      = "AddNewEmployeeToExistingGroup"
+	NoEmployeesInTheGroup                              = "NoEmployeesInTheGroup"
+	DeleteEmployeeFromGroupKeyText                     = "DeleteEmployeeFromGroupKeyText"
+	CopyEmployeeToAnotherGroupKeyText                  = "CopyEmployeeToAnotherGroupKeyText"
+	MoveEmployeeToAnotherGroupKeyText                  = "MoveEmployeeToAnotherGroupKeyText"
+	NoGroups                                           = "NoGroups"
+	ShownMembersOfTheGroupWithName                     = "ShownMembersOfTheGroupWithName"
+	YouAreDeletedFromGroup                             = "YouAreDeletedFromGroup"
+	EmployeeHaveBeenDeletedFromGroup                   = "EmployeeHaveBeenDeletedFromGroup"
+	AddNewGroupFromGroupListMenu                       = "AddNewGroupFromGroupListMenu"
+	ShowAllEmployeeGroups                              = "ShowAllEmployeeGroups"
+	MessageWhenCopyEmployeeToAnotherGroup              = "MessageWhenCopyEmployeeToAnotherGroup"
+	CopeEmployeeKey                                    = "CopeEmployeeKey"
+	DeleteGroupKey                                     = "DeleteGroupKey"
+	WarningMessageBeforeDeletingEmployeeFromGroup      = "WarningMessageBeforeDeletingEmployeeFromGroup"
+	ConfirmationButtonTextForDeletingEmployeeFromGroup = "ConfirmationButtonTextForDeletingEmployeeFromGroup"
+	ConfirmationButtonTextForDeletingGroup             = "ConfirmationButtonTextForDeletingGroup"
+	WarningBeforeGroupDeleting                         = "WarningBeforeGroupDeleting"
+	GroupIsDeleted                                     = "GroupIsDeleted"
 )
 
 type MessageTitle string
@@ -217,6 +223,30 @@ var Messages = map[MessageTitle]map[Language]string{
 	CopeEmployeeKey: {
 		EN: "Add",
 		UA: "Додати",
+	},
+	DeleteGroupKey: {
+		EN: "Delete the group",
+		UA: "Видалити групу",
+	},
+	WarningMessageBeforeDeletingEmployeeFromGroup: {
+		EN: "Are you sure you want to remove employee %s from group %s?",
+		UA: "Ви впевнені, що хочете видалити працівника %s з групи %s?",
+	},
+	ConfirmationButtonTextForDeletingEmployeeFromGroup: {
+		EN: "Confirm the deletion",
+		UA: "Підтвердити видалення",
+	},
+	ConfirmationButtonTextForDeletingGroup: {
+		EN: "Confirm the deletion",
+		UA: "Підтвердити видалення",
+	},
+	WarningBeforeGroupDeleting: {
+		EN: "Are you sure you want to delete group %s?\nWarning: All assignments of this group will be lost!",
+		UA: "Ви впевнені, що хочете видалити групу %s?\nУвага! Буде втрачено всі доручення цієї групи!",
+	},
+	GroupIsDeleted: {
+		EN: "Group %s has been deleted",
+		UA: "Групу %s видалено",
 	},
 }
 

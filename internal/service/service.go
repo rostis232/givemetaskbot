@@ -25,8 +25,11 @@ type Authorisation interface {
 	AskingForUpdatedGroupName(user *entities.User, callbackQueryData string) error
 	UpdateGroupName(user *entities.User, newGroupName string) error
 	ShowAllEmploysFromGroup(user *entities.User, callbackQueryData string) error
+	WarningBeforeDeletingEmployeeFromGroup(user *entities.User, callbackQueryData string) error
 	DeleteEmployeeFromGroup(user *entities.User, receivedData string) error
 	CopyEmployeeToAnotherGroup(user *entities.User, callbackQueryData string) error
+	WarningBeforeGroupDeleting(user *entities.User, callbackQueryData string) error
+	DeleteGroup(user *entities.User, callbackQueryData string) error
 }
 
 type Service struct {

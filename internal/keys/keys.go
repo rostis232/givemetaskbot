@@ -20,7 +20,9 @@ const (
 	EmployeeIDtoCopyToANotherGroup  = "EmployeeIDtoCopyToANotherGroup-"
 	EmployeeIDtoMoveToANotherGroup  = "EmployeeIDtoMoveToANotherGroup-"
 	ShowAllEmployeeGroups           = "ShowAllEmployeeGroups"
-	DeleteGroup                     = "DeleteGroup"
+	DeleteGroup                     = "DeleteGroup-"
 	CopyEmployeeGroupID             = "CopyEmployeeToGroupWithId-"
 	CopyEmployeeEmployeeID          = "CopyEmployeeEmployeeID-"
+	ConfirmDeletingEmployeeId       = "ConfirmDeletingEmployeeId-"
+	ConfirmDeletingGroup            = "ConfirmDeletingGroup"
 )

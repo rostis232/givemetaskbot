@@ -174,6 +174,13 @@ func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.In
 		log.Println(err)
 	}
 	showEmployeesKey := keys.ShowAllEmployeesFromGroupWithId + strconv.Itoa(int(group.Id))
+
+	deleteGroupTitle, err := messages.ReturnMessageByLanguage(messages.DeleteGroupKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	deleteGroupKey := keys.DeleteGroup + strconv.Itoa(int(group.Id))
+
 	//TODO: Add key for deleting group
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
@@ -181,6 +188,9 @@ func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.In
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(showEmployeesTitle, showEmployeesKey),
+		),
+		tgbotapi.NewInlineKeyboardRow( //TODO: Implement function
+			tgbotapi.NewInlineKeyboardButtonData(deleteGroupTitle, deleteGroupKey),
 		),
 	)
 	return keyboard
@@ -195,13 +205,13 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 	if err != nil {
 		log.Println(err)
 	}
-	moveTitle, err := messages.ReturnMessageByLanguage(messages.MoveEmployeeToAnotherGroupKeyText, user.Language)
-	if err != nil {
-		log.Println(err)
-	}
+	//moveTitle, err := messages.ReturnMessageByLanguage(messages.MoveEmployeeToAnotherGroupKeyText, user.Language)
+	//if err != nil {
+	//	log.Println(err)
+	//}
 	deleteKey := keys.EmployeeIDtoDeleteFromGroup + strconv.Itoa(int(employee.UserId))
 	copyKey := keys.EmployeeIDtoCopyToANotherGroup + strconv.Itoa(int(employee.UserId))
-	moveKey := keys.EmployeeIDtoMoveToANotherGroup + strconv.Itoa(int(employee.UserId))
+	//moveKey := keys.EmployeeIDtoMoveToANotherGroup + strconv.Itoa(int(employee.UserId))
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
@@ -210,9 +220,9 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 		tgbotapi.NewInlineKeyboardRow( //TODO: Implement function
 			tgbotapi.NewInlineKeyboardButtonData(copyTitle, copyKey),
 		),
-		tgbotapi.NewInlineKeyboardRow( //TODO: Implement function
-			tgbotapi.NewInlineKeyboardButtonData(moveTitle, moveKey),
-		),
+		//tgbotapi.NewInlineKeyboardRow( //TODO: Is this functional needed?
+		//	tgbotapi.NewInlineKeyboardButtonData(moveTitle, moveKey),
+		//),
 	)
 	return keyboard
 }
@@ -257,6 +267,48 @@ func NewCopyEmployeeKeyboard(user *entities.User, groupID int, employeeID int) t
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(copyKey, copyData),
+		),
+	)
+	return keyboard
+}
+
+func NewConfirmDeletingEmployeeFromGroupKeyboard(user *entities.User, employeeID int) tgbotapi.InlineKeyboardMarkup {
+	confirmKey, err := messages.ReturnMessageByLanguage(messages.ConfirmationButtonTextForDeletingEmployeeFromGroup, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	confirmData := keys.ConfirmDeletingEmployeeId + strconv.Itoa(employeeID)
+	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(confirmKey, confirmData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
+		),
+	)
+	return keyboard
+}
+
+func NewConfirmDeletingGroupKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	confirmKey, err := messages.ReturnMessageByLanguage(messages.ConfirmationButtonTextForDeletingGroup, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	confirmData := keys.ConfirmDeletingGroup
+	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(confirmKey, confirmData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
 		),
 	)
 	return keyboard

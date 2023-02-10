@@ -158,13 +158,28 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 			log.Println(err)
 		}
 	case strings.Contains(callbackQuery.Data, keys.EmployeeIDtoDeleteFromGroup):
-		//Отримано запит на видалення учасника групи
+		//Отримано запит на видалення учасника групи, запитуємо підтвердження
+		if err = b.service.WarningBeforeDeletingEmployeeFromGroup(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
+	case strings.Contains(callbackQuery.Data, keys.ConfirmDeletingEmployeeId):
+		//Отримано підтвердження на видалення учасника групи
 		if err = b.service.DeleteEmployeeFromGroup(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
 	case strings.Contains(callbackQuery.Data, keys.EmployeeIDtoCopyToANotherGroup):
 		//Request to copy employee to another group
 		if err = b.service.CopyEmployeeToAnotherGroup(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
+	case strings.Contains(callbackQuery.Data, keys.DeleteGroup):
+		//Get request to delete group, pending confirmation
+		if err = b.service.WarningBeforeGroupDeleting(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
+	case strings.Contains(callbackQuery.Data, keys.ConfirmDeletingGroup):
+		//Get confirmation to delete group
+		if err = b.service.DeleteGroup(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
 	case strings.Contains(callbackQuery.Data, keys.CopyEmployeeGroupID):
