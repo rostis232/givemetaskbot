@@ -61,6 +61,7 @@ func NewKeyboardChooseCreateOrJoinGroup(user *entities.User) tgbotapi.InlineKeyb
 
 // NewMainMenuKeyboard returns new inline keyboard for Main Menu
 func NewMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	//TODO: Add key to adding new task from Main Menu
 	userMenuTitle, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -163,6 +164,7 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 
 // NewMenuForEvenGroup returns new inline keyboard for even group after showing all groups in Group Menu
 func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.InlineKeyboardMarkup {
+	//TODO: Add key to create new task from group menu
 	changeNameTitle, err := messages.ReturnMessageByLanguage(messages.RenameGroupKey, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -181,7 +183,6 @@ func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.In
 	}
 	deleteGroupKey := keys.DeleteGroup + strconv.Itoa(int(group.Id))
 
-	//TODO: Add key for deleting group
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(changeNameTitle, changeNameKey),
@@ -189,7 +190,7 @@ func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.In
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(showEmployeesTitle, showEmployeesKey),
 		),
-		tgbotapi.NewInlineKeyboardRow( //TODO: Implement function
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(deleteGroupTitle, deleteGroupKey),
 		),
 	)
@@ -217,7 +218,7 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(deleteTitle, deleteKey),
 		),
-		tgbotapi.NewInlineKeyboardRow( //TODO: Implement function
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(copyTitle, copyKey),
 		),
 		//tgbotapi.NewInlineKeyboardRow( //TODO: Is this functional needed?
@@ -226,37 +227,6 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 	)
 	return keyboard
 }
-
-//func NewGroupCreatingKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
-//	//TODO: check if this code is needed
-//	//createNewGroupKey, err := messages.ReturnMessageByLanguage(messages.CreateNewGroupKey, user.Language)
-//	//if err != nil {
-//	//	log.Println(err)
-//	//}
-//	//keyJoin, err := messages.ReturnMessageByLanguage(messages.JoinToGroupKey, user.Language)
-//	//if err != nil {
-//	//	log.Println(err)
-//	//}
-//	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
-//	if err != nil {
-//		log.Println(err)
-//	}
-//
-//	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-//		//TODO: check if this code is needed
-//		//tgbotapi.NewInlineKeyboardRow(
-//		//	tgbotapi.NewInlineKeyboardButtonData(createNewGroupKey, keys.CreateNewGroup),
-//		//),
-//		//tgbotapi.NewInlineKeyboardRow(
-//		//	tgbotapi.NewInlineKeyboardButtonData(keyJoin, keys.JoinTheExistGroup),
-//		//),
-//		tgbotapi.NewInlineKeyboardRow(
-//			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
-//		),
-//	)
-//
-//	return keyboard
-//}
 
 func NewCopyEmployeeKeyboard(user *entities.User, groupID int, employeeID int) tgbotapi.InlineKeyboardMarkup {
 	copyKey, err := messages.ReturnMessageByLanguage(messages.CopeEmployeeKey, user.Language)

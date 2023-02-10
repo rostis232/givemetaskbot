@@ -385,6 +385,7 @@ func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
 	} else {
 		for _, g := range allGroups {
 			msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
+			//TODO: Add keyboard with key to exit from group and implement this functionality
 			MsgChan <- msg
 		}
 	}
