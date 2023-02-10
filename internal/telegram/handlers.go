@@ -183,8 +183,10 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 			log.Println(err)
 		}
 	case strings.Contains(callbackQuery.Data, keys.CopyEmployeeGroupID):
-		//TODO: implement service function
-
+		//Got information with group id to copy in employee
+		if err = b.service.ConfirmCopyEmployeeToAnotherGroup(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
 	}
 	return nil
 }

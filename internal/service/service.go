@@ -28,6 +28,7 @@ type Authorisation interface {
 	WarningBeforeDeletingEmployeeFromGroup(user *entities.User, callbackQueryData string) error
 	DeleteEmployeeFromGroup(user *entities.User, receivedData string) error
 	CopyEmployeeToAnotherGroup(user *entities.User, callbackQueryData string) error
+	ConfirmCopyEmployeeToAnotherGroup(user *entities.User, callbackQueryData string) error
 	WarningBeforeGroupDeleting(user *entities.User, callbackQueryData string) error
 	DeleteGroup(user *entities.User, callbackQueryData string) error
 }

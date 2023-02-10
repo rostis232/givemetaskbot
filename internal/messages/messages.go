@@ -55,6 +55,8 @@ const (
 	ConfirmationButtonTextForDeletingGroup             = "ConfirmationButtonTextForDeletingGroup"
 	WarningBeforeGroupDeleting                         = "WarningBeforeGroupDeleting"
 	GroupIsDeleted                                     = "GroupIsDeleted"
+	MessageToChiefUserCopied                           = "MessageToChiefUserCopied"
+	MessageToEmployeeCopied                            = "MessageToEmployeeCopied"
 )
 
 type MessageTitle string
@@ -247,6 +249,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	GroupIsDeleted: {
 		EN: "Group %s has been deleted",
 		UA: "Групу %s видалено",
+	},
+	MessageToChiefUserCopied: {
+		EN: "User %s has been added to group %s",
+		UA: "Користувача %s додано до групи %s",
+	},
+	MessageToEmployeeCopied: {
+		EN: "You have been added to group %s",
+		UA: "Вас додано до групи %s",
 	},
 }
 

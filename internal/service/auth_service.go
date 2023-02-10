@@ -598,6 +598,66 @@ func (u *AuthService) CopyEmployeeToAnotherGroup(user *entities.User, callbackQu
 	return nil
 }
 
+func (u *AuthService) ConfirmCopyEmployeeToAnotherGroup(user *entities.User, callbackQueryData string) error {
+	groupString, employeeString, ok := strings.Cut(callbackQueryData, ":")
+	if !ok {
+		err := errors.New("error while cutting whole string")
+		log.Println(err)
+		return err
+	}
+	_, groupCode, ok := strings.Cut(groupString, keys.CopyEmployeeGroupID)
+	if !ok {
+		err := errors.New("error while cutting group info string")
+		log.Println(err)
+		return err
+	}
+	_, employeeCode, ok := strings.Cut(employeeString, keys.CopyEmployeeEmployeeID)
+	if !ok {
+		err := errors.New("error while cutting employee info string")
+		log.Println(err)
+		return err
+	}
+	groupIdInt, err := strconv.Atoi(groupCode)
+	if err != nil {
+		log.Println("Помилка визначення ID групи")
+		return err
+	}
+	employeeIdInt, err := strconv.Atoi(employeeCode)
+	if err != nil {
+		log.Println("Помилка визначення ID учасника")
+		return err
+	}
+	group, err := u.repository.GetGroupById(groupIdInt)
+	if err != nil {
+		return err
+	}
+
+	employee, err := u.repository.GetUserByUserId(int64(employeeIdInt))
+
+	if err := u.repository.AddEmployeeToGroup(groupIdInt, employeeIdInt); err != nil {
+		log.Println(err)
+		return err
+	}
+	//send message to chief
+	messageToChief, err := messages.ReturnMessageByLanguage(messages.MessageToChiefUserCopied, user.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	msgToChief := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(messageToChief, employee.UserName, group.GroupName))
+	msgToChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msgToChief
+
+	//send message to employee
+	messageToEmployee, err := messages.ReturnMessageByLanguage(messages.MessageToEmployeeCopied, employee.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	msgToEmployee := tgbotapi.NewMessage(employee.ChatId, fmt.Sprintf(messageToEmployee, group.GroupName))
+	msgToEmployee.ReplyMarkup = keyboards.NewToMainMenuKeyboard(&employee)
+	MsgChan <- msgToEmployee
+	return nil
+}
+
 func (u *AuthService) WarningBeforeGroupDeleting(user *entities.User, callbackQueryData string) error {
 	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.DeleteGroup)
 	if !ok {
