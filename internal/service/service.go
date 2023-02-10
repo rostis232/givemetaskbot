@@ -26,6 +26,7 @@ type Authorisation interface {
 	UpdateGroupName(user *entities.User, newGroupName string) error
 	ShowAllEmploysFromGroup(user *entities.User, callbackQueryData string) error
 	DeleteEmployeeFromGroup(user *entities.User, receivedData string) error
+	CopyEmployeeToAnotherGroup(user *entities.User, callbackQueryData string) error
 }
 
 type Service struct {

@@ -304,7 +304,7 @@ func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbota
 	}
 
 	//Передати в репозиторій
-	if err := u.repository.AddEmployeeToGroup(user, &employee); err != nil {
+	if err := u.repository.AddEmployeeToGroup(user.ActiveGroup, int(employee.UserId)); err != nil {
 		log.Println(err)
 		return err
 	}
@@ -418,6 +418,7 @@ func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, callbackQue
 }
 
 func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) error {
+	//TODO: Make notification to users if group name changed
 	if err := u.repository.UpdateGroupName(user, newGroupName); err != nil {
 		log.Println(err)
 		return err
@@ -532,5 +533,33 @@ func (u *AuthService) DeleteEmployeeFromGroup(user *entities.User, receivedData 
 	}
 	msgToChief := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(messageToChief, employee.UserName, group.GroupName))
 	MsgChan <- msgToChief
+	return nil
+}
+
+func (u *AuthService) CopyEmployeeToAnotherGroup(user *entities.User, callbackQueryData string) error {
+	_, employeeUserIdString, ok := strings.Cut(callbackQueryData, keys.EmployeeIDtoCopyToANotherGroup)
+	if !ok {
+		log.Println("Помилка отримання chatID працівника")
+	}
+	employeeUserIdInt, err := strconv.Atoi(employeeUserIdString)
+	if err != nil {
+		log.Println("Помилка визначення ID")
+		return err
+	}
+	groupsWithoutThisEmployee, err := u.repository.GetGroupsWithoutSelectedEmployee(employeeUserIdInt)
+	employee, err := u.repository.GetUserByUserId(int64(employeeUserIdInt))
+	if err != nil {
+		log.Println("Помилка отримання даних працівника з БД")
+		return err
+	}
+	for _, v := range groupsWithoutThisEmployee {
+		text, err := messages.ReturnMessageByLanguage(messages.MessageWhenCopyEmployeeToAnotherGroup, user.Language)
+		if err != nil {
+			log.Println("Помилка отримання тексту повідомлення")
+		}
+		msg := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(text, employee.UserName, v.GroupName))
+		msg.ReplyMarkup = keyboards.NewCopyEmployeeKeyboard(user, int(v.Id), int(employee.UserId))
+		MsgChan <- msg
+	}
 	return nil
 }

@@ -20,13 +20,14 @@ type Authorisation interface {
 	UpdateName(user *entities.User) error
 	UpdateStatus(user *entities.User) error
 	CreateGroup(group *entities.Group) (int, error)
-	AddEmployeeToGroup(chief, employee *entities.User) error
+	AddEmployeeToGroup(groupID, employeeID int) error
 	GetAllChiefsGroups(user *entities.User) ([]entities.Group, error)
 	GetAllEmployeeGroups(user *entities.User) ([]entities.Group, error)
 	UpdateGroupName(user *entities.User, newGroupName string) error
 	ShowAllEmploysFromGroup(user *entities.User) ([]entities.User, error)
 	GetGroupById(id int) (entities.Group, error)
 	DeleteEmployeeFromGroup(employee *entities.User, group *entities.Group) error
+	GetGroupsWithoutSelectedEmployee(id int) ([]entities.Group, error)
 }
 
 type Repository struct {

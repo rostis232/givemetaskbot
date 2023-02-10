@@ -159,10 +159,17 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 		}
 	case strings.Contains(callbackQuery.Data, keys.EmployeeIDtoDeleteFromGroup):
 		//Отримано запит на видалення учасника групи
-		err = b.service.DeleteEmployeeFromGroup(&user, callbackQuery.Data)
-		if err != nil {
+		if err = b.service.DeleteEmployeeFromGroup(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
+	case strings.Contains(callbackQuery.Data, keys.EmployeeIDtoCopyToANotherGroup):
+		//Request to copy employee to another group
+		if err = b.service.CopyEmployeeToAnotherGroup(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
+	case strings.Contains(callbackQuery.Data, keys.CopyEmployeeGroupID):
+		//TODO: implement service function
+
 	}
 	return nil
 }

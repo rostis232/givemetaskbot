@@ -20,4 +20,7 @@ const (
 	EmployeeIDtoCopyToANotherGroup  = "EmployeeIDtoCopyToANotherGroup-"
 	EmployeeIDtoMoveToANotherGroup  = "EmployeeIDtoMoveToANotherGroup-"
 	ShowAllEmployeeGroups           = "ShowAllEmployeeGroups"
+	DeleteGroup                     = "DeleteGroup"
+	CopyEmployeeGroupID             = "CopyEmployeeToGroupWithId-"
+	CopyEmployeeEmployeeID          = "CopyEmployeeEmployeeID-"
 )

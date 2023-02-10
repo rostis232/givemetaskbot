@@ -174,7 +174,7 @@ func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.In
 		log.Println(err)
 	}
 	showEmployeesKey := keys.ShowAllEmployeesFromGroupWithId + strconv.Itoa(int(group.Id))
-
+	//TODO: Add key for deleting group
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(changeNameTitle, changeNameKey),
@@ -207,10 +207,10 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(deleteTitle, deleteKey),
 		),
-		tgbotapi.NewInlineKeyboardRow(
+		tgbotapi.NewInlineKeyboardRow( //TODO: Implement function
 			tgbotapi.NewInlineKeyboardButtonData(copyTitle, copyKey),
 		),
-		tgbotapi.NewInlineKeyboardRow(
+		tgbotapi.NewInlineKeyboardRow( //TODO: Implement function
 			tgbotapi.NewInlineKeyboardButtonData(moveTitle, moveKey),
 		),
 	)
@@ -245,5 +245,19 @@ func NewGroupCreatingKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup
 		),
 	)
 
+	return keyboard
+}
+
+func NewCopyEmployeeKeyboard(user *entities.User, groupID int, employeeID int) tgbotapi.InlineKeyboardMarkup {
+	copyKey, err := messages.ReturnMessageByLanguage(messages.CopeEmployeeKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	copyData := keys.CopyEmployeeGroupID + strconv.Itoa(groupID) + ":" + keys.CopyEmployeeEmployeeID + strconv.Itoa(employeeID)
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(copyKey, copyData),
+		),
+	)
 	return keyboard
 }
