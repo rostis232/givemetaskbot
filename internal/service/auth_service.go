@@ -595,6 +595,13 @@ func (u *AuthService) CopyEmployeeToAnotherGroup(user *entities.User, callbackQu
 		msg.ReplyMarkup = keyboards.NewCopyEmployeeKeyboard(user, int(v.Id), int(employee.UserId))
 		MsgChan <- msg
 	}
+	text, err := messages.ReturnMessageByLanguage(messages.GoToMainMenu, user.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msg
 	return nil
 }
 

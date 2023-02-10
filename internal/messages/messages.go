@@ -57,6 +57,7 @@ const (
 	GroupIsDeleted                                     = "GroupIsDeleted"
 	MessageToChiefUserCopied                           = "MessageToChiefUserCopied"
 	MessageToEmployeeCopied                            = "MessageToEmployeeCopied"
+	GoToMainMenu                                       = "GoToMainMenu"
 )
 
 type MessageTitle string
@@ -257,6 +258,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	MessageToEmployeeCopied: {
 		EN: "You have been added to group %s",
 		UA: "Вас додано до групи %s",
+	},
+	GoToMainMenu: {
+		EN: "Return to the main menu",
+		UA: "Повернутись до головного меню",
 	},
 }
 
