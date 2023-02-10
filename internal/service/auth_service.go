@@ -363,7 +363,7 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) error {
 		log.Println(err)
 	}
 	msg := tgbotapi.NewMessage(user.ChatId, text)
-	msg.ReplyMarkup = keyboards.NewGroupCreatingKeyboard(user)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	MsgChan <- msg
 	return err
 }

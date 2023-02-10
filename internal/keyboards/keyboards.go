@@ -227,36 +227,36 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 	return keyboard
 }
 
-func NewGroupCreatingKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
-	//TODO: check if this code is needed
-	//createNewGroupKey, err := messages.ReturnMessageByLanguage(messages.CreateNewGroupKey, user.Language)
-	//if err != nil {
-	//	log.Println(err)
-	//}
-	//keyJoin, err := messages.ReturnMessageByLanguage(messages.JoinToGroupKey, user.Language)
-	//if err != nil {
-	//	log.Println(err)
-	//}
-	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
-	if err != nil {
-		log.Println(err)
-	}
-
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-		//TODO: check if this code is needed
-		//tgbotapi.NewInlineKeyboardRow(
-		//	tgbotapi.NewInlineKeyboardButtonData(createNewGroupKey, keys.CreateNewGroup),
-		//),
-		//tgbotapi.NewInlineKeyboardRow(
-		//	tgbotapi.NewInlineKeyboardButtonData(keyJoin, keys.JoinTheExistGroup),
-		//),
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
-		),
-	)
-
-	return keyboard
-}
+//func NewGroupCreatingKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+//	//TODO: check if this code is needed
+//	//createNewGroupKey, err := messages.ReturnMessageByLanguage(messages.CreateNewGroupKey, user.Language)
+//	//if err != nil {
+//	//	log.Println(err)
+//	//}
+//	//keyJoin, err := messages.ReturnMessageByLanguage(messages.JoinToGroupKey, user.Language)
+//	//if err != nil {
+//	//	log.Println(err)
+//	//}
+//	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+//	if err != nil {
+//		log.Println(err)
+//	}
+//
+//	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+//		//TODO: check if this code is needed
+//		//tgbotapi.NewInlineKeyboardRow(
+//		//	tgbotapi.NewInlineKeyboardButtonData(createNewGroupKey, keys.CreateNewGroup),
+//		//),
+//		//tgbotapi.NewInlineKeyboardRow(
+//		//	tgbotapi.NewInlineKeyboardButtonData(keyJoin, keys.JoinTheExistGroup),
+//		//),
+//		tgbotapi.NewInlineKeyboardRow(
+//			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
+//		),
+//	)
+//
+//	return keyboard
+//}
 
 func NewCopyEmployeeKeyboard(user *entities.User, groupID int, employeeID int) tgbotapi.InlineKeyboardMarkup {
 	copyKey, err := messages.ReturnMessageByLanguage(messages.CopeEmployeeKey, user.Language)
