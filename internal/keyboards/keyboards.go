@@ -268,14 +268,48 @@ func NewConfirmDeletingGroupKeyboard(user *entities.User) tgbotapi.InlineKeyboar
 	if err != nil {
 		log.Println(err)
 	}
-	confirmData := keys.ConfirmDeletingGroup
 	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(confirmKey, confirmData),
+			tgbotapi.NewInlineKeyboardButtonData(confirmKey, keys.ConfirmDeletingGroup),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
+		),
+	)
+	return keyboard
+}
+
+func NewMenuForEvenGroupForEmployee(lng messages.Language, groupID int64) tgbotapi.InlineKeyboardMarkup {
+	leaveKey, err := messages.ReturnMessageByLanguage(messages.ExitFromTheGroup, lng)
+	if err != nil {
+		log.Println(err)
+	}
+	leaveData := keys.LeaveGroupID + strconv.Itoa(int(groupID))
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(leaveKey, leaveData),
+		),
+	)
+
+	return keyboard
+}
+
+func NewConfirmLeavingGroupKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	confirmKey, err := messages.ReturnMessageByLanguage(messages.ConfirmLeavingGroup, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(confirmKey, keys.ConfirmLeavingGroup),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),

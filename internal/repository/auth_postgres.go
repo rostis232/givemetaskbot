@@ -154,3 +154,12 @@ func (a *AuthPostgres) DeleteGroup(id int) error {
 	}
 	return nil
 }
+
+func (a *AuthPostgres) LeaveGroup(employeeID, groupID int) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE group_id = $1 AND employee_user_id = $2;", GroupEmployeeTable)
+	row := a.db.QueryRow(query, groupID, employeeID)
+	if err := row.Err(); err != nil {
+		return err
+	}
+	return nil
+}

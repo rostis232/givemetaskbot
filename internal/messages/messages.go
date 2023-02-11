@@ -58,6 +58,11 @@ const (
 	MessageToChiefUserCopied                           = "MessageToChiefUserCopied"
 	MessageToEmployeeCopied                            = "MessageToEmployeeCopied"
 	GoToMainMenu                                       = "GoToMainMenu"
+	ExitFromTheGroup                                   = "ExitFromTheGroup"
+	LeaveGroupWarning                                  = "LeaveGroupWarning"
+	ConfirmLeavingGroup                                = "ConfirmLeavingGroup"
+	MessageForEmployeeWhoLeavedGroup                   = "MessageForEmployeeWhoLeavedGroup"
+	MessageForChiefAboutEmployeeLeftGroup              = "MessageForChiefAboutEmployeeLeftGroup"
 )
 
 type MessageTitle string
@@ -262,6 +267,26 @@ var Messages = map[MessageTitle]map[Language]string{
 	GoToMainMenu: {
 		EN: "Return to the main menu",
 		UA: "Повернутись до головного меню",
+	},
+	ExitFromTheGroup: {
+		EN: "Leave the group",
+		UA: "Вийти з групи",
+	},
+	LeaveGroupWarning: {
+		EN: "Are you sure you want to leave the '%s' group?",
+		UA: "Ви впевнені, що хочете вийти з групи '%s'?",
+	},
+	ConfirmLeavingGroup: {
+		EN: "Confirm exit",
+		UA: "Підтвердити вихід",
+	},
+	MessageForEmployeeWhoLeavedGroup: {
+		EN: "You have left the '%s' group",
+		UA: "Ви вийшли з групи '%s'",
+	},
+	MessageForChiefAboutEmployeeLeftGroup: {
+		EN: "User %s has left group %s",
+		UA: "Користувач %s вийшов з групи %s",
 	},
 }
 

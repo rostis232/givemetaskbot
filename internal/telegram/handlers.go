@@ -187,6 +187,14 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 		if err = b.service.ConfirmCopyEmployeeToAnotherGroup(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
+	case strings.Contains(callbackQuery.Data, keys.LeaveGroupID):
+		if err = b.service.LeaveGroupBeforeConfirmation(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
+	case callbackQuery.Data == keys.ConfirmLeavingGroup:
+		if err := b.service.LeaveGroupWithConfirmation(&user); err != nil {
+			log.Println(err)
+		}
 	}
 	return nil
 }

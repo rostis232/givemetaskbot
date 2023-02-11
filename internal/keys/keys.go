@@ -25,4 +25,6 @@ const (
 	CopyEmployeeEmployeeID          = "CopyEmployeeEmployeeID-"
 	ConfirmDeletingEmployeeId       = "ConfirmDeletingEmployeeId-"
 	ConfirmDeletingGroup            = "ConfirmDeletingGroup"
+	LeaveGroupID                    = "LeaveGroupID-"
+	ConfirmLeavingGroup             = "ConfirmLeavingGroup"
 )

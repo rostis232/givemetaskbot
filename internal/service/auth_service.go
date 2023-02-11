@@ -385,7 +385,7 @@ func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
 	} else {
 		for _, g := range allGroups {
 			msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
-			//TODO: Add keyboard with key to exit from group and implement this functionality
+			msg.ReplyMarkup = keyboards.NewMenuForEvenGroupForEmployee(user.Language, g.Id)
 			MsgChan <- msg
 		}
 	}
@@ -419,7 +419,6 @@ func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, callbackQue
 }
 
 func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) error {
-	//TODO: Make notification to users if group name changed
 	oldGroup, err := u.repository.GetGroupById(user.ActiveGroup)
 	if err != nil {
 		log.Println(err)
@@ -762,5 +761,72 @@ func (u *AuthService) DeleteGroup(user *entities.User, callbackQueryData string)
 			MsgChan <- msgToEmployee
 		}
 	}
+	return nil
+}
+
+func (u *AuthService) LeaveGroupBeforeConfirmation(user *entities.User, callbackQueryData string) error {
+	_, groupIDString, ok := strings.Cut(callbackQueryData, keys.LeaveGroupID)
+	if !ok {
+		log.Println("Помилка отримання group ID")
+		return errors.New("error while getting group ID")
+	}
+	groupIDInt, err := strconv.Atoi(groupIDString)
+	if err != nil {
+		log.Println("Помилка визначення ID")
+		return err
+	}
+	group, err := u.repository.GetGroupById(groupIDInt)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	user.ActiveGroup = groupIDInt
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return err
+	}
+	text, err := messages.ReturnMessageByLanguage(messages.LeaveGroupWarning, user.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	text = fmt.Sprintf(text, group.GroupName)
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewConfirmLeavingGroupKeyboard(user)
+	MsgChan <- msg
+	return nil
+}
+
+func (u *AuthService) LeaveGroupWithConfirmation(user *entities.User) error {
+	group, err := u.repository.GetGroupById(user.ActiveGroup)
+	if err != nil {
+		return err
+	}
+
+	chief, err := u.repository.GetUserByUserId(group.ChiefUserId)
+	if err != nil {
+		return err
+	}
+
+	if err := u.repository.LeaveGroup(int(user.UserId), user.ActiveGroup); err != nil {
+		return err
+	}
+
+	textForEmployee, err := messages.ReturnMessageByLanguage(messages.MessageForEmployeeWhoLeavedGroup, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	textForEmployee = fmt.Sprintf(textForEmployee, group.GroupName)
+	msgForEmployee := tgbotapi.NewMessage(user.ChatId, textForEmployee)
+	msgForEmployee.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msgForEmployee
+
+	textForChief, err := messages.ReturnMessageByLanguage(messages.MessageForChiefAboutEmployeeLeftGroup, chief.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	textForChief = fmt.Sprintf(textForChief, user.UserName, group.GroupName)
+	msgForChief := tgbotapi.NewMessage(chief.ChatId, textForChief)
+	msgForChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(&chief)
+	MsgChan <- msgForChief
 	return nil
 }

@@ -29,6 +29,7 @@ type Authorisation interface {
 	DeleteEmployeeFromGroup(employee *entities.User, group *entities.Group) error
 	GetGroupsWithoutSelectedEmployee(id int) ([]entities.Group, error)
 	DeleteGroup(id int) error
+	LeaveGroup(employeeID, groupID int) error
 }
 
 type Repository struct {

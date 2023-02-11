@@ -31,6 +31,8 @@ type Authorisation interface {
 	ConfirmCopyEmployeeToAnotherGroup(user *entities.User, callbackQueryData string) error
 	WarningBeforeGroupDeleting(user *entities.User, callbackQueryData string) error
 	DeleteGroup(user *entities.User, callbackQueryData string) error
+	LeaveGroupBeforeConfirmation(user *entities.User, callbackQueryData string) error
+	LeaveGroupWithConfirmation(user *entities.User) error
 }
 
 type Service struct {
