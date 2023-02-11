@@ -168,8 +168,8 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Введіть нову назву для групи, або поверніться до головного меню",
 	},
 	MessageNewGroupNameAccepted: {
-		EN: "Group name changed to %s",
-		UA: "Змінено назву групи на %s",
+		EN: "Group name '%s' has been changed to '%s'",
+		UA: "Назву групи '%s' змінено на '%s'",
 	},
 	ShowAllEmployeesFromGroupWithIdKey: {
 		EN: "Display group members",

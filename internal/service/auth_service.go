@@ -420,6 +420,18 @@ func (u *AuthService) AskingForUpdatedGroupName(user *entities.User, callbackQue
 
 func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) error {
 	//TODO: Make notification to users if group name changed
+	oldGroup, err := u.repository.GetGroupById(user.ActiveGroup)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
 	if err := u.repository.UpdateGroupName(user, newGroupName); err != nil {
 		log.Println(err)
 		return err
@@ -429,10 +441,23 @@ func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) 
 	if err != nil {
 		log.Println(err)
 	}
-	text = fmt.Sprintf(text, newGroupName)
+	text = fmt.Sprintf(text, oldGroup.GroupName, newGroupName)
 	msg := tgbotapi.NewMessage(user.ChatId, text)
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	MsgChan <- msg
+
+	if allEmployees != nil && len(allEmployees) != 0 {
+		for _, employee := range allEmployees {
+			messageForEmployee, err := messages.ReturnMessageByLanguage(messages.MessageNewGroupNameAccepted, employee.Language)
+			if err != nil {
+				log.Println(err)
+			}
+			messageForEmployee = fmt.Sprintf(messageForEmployee, oldGroup.GroupName, newGroupName)
+			msgForEmployee := tgbotapi.NewMessage(employee.ChatId, messageForEmployee)
+			msgForEmployee.ReplyMarkup = keyboards.NewToMainMenuKeyboard(&employee)
+			MsgChan <- msgForEmployee
+		}
+	}
 	return nil
 }
 
