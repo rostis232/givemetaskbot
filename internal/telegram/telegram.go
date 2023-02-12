@@ -53,10 +53,6 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup)
 				}
 			}
 		} else if update.CallbackQuery != nil {
-			//callback := tgbotapi.NewCallback(update.CallbackQuery.ID, "working")
-			//if _, err := b.bot.Request(callback); err != nil {
-			//	panic(err)
-			//}
 			if err := b.handleCallback(update.CallbackQuery); err != nil {
 				log.Printf("handling callback error: %s", err)
 				continue
