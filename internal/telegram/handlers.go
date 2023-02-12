@@ -90,13 +90,14 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 
 func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 	user, err := b.service.GetUser(callbackQuery.Message.Chat.ID)
-	if err != nil {
-		//TODO: Add handling situation when user is unregistered
+	switch {
+	case err == sql.ErrNoRows:
+		if err = b.service.NewUserRegistration(callbackQuery.Message.Chat.ID); err != nil {
+			return err
+		}
+	case err != nil:
 		log.Println(err)
 		return err
-	}
-
-	switch {
 	case strings.Contains(callbackQuery.Data, messages.LanguageKey):
 		//Обробка вибору мови
 		if err = b.service.SelectLanguage(&user, callbackQuery.Data); err != nil {
