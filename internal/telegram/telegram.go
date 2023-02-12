@@ -1,11 +1,11 @@
 package telegram
 
 import (
-	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/rostis232/givemetaskbot/internal/service"
 	"log"
 	"sync"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/rostis232/givemetaskbot/internal/service"
 )
 
 type Bot struct {
@@ -43,12 +43,12 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup)
 		if update.Message != nil { // If we got a message
 			if update.Message.IsCommand() {
 				if err := b.handleCommand(update.Message); err != nil {
-					log.Println(fmt.Sprintf("handling command error: %s", err))
+					log.Printf("handling command error: %s", err)
 					continue
 				}
 			} else {
 				if err := b.handleMessage(update.Message); err != nil {
-					log.Println(fmt.Sprintf("handling message error: %s", err))
+					log.Printf("handling message error: %s", err)
 					continue
 				}
 			}
@@ -58,7 +58,7 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel, wg *sync.WaitGroup)
 			//	panic(err)
 			//}
 			if err := b.handleCallback(update.CallbackQuery); err != nil {
-				log.Println(fmt.Sprintf("handling callback error: %s", err))
+				log.Printf("handling callback error: %s", err)
 				continue
 			}
 		}
