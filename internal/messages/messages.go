@@ -63,7 +63,9 @@ const (
 	MessageForEmployeeWhoLeavedGroup                   = "MessageForEmployeeWhoLeavedGroup"
 	MessageForChiefAboutEmployeeLeftGroup              = "MessageForChiefAboutEmployeeLeftGroup"
 	CreateNewTaskKey                                   = "CreateNewTask"
-	ExpectingNewTaskTitleMessage = "ExpectingNewTaskTitleMessage"
+	ExpectingNewTaskTitleMessage                       = "ExpectingNewTaskTitleMessage"
+	NewTaskTitleAcceptedExpectingNewTaskDesc           = "NewTaskTitleAcceptedExpectingNewTaskDesc"
+	SkipKeyTitle                                       = "SkipKeyTitle"
 )
 
 type MessageTitle string
@@ -296,6 +298,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	ExpectingNewTaskTitleMessage: {
 		EN: "Enter a title for the task. To cancel, return to the Main Menu.",
 		UA: "Введіть заголовок завдання. Для скасування поверніться до Головного Меню.",
+	},
+	NewTaskTitleAcceptedExpectingNewTaskDesc: {
+		EN: "Task '%s' has been created. Enter a description of the task or click the button to skip.",
+		UA: "Задачу '%s' створено. Введіть опис задачі або натисніть кнопку, щоб пропустити.",
+	},
+	SkipKeyTitle: {
+		EN: "Without description",
+		UA: "Без опису",
 	},
 }
 

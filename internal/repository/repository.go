@@ -30,6 +30,7 @@ type Authorisation interface {
 	GetGroupsWithoutSelectedEmployee(id int) ([]entities.Group, error)
 	DeleteGroup(id int) error
 	LeaveGroup(employeeID, groupID int) error
+	CreateNewTask(taskTitle string, groupID int) (int, error)
 }
 
 type Repository struct {

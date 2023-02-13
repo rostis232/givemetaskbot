@@ -163,3 +163,13 @@ func (a *AuthPostgres) LeaveGroup(employeeID, groupID int) error {
 	}
 	return nil
 }
+
+func (a *AuthPostgres) CreateNewTask(taskTitle string, groupID int) (int, error) {
+	var taskId int
+	query := fmt.Sprintf("INSERT INTO %s (task_name, group_id) VALUES ($1, $2)  RETURNING group_id;", TaskTable)
+	row := a.db.QueryRow(query, taskTitle, groupID)
+	if err := row.Scan(&taskId); err != nil {
+		return 0, err
+	}
+	return taskId, nil
+}

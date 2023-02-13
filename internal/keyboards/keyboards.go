@@ -319,3 +319,16 @@ func NewConfirmLeavingGroupKeyboard(user *entities.User) tgbotapi.InlineKeyboard
 	)
 	return keyboard
 }
+
+func NewExpectingDescriptionOrSkipKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	skipKeyTitle, err := messages.ReturnMessageByLanguage(messages.SkipKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(skipKeyTitle, keys.SkipDescritionEntering),
+		),
+	)
+	return keyboard
+}

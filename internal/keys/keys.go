@@ -28,4 +28,5 @@ const (
 	LeaveGroupID                    = "LeaveGroupID-"
 	ConfirmLeavingGroup             = "ConfirmLeavingGroup"
 	CreateNewTaskKeyData            = "CreateNewTaskKeyData-"
+	SkipDescritionEntering          = "SkipDescritionEntering"
 )

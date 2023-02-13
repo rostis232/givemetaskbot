@@ -857,3 +857,27 @@ func (u *AuthService) CreateNewTaskAskingTitle(user *entities.User, callbackQuer
 	MsgChan <- msgToChief
 	return nil
 }
+
+func (u *AuthService) CreateNewTaskGotTitle(user *entities.User, taskTitle string) error {
+	taskID, err := u.repository.CreateNewTask(taskTitle, user.ActiveGroup)
+	if err != nil {
+		return err
+	}
+
+	user.ActiveTask = taskID
+	user.ActiveGroup = 0
+	user.Status = state_service.Expecting_new_task_description
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return err
+	}
+
+	messageToChief, err := messages.ReturnMessageByLanguage(messages.NewTaskTitleAcceptedExpectingNewTaskDesc, user.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	msgToChief := tgbotapi.NewMessage(user.ChatId, fmt.Sprintf(messageToChief, taskTitle))
+	msgToChief.ReplyMarkup = keyboards.NewExpectingDescriptionOrSkipKeyboard(user)
+	MsgChan <- msgToChief
+	return nil
+}

@@ -34,6 +34,7 @@ type Authorisation interface {
 	LeaveGroupBeforeConfirmation(user *entities.User, callbackQueryData string) error
 	LeaveGroupWithConfirmation(user *entities.User) error
 	CreateNewTaskAskingTitle(user *entities.User, callbackQueryData string) error
+	CreateNewTaskGotTitle(user *entities.User, taskTitle string) error
 }
 
 type Service struct {
