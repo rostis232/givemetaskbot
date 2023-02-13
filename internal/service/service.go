@@ -33,6 +33,7 @@ type Authorisation interface {
 	DeleteGroup(user *entities.User, callbackQueryData string) error
 	LeaveGroupBeforeConfirmation(user *entities.User, callbackQueryData string) error
 	LeaveGroupWithConfirmation(user *entities.User) error
+	CreateNewTaskAskingTitle(user *entities.User, callbackQueryData string) error
 }
 
 type Service struct {

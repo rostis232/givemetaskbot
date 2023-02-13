@@ -27,4 +27,5 @@ const (
 	ConfirmDeletingGroup            = "ConfirmDeletingGroup"
 	LeaveGroupID                    = "LeaveGroupID-"
 	ConfirmLeavingGroup             = "ConfirmLeavingGroup"
+	CreateNewTaskKeyData            = "CreateNewTaskKeyData-"
 )

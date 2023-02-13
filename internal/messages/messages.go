@@ -1,7 +1,6 @@
 package messages
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -63,6 +62,8 @@ const (
 	ConfirmLeavingGroup                                = "ConfirmLeavingGroup"
 	MessageForEmployeeWhoLeavedGroup                   = "MessageForEmployeeWhoLeavedGroup"
 	MessageForChiefAboutEmployeeLeftGroup              = "MessageForChiefAboutEmployeeLeftGroup"
+	CreateNewTaskKey                                   = "CreateNewTask"
+	ExpectingNewTaskTitleMessage = "ExpectingNewTaskTitleMessage"
 )
 
 type MessageTitle string
@@ -288,16 +289,24 @@ var Messages = map[MessageTitle]map[Language]string{
 		EN: "User %s has left group %s",
 		UA: "Користувач %s вийшов з групи %s",
 	},
+	CreateNewTaskKey: {
+		EN: "Create new task",
+		UA: "Створити нову задачу",
+	},
+	ExpectingNewTaskTitleMessage: {
+		EN: "Enter a title for the task. To cancel, return to the Main Menu.",
+		UA: "Введіть заголовок завдання. Для скасування поверніться до Головного Меню.",
+	},
 }
 
 func ReturnMessageByLanguage(msgTitle MessageTitle, lng Language) (string, error) {
 	msg, ok := Messages[msgTitle]
 	if !ok {
-		return "", errors.New(fmt.Sprintf("unknown message title: %s", msgTitle))
+		return "", fmt.Errorf("unknown message title: %s", msgTitle)
 	}
 	str, ok := msg[lng]
 	if !ok {
-		return msg[EN], errors.New(fmt.Sprintf("unknown language: %s", lng))
+		return msg[EN], fmt.Errorf("unknown language: %s", lng)
 	}
 	return str, nil
 }

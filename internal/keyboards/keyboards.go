@@ -1,12 +1,13 @@
 package keyboards
 
 import (
+	"log"
+	"strconv"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/rostis232/givemetaskbot/internal/entities"
 	"github.com/rostis232/givemetaskbot/internal/keys"
 	"github.com/rostis232/givemetaskbot/internal/messages"
-	"log"
-	"strconv"
 )
 
 var (
@@ -165,6 +166,12 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 // NewMenuForEvenGroup returns new inline keyboard for even group after showing all groups in Group Menu
 func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.InlineKeyboardMarkup {
 	//TODO: Add key to create new task from group menu
+	createNewTaskKeyTitle, err := messages.ReturnMessageByLanguage(messages.CreateNewTaskKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	createNewTaskKeyData := keys.CreateNewTaskKeyData + strconv.Itoa(int(group.Id))
+
 	changeNameTitle, err := messages.ReturnMessageByLanguage(messages.RenameGroupKey, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -184,6 +191,9 @@ func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.In
 	deleteGroupKey := keys.DeleteGroup + strconv.Itoa(int(group.Id))
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(createNewTaskKeyTitle, createNewTaskKeyData),
+		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(changeNameTitle, changeNameKey),
 		),
@@ -206,13 +216,8 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 	if err != nil {
 		log.Println(err)
 	}
-	//moveTitle, err := messages.ReturnMessageByLanguage(messages.MoveEmployeeToAnotherGroupKeyText, user.Language)
-	//if err != nil {
-	//	log.Println(err)
-	//}
 	deleteKey := keys.EmployeeIDtoDeleteFromGroup + strconv.Itoa(int(employee.UserId))
 	copyKey := keys.EmployeeIDtoCopyToANotherGroup + strconv.Itoa(int(employee.UserId))
-	//moveKey := keys.EmployeeIDtoMoveToANotherGroup + strconv.Itoa(int(employee.UserId))
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
@@ -221,9 +226,6 @@ func NewMenuForEvenEmployee(user, employee *entities.User) tgbotapi.InlineKeyboa
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(copyTitle, copyKey),
 		),
-		//tgbotapi.NewInlineKeyboardRow( //TODO: Is this functional needed?
-		//	tgbotapi.NewInlineKeyboardButtonData(moveTitle, moveKey),
-		//),
 	)
 	return keyboard
 }

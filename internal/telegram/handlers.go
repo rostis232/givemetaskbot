@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/rostis232/givemetaskbot/internal/keyboards"
 	"github.com/rostis232/givemetaskbot/internal/keys"
 	"github.com/rostis232/givemetaskbot/internal/messages"
 	"github.com/rostis232/givemetaskbot/internal/state_service"
@@ -16,9 +15,6 @@ import (
 func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 	log.Printf("[%s] %s - %d", message.From.UserName, message.Text, message.Chat.ID)
 
-	msg := tgbotapi.NewMessage(message.Chat.ID, "")
-	//TODO: what with keyboard?
-	msg.ReplyMarkup = keyboards.RemoveKeyboard
 	user, err := b.service.GetUser(message.Chat.ID)
 
 	switch {
@@ -89,6 +85,7 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
+	log.Printf("[%s] %s - %d", callbackQuery.From.UserName, callbackQuery.Data, callbackQuery.Message.Chat.ID)
 	user, err := b.service.GetUser(callbackQuery.Message.Chat.ID)
 	switch {
 	case err == sql.ErrNoRows:
@@ -194,6 +191,10 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 		}
 	case callbackQuery.Data == keys.ConfirmLeavingGroup:
 		if err := b.service.LeaveGroupWithConfirmation(&user); err != nil {
+			log.Println(err)
+		}
+	case strings.Contains(callbackQuery.Data, keys.CreateNewTaskKeyData):
+		if err := b.service.CreateNewTaskAskingTitle(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
 	}

@@ -830,3 +830,30 @@ func (u *AuthService) LeaveGroupWithConfirmation(user *entities.User) error {
 	MsgChan <- msgForChief
 	return nil
 }
+
+func (u *AuthService) CreateNewTaskAskingTitle(user *entities.User, callbackQueryData string) error {
+	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.CreateNewTaskKeyData)
+	if !ok {
+		log.Println("Помилка отримання group ID")
+		return errors.New("error while getting group ID")
+	}
+	groupIdInt, err := strconv.Atoi(groupIdString)
+	if err != nil {
+		log.Println("Помилка визначення ID")
+		return err
+	}
+	user.ActiveGroup = groupIdInt
+	user.Status = state_service.Expecting_new_task_title
+	if err := u.repository.UpdateStatus(user); err != nil {
+		log.Println(err)
+		return err
+	}
+	messageToChief, err := messages.ReturnMessageByLanguage(messages.ExpectingNewTaskTitleMessage, user.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	msgToChief := tgbotapi.NewMessage(user.ChatId, messageToChief)
+	msgToChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msgToChief
+	return nil
+}
