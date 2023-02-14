@@ -3,7 +3,6 @@ package repository
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rostis232/givemetaskbot/internal/entities"
@@ -176,7 +175,6 @@ func (a *AuthPostgres) CreateNewTask(taskTitle string, groupID int) (int, error)
 }
 
 func (a *AuthPostgres) UpdateTaskDescription(taskDesc string, taskID int) error {
-	log.Println(taskDesc, taskID)
 	query := fmt.Sprintf("UPDATE %s SET task_description = $1 WHERE task_id = $2;", TaskTable)
 	row := a.db.QueryRow(query, taskDesc, taskID)
 	if err := row.Err(); err != nil {
@@ -192,4 +190,13 @@ func (a *AuthPostgres) GetTaskByID(taskID int) (entities.Task, error) {
 		return entities.Task{}, err
 	}
 	return task, nil
+}
+
+func (a *AuthPostgres) AddEmployeeToTask(taskID, employeeID int) error {
+	query := fmt.Sprintf("INSERT INTO %s (task_id, employee_user_id) VALUES ($1, $2);", TaskEmployeeTable)
+	row := a.db.QueryRow(query, taskID, employeeID)
+	if err := row.Err(); err != nil {
+		return err
+	}
+	return nil
 }

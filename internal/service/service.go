@@ -36,6 +36,7 @@ type Authorisation interface {
 	CreateNewTaskAskingTitle(user *entities.User, callbackQueryData string) error
 	CreateNewTaskGotTitle(user *entities.User, taskTitle string) error
 	UpdateTaskDescription(user *entities.User, taskDesc string) error
+	AddAllEmployeesToTask(user *entities.User) error
 }
 
 type Service struct {

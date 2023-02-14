@@ -206,7 +206,9 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 			log.Println(err)
 		}
 	case callbackQuery.Data == keys.AddWholeGroupToTaskKeyData:
-		
+		if err := b.service.AddAllEmployeesToTask(&user); err != nil {
+			log.Println(err)
+		}
 	}
 	return nil
 }

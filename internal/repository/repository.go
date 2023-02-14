@@ -10,6 +10,7 @@ const (
 	GroupTable         = "groups"
 	TaskTable          = "tasks"
 	GroupEmployeeTable = "group_employee"
+	TaskEmployeeTable = "task_employee"
 )
 
 type Authorisation interface {
@@ -33,6 +34,7 @@ type Authorisation interface {
 	CreateNewTask(taskTitle string, groupID int) (int, error)
 	UpdateTaskDescription(taskDesc string, taskID int) error
 	GetTaskByID(taskID int) (entities.Task, error)
+	AddEmployeeToTask(taskID, employeeID int) error
 }
 
 type Repository struct {

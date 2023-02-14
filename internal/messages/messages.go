@@ -69,6 +69,7 @@ const (
 	TaskDescriptionAccepted                            = "TaskDescriptionAccepted"
 	AddWholeGroupToTaskKeyTitle                        = "AddWholeGroupToTaskKeyTitle"
 	AddSomeEmployeesToTaskKeyTitle                     = "AddSomeEmployeesToTaskKeyTitle"
+	AllEmployeesFromGroupSuccessfullyAddedToTask = "AllEmployeesFromGroupSuccessfullyAddedToTask"
 )
 
 type MessageTitle string
@@ -321,6 +322,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	AddSomeEmployeesToTaskKeyTitle: {
 		EN: "Assign individual employees",
 		UA: "Доручити окремим працівникам",
+	},
+	AllEmployeesFromGroupSuccessfullyAddedToTask: {
+		EN: "Task '%s' is assigned to all members of group '%s'.",
+		UA: "Виконання задачі '%s' доручено всім членам групи '%s'.",
 	},
 }
 

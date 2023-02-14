@@ -898,7 +898,41 @@ func (u *AuthService) UpdateTaskDescription(user *entities.User, taskDesc string
 }
 
 func (u *AuthService) AddAllEmployeesToTask(user *entities.User) error {
-	
-	// allEmployees, err := u.repository.ShowAllEmploysFromGroup()
+	task, err := u.repository.GetTaskByID(user.ActiveTask)
+	if err != nil {
+		return err
+	}
+	group, err := u.repository.GetGroupById(int(task.GroupId))
+	if err != nil {
+		return err
+	}
+	allEmployees, err := u.repository.ShowAllEmploysFromGroup(int(task.GroupId))
+	if err != nil {
+		return err
+	}
+	if len(allEmployees) == 0 {
+		text, err := messages.ReturnMessageByLanguage(messages.NoEmployeesInTheGroup, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		text = fmt.Sprintf(text, group.GroupName)
+		msgToChief := tgbotapi.NewMessage(user.ChatId, text)
+		msgToChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		MsgChan <- msgToChief
+		return nil
+	}
+	for _, employee := range allEmployees {
+		if err := u.repository.AddEmployeeToTask(int(task.Id), int(employee.UserId)); err != nil {
+			log.Println(err)
+		}
+	}
+	text, err := messages.ReturnMessageByLanguage(messages.AllEmployeesFromGroupSuccessfullyAddedToTask, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		text = fmt.Sprintf(text, task.TaskName, group.GroupName)
+		msgToChief := tgbotapi.NewMessage(user.ChatId, text)
+		msgToChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		MsgChan <- msgToChief
 	return nil
 }
