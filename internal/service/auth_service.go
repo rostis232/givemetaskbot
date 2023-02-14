@@ -425,7 +425,7 @@ func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) 
 		return err
 	}
 
-	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user)
+	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user.ActiveGroup)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -471,7 +471,7 @@ func (u *AuthService) ShowAllEmploysFromGroup(user *entities.User, callbackQuery
 	}
 	user.Status = state_service.Adding_employee_to_group
 	user.ActiveGroup = groupIdInt
-	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user)
+	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user.ActiveGroup)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -729,7 +729,7 @@ func (u *AuthService) DeleteGroup(user *entities.User, callbackQueryData string)
 	}
 
 	// Get all employees from group
-	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user)
+	allEmployees, err := u.repository.ShowAllEmploysFromGroup(user.ActiveGroup)
 	if err != nil {
 		return err
 	}
@@ -894,5 +894,11 @@ func (u *AuthService) UpdateTaskDescription(user *entities.User, taskDesc string
 	msgToChief := tgbotapi.NewMessage(user.ChatId, text)
 	msgToChief.ReplyMarkup = keyboards.NewAssignToEntireGroupAllSomeEmployees(user)
 	MsgChan <- msgToChief
+	return nil
+}
+
+func (u *AuthService) AddAllEmployeesToTask(user *entities.User) error {
+	
+	// allEmployees, err := u.repository.ShowAllEmploysFromGroup()
 	return nil
 }

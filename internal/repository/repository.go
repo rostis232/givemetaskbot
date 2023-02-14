@@ -24,7 +24,7 @@ type Authorisation interface {
 	GetAllChiefsGroups(user *entities.User) ([]entities.Group, error)
 	GetAllEmployeeGroups(user *entities.User) ([]entities.Group, error)
 	UpdateGroupName(user *entities.User, newGroupName string) error
-	ShowAllEmploysFromGroup(user *entities.User) ([]entities.User, error)
+	ShowAllEmploysFromGroup(groupID int) ([]entities.User, error)
 	GetGroupById(id int) (entities.Group, error)
 	DeleteEmployeeFromGroup(employee *entities.User, group *entities.Group) error
 	GetGroupsWithoutSelectedEmployee(id int) ([]entities.Group, error)
@@ -32,6 +32,7 @@ type Authorisation interface {
 	LeaveGroup(employeeID, groupID int) error
 	CreateNewTask(taskTitle string, groupID int) (int, error)
 	UpdateTaskDescription(taskDesc string, taskID int) error
+	GetTaskByID(taskID int) (entities.Task, error)
 }
 
 type Repository struct {

@@ -80,7 +80,6 @@ func NewMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 		),
 	)
 	return keyboard
-
 }
 
 // NewUserSettingsMenuKeyboard returns new inline keyboard for User Settings Menu

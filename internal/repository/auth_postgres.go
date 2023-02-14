@@ -115,10 +115,10 @@ func (a *AuthPostgres) UpdateGroupName(user *entities.User, newGroupName string)
 	return nil
 }
 
-func (a *AuthPostgres) ShowAllEmploysFromGroup(user *entities.User) ([]entities.User, error) {
+func (a *AuthPostgres) ShowAllEmploysFromGroup(groupID int) ([]entities.User, error) {
 	var allEmployees []entities.User
 	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id IN (SELECT employee_user_id FROM %s WHERE group_id = $1);", UserTable, GroupEmployeeTable)
-	err := a.db.Select(&allEmployees, query, user.ActiveGroup)
+	err := a.db.Select(&allEmployees, query, groupID)
 	return allEmployees, err
 }
 
@@ -183,4 +183,13 @@ func (a *AuthPostgres) UpdateTaskDescription(taskDesc string, taskID int) error 
 		return err
 	}
 	return nil
+}
+
+func (a *AuthPostgres) GetTaskByID(taskID int) (entities.Task, error) {
+	task := entities.Task{}
+	query := fmt.Sprintf("SELECT * FROM %s WHERE task_id = $1;", TaskTable)
+	if err := a.db.Get(&task, query, taskID); err != nil {
+		return entities.Task{}, err
+	}
+	return task, nil
 }
