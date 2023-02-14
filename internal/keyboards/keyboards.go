@@ -332,3 +332,23 @@ func NewExpectingDescriptionOrSkipKeyboard(user *entities.User) tgbotapi.InlineK
 	)
 	return keyboard
 }
+
+func NewAssignToEntireGroupAllSomeEmployees(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	toWholeGroupKeyTitle, err := messages.ReturnMessageByLanguage(messages.AddWholeGroupToTaskKeyTitle, user.Language)
+	if err != nil {
+		log.Println()
+	}
+	toSomeEmployees, err := messages.ReturnMessageByLanguage(messages.AddSomeEmployeesToTaskKeyTitle, user.Language)
+	if err != nil {
+		log.Println()
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(toWholeGroupKeyTitle, keys.AddWholeGroupToTaskKeyData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(toSomeEmployees, keys.AddSomeEmployeesToTaskKeyData),
+		),
+	)
+	return keyboard
+}

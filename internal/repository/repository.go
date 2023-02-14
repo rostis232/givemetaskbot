@@ -31,6 +31,7 @@ type Authorisation interface {
 	DeleteGroup(id int) error
 	LeaveGroup(employeeID, groupID int) error
 	CreateNewTask(taskTitle string, groupID int) (int, error)
+	UpdateTaskDescription(taskDesc string, taskID int) error
 }
 
 type Repository struct {

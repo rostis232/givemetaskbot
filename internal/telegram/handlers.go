@@ -53,6 +53,10 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) error {
 		if err = b.service.CreateNewTaskGotTitle(&user, message.Text); err != nil {
 			return err
 		}
+	case user.Status == state_service.Expecting_new_task_description && user.ActiveTask != 0:
+		if err = b.service.UpdateTaskDescription(&user, message.Text); err != nil {
+			return err
+		}
 	}
 
 	return nil

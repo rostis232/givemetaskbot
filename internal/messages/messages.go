@@ -66,6 +66,9 @@ const (
 	ExpectingNewTaskTitleMessage                       = "ExpectingNewTaskTitleMessage"
 	NewTaskTitleAcceptedExpectingNewTaskDesc           = "NewTaskTitleAcceptedExpectingNewTaskDesc"
 	SkipKeyTitle                                       = "SkipKeyTitle"
+	TaskDescriptionAccepted                            = "TaskDescriptionAccepted"
+	AddWholeGroupToTaskKeyTitle                        = "AddWholeGroupToTaskKeyTitle"
+	AddSomeEmployeesToTaskKeyTitle                     = "AddSomeEmployeesToTaskKeyTitle"
 )
 
 type MessageTitle string
@@ -306,6 +309,18 @@ var Messages = map[MessageTitle]map[Language]string{
 	SkipKeyTitle: {
 		EN: "Without description",
 		UA: "Без опису",
+	},
+	TaskDescriptionAccepted: {
+		EN: "Description\n%s\nis accepted and added to the task. Assign it to the entire group or to individual employees?",
+		UA: "Опис\n%s\nприйнято та додано до задачі. Доручити його виконання всій групі чи окремим працівникам?",
+	},
+	AddWholeGroupToTaskKeyTitle: {
+		EN: "Assign the entire group",
+		UA: "Доручити всій групі",
+	},
+	AddSomeEmployeesToTaskKeyTitle: {
+		EN: "Assign individual employees",
+		UA: "Доручити окремим працівникам",
 	},
 }
 

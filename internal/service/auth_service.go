@@ -881,3 +881,18 @@ func (u *AuthService) CreateNewTaskGotTitle(user *entities.User, taskTitle strin
 	MsgChan <- msgToChief
 	return nil
 }
+
+func (u *AuthService) UpdateTaskDescription(user *entities.User, taskDesc string) error {
+	if err := u.repository.UpdateTaskDescription(taskDesc, user.ActiveTask); err != nil {
+		return err
+	}
+	text, err := messages.ReturnMessageByLanguage(messages.TaskDescriptionAccepted, user.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	text = fmt.Sprintf(text, taskDesc)
+	msgToChief := tgbotapi.NewMessage(user.ChatId, text)
+	msgToChief.ReplyMarkup = keyboards.NewAssignToEntireGroupAllSomeEmployees(user)
+	MsgChan <- msgToChief
+	return nil
+}

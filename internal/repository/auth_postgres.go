@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rostis232/givemetaskbot/internal/entities"
@@ -166,10 +167,20 @@ func (a *AuthPostgres) LeaveGroup(employeeID, groupID int) error {
 
 func (a *AuthPostgres) CreateNewTask(taskTitle string, groupID int) (int, error) {
 	var taskId int
-	query := fmt.Sprintf("INSERT INTO %s (task_name, group_id) VALUES ($1, $2)  RETURNING group_id;", TaskTable)
+	query := fmt.Sprintf("INSERT INTO %s (task_name, group_id) VALUES ($1, $2)  RETURNING task_id;", TaskTable)
 	row := a.db.QueryRow(query, taskTitle, groupID)
 	if err := row.Scan(&taskId); err != nil {
 		return 0, err
 	}
 	return taskId, nil
+}
+
+func (a *AuthPostgres) UpdateTaskDescription(taskDesc string, taskID int) error {
+	log.Println(taskDesc, taskID)
+	query := fmt.Sprintf("UPDATE %s SET task_description = $1 WHERE task_id = $2;", TaskTable)
+	row := a.db.QueryRow(query, taskDesc, taskID)
+	if err := row.Err(); err != nil {
+		return err
+	}
+	return nil
 }

@@ -18,7 +18,6 @@ const (
 	ShowAllEmployeesFromGroupWithId = "ShowAllEmployeesFromGroupWithId-"
 	EmployeeIDtoDeleteFromGroup     = "EmployeeIDtoDeleteFromGroup-"
 	EmployeeIDtoCopyToANotherGroup  = "EmployeeIDtoCopyToANotherGroup-"
-	EmployeeIDtoMoveToANotherGroup  = "EmployeeIDtoMoveToANotherGroup-"
 	ShowAllEmployeeGroups           = "ShowAllEmployeeGroups"
 	DeleteGroup                     = "DeleteGroup-"
 	CopyEmployeeGroupID             = "CopyEmployeeToGroupWithId-"
@@ -29,4 +28,6 @@ const (
 	ConfirmLeavingGroup             = "ConfirmLeavingGroup"
 	CreateNewTaskKeyData            = "CreateNewTaskKeyData-"
 	SkipDescritionEntering          = "SkipDescritionEntering"
+	AddWholeGroupToTaskKeyData      = "AddWholeGroupToTaskKeyData"
+	AddSomeEmployeesToTaskKeyData   = "AddSomeEmployeesToTaskKeyData"
 )
