@@ -361,7 +361,7 @@ func NewAssignKeyboard(user *entities.User, employeeID int) tgbotapi.InlineKeybo
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(assignKeyTitle, assignKeyData),
-		),
+		), //TODO: Implement functionality
 	)
 	return keyboard
 }
@@ -379,7 +379,7 @@ func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineK
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(toViewTaskDetailsKeyTitle, toViewTaskDetailsKeyData),
-		),
+		), // TODO: Implement functionality
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
 		),

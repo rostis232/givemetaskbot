@@ -979,3 +979,48 @@ func (u *AuthService) SkipDescritionEntering(user *entities.User) error {
 	MsgChan <- msgToChief
 	return nil
 }
+
+func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData string) error {
+	_, taskIDString, ok := strings.Cut(callbackQueryData, keys.ToSeeTaskDetailsTaskID)
+	if !ok {
+		log.Println("Помилка отримання group ID")
+		return errors.New("error while getting group ID")
+	}
+	taskIdInt, err := strconv.Atoi(taskIDString)
+	if err != nil {
+		log.Println("Помилка визначення ID")
+		return err
+	}
+	task, err := u.repository.GetTaskByID(taskIdInt)
+	if err != nil {
+		return err
+	}
+	taskDesc, err := messages.ReturnMessageByLanguage(messages.NoTaskDescription, user.Language)
+	if err != nil {
+		return err
+	}
+	if task.TaskDescription != "no_description" {
+		taskDesc = task.TaskDescription
+	}
+	allExecutors, err := u.repository.GetAllExecutors(int(task.Id))
+	if err != nil {
+		return err
+	}
+	executorsString := ""
+	for index, executor := range allExecutors {
+		executorsString += executor.UserName
+		if index != len(allExecutors) - 1 {
+			executorsString += "\n"
+		}
+	}
+
+	text, err := messages.ReturnMessageByLanguage(messages.TaskDetailsForEmployees, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	text = fmt.Sprintf(text, task.TaskName, taskDesc, executorsString)
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msg
+	return nil
+}

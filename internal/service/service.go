@@ -39,6 +39,7 @@ type Authorisation interface {
 	AddAllEmployeesToTask(user *entities.User) error
 	AddSomeEmployeesToTaskShowList(user *entities.User) error
 	SkipDescritionEntering(user *entities.User) error
+	ShowTaskDetails(user *entities.User, callbackQueryData string) error
 }
 
 type Service struct {

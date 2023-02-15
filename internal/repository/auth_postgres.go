@@ -206,5 +206,12 @@ func (a *AuthPostgres) GetEmployeesWhichAreInTheGroupButNotAssignedToTheTask(tas
 	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id IN (SELECT ge.employee_user_id FROM %s ge, %s t WHERE ge.group_id = t.group_id AND t.task_id = $1 AND ge.employee_user_id NOT IN (SELECT employee_user_id FROM %s WHERE task_id = $1));", UserTable, GroupEmployeeTable, TaskTable, TaskEmployeeTable)
 	err := a.db.Select(&allEmployees, query, taskID)
 	return allEmployees, err
+}
+
+func (a *AuthPostgres) GetAllExecutors(taskID int) ([]entities.User, error) {
+	var allExecutors []entities.User
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id IN (SELECT employee_user_id FROM %s WHERE task_id = $1);", UserTable, TaskEmployeeTable)
+	err := a.db.Select(&allExecutors, query, taskID)
+	return allExecutors, err
 
 }

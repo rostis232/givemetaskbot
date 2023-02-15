@@ -75,6 +75,8 @@ const (
 	YouHaveBeenAssignedTheTask                         = "YouHaveBeenAssignedTheTask"
 	ToSeeTaskDetailsKeyTitle                           = "ToSeeTaskDetailsKeyTitle"
 	TaskDescriptionSkipped                             = "TaskDescriptionSkipped"
+	TaskDetailsForEmployees                            = "TaskDetailsForEmployees"
+	NoTaskDescription = "NoTaskDescription"
 )
 
 type MessageTitle string
@@ -351,6 +353,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	TaskDescriptionSkipped: {
 		EN: "Adding a description to the task has been skipped. You can do it later. Should I assign the task to the entire group or to individual employees?",
 		UA: "Додавання опису до задачі пропущено. Ви можете зробити це пізніше. Доручити виконання задачі всій групі чи окремим працівникам?",
+	},
+	TaskDetailsForEmployees: {
+		EN: "Title:\n%s\n\nDescription:\n%s\n\nExecutors:\n%s",
+		UA: "Назва:\n%s\n\nОпис:\n%s\n\nВиконавці:\n%s",
+	},
+	NoTaskDescription: {
+		EN: "No description available",
+		UA: "Опис відсутній",
 	},
 }
 
