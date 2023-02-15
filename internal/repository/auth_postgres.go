@@ -200,3 +200,11 @@ func (a *AuthPostgres) AddEmployeeToTask(taskID, employeeID int) error {
 	}
 	return nil
 }
+
+func (a *AuthPostgres) GetEmployeesWhichAreInTheGroupButNotAssignedToTheTask(taskID int) ([]entities.User, error) {
+	var allEmployees []entities.User
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id IN (SELECT ge.employee_user_id FROM %s ge, %s t WHERE ge.group_id = t.group_id AND t.task_id = $1 AND ge.employee_user_id NOT IN (SELECT employee_user_id FROM %s WHERE task_id = $1));", UserTable, GroupEmployeeTable, TaskTable, TaskEmployeeTable)
+	err := a.db.Select(&allEmployees, query, taskID)
+	return allEmployees, err
+
+}

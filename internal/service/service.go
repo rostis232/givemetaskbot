@@ -37,6 +37,8 @@ type Authorisation interface {
 	CreateNewTaskGotTitle(user *entities.User, taskTitle string) error
 	UpdateTaskDescription(user *entities.User, taskDesc string) error
 	AddAllEmployeesToTask(user *entities.User) error
+	AddSomeEmployeesToTaskShowList(user *entities.User) error
+	SkipDescritionEntering(user *entities.User) error
 }
 
 type Service struct {

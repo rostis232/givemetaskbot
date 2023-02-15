@@ -30,4 +30,6 @@ const (
 	SkipDescritionEntering          = "SkipDescritionEntering"
 	AddWholeGroupToTaskKeyData      = "AddWholeGroupToTaskKeyData"
 	AddSomeEmployeesToTaskKeyData   = "AddSomeEmployeesToTaskKeyData"
+	AssignToEmployeeWithID          = "AssignToEmployeeWithID-"
+	ToSeeTaskDetailsTaskID          = "ToSeeTaskDetailsTaskID-"
 )

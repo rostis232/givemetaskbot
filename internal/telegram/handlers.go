@@ -209,6 +209,14 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 		if err := b.service.AddAllEmployeesToTask(&user); err != nil {
 			log.Println(err)
 		}
+	case callbackQuery.Data == keys.AddSomeEmployeesToTaskKeyData:
+		if err := b.service.AddSomeEmployeesToTaskShowList(&user); err != nil {
+			log.Println(err)
+		}
+	case callbackQuery.Data == keys.SkipDescritionEntering:
+		if err := b.service.SkipDescritionEntering(&user); err != nil {
+			log.Println(err)
+		}
 	}
 	return nil
 }

@@ -69,7 +69,12 @@ const (
 	TaskDescriptionAccepted                            = "TaskDescriptionAccepted"
 	AddWholeGroupToTaskKeyTitle                        = "AddWholeGroupToTaskKeyTitle"
 	AddSomeEmployeesToTaskKeyTitle                     = "AddSomeEmployeesToTaskKeyTitle"
-	AllEmployeesFromGroupSuccessfullyAddedToTask = "AllEmployeesFromGroupSuccessfullyAddedToTask"
+	AllEmployeesFromGroupSuccessfullyAddedToTask       = "AllEmployeesFromGroupSuccessfullyAddedToTask"
+	NoEmployeesToAssignToTheTask                       = "NoEmployeesToAssignToTheTask"
+	ToAssignKeyTitle                                   = "ToAssignKeyTitle"
+	YouHaveBeenAssignedTheTask                         = "YouHaveBeenAssignedTheTask"
+	ToSeeTaskDetailsKeyTitle                           = "ToSeeTaskDetailsKeyTitle"
+	TaskDescriptionSkipped                             = "TaskDescriptionSkipped"
 )
 
 type MessageTitle string
@@ -313,7 +318,7 @@ var Messages = map[MessageTitle]map[Language]string{
 	},
 	TaskDescriptionAccepted: {
 		EN: "Description\n%s\nis accepted and added to the task. Assign it to the entire group or to individual employees?",
-		UA: "Опис\n%s\nприйнято та додано до задачі. Доручити його виконання всій групі чи окремим працівникам?",
+		UA: "Опис\n%s\nприйнято та додано до задачі. Доручити її виконання всій групі чи окремим працівникам?",
 	},
 	AddWholeGroupToTaskKeyTitle: {
 		EN: "Assign the entire group",
@@ -326,6 +331,26 @@ var Messages = map[MessageTitle]map[Language]string{
 	AllEmployeesFromGroupSuccessfullyAddedToTask: {
 		EN: "Task '%s' is assigned to all members of group '%s'.",
 		UA: "Виконання задачі '%s' доручено всім членам групи '%s'.",
+	},
+	NoEmployeesToAssignToTheTask: {
+		EN: "There are no employees who can be entrusted with this task",
+		UA: "Відсутні працівники, яким можна доручити виконання цієї задачі",
+	},
+	ToAssignKeyTitle: {
+		EN: "Assign",
+		UA: "Доручити",
+	},
+	YouHaveBeenAssignedTheTask: {
+		EN: "You have been assigned the following task:\n'%s'.",
+		UA: "Вам доручено виконання задачі:\n'%s'.",
+	},
+	ToSeeTaskDetailsKeyTitle: {
+		EN: "View details",
+		UA: "Переглянути деталі",
+	},
+	TaskDescriptionSkipped: {
+		EN: "Adding a description to the task has been skipped. You can do it later. Should I assign the task to the entire group or to individual employees?",
+		UA: "Додавання опису до задачі пропущено. Ви можете зробити це пізніше. Доручити виконання задачі всій групі чи окремим працівникам?",
 	},
 }
 

@@ -351,3 +351,38 @@ func NewAssignToEntireGroupAllSomeEmployees(user *entities.User) tgbotapi.Inline
 	)
 	return keyboard
 }
+
+func NewAssignKeyboard(user *entities.User, employeeID int) tgbotapi.InlineKeyboardMarkup {
+	assignKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToAssignKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	assignKeyData := keys.AssignToEmployeeWithID + strconv.Itoa(employeeID)
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(assignKeyTitle, assignKeyData),
+		),
+	)
+	return keyboard
+}
+
+func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineKeyboardMarkup {
+	toViewTaskDetailsKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToSeeTaskDetailsKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	toViewTaskDetailsKeyData := keys.ToSeeTaskDetailsTaskID + strconv.Itoa(taskID)
+	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(toViewTaskDetailsKeyTitle, toViewTaskDetailsKeyData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
+		),
+	)
+	return keyboard
+}

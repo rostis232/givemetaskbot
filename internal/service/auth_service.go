@@ -925,14 +925,57 @@ func (u *AuthService) AddAllEmployeesToTask(user *entities.User) error {
 		if err := u.repository.AddEmployeeToTask(int(task.Id), int(employee.UserId)); err != nil {
 			log.Println(err)
 		}
+		textToEmployee, err := messages.ReturnMessageByLanguage(messages.YouHaveBeenAssignedTheTask, employee.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		textToEmployee = fmt.Sprintf(textToEmployee, task.TaskName)
+		msgToEmployee := tgbotapi.NewMessage(employee.ChatId, textToEmployee)
+		msgToEmployee.ReplyMarkup = keyboards.SeeTaskDetailsForEmployee(&employee, int(task.Id))
+		MsgChan <- msgToEmployee
 	}
 	text, err := messages.ReturnMessageByLanguage(messages.AllEmployeesFromGroupSuccessfullyAddedToTask, user.Language)
 		if err != nil {
 			log.Println(err)
 		}
-		text = fmt.Sprintf(text, task.TaskName, group.GroupName)
-		msgToChief := tgbotapi.NewMessage(user.ChatId, text)
-		msgToChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
-		MsgChan <- msgToChief
+	text = fmt.Sprintf(text, task.TaskName, group.GroupName)
+	msgToChief := tgbotapi.NewMessage(user.ChatId, text)
+	msgToChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msgToChief
+	return nil
+}
+
+func (u *AuthService) AddSomeEmployeesToTaskShowList(user *entities.User) error {
+	allEmployees, err := u.repository.GetEmployeesWhichAreInTheGroupButNotAssignedToTheTask(user.ActiveTask)
+	if err != nil {
+		return err
+	}
+	if allEmployees == nil {
+		//In case if there are no employees
+		text, err := messages.ReturnMessageByLanguage(messages.NoEmployeesToAssignToTheTask, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		MsgChan <- msg
+	} else {
+		for _, e := range allEmployees {
+			msg := tgbotapi.NewMessage(user.ChatId, e.UserName)
+			msg.ReplyMarkup = keyboards.NewAssignKeyboard(user, int(e.UserId))
+			MsgChan <- msg
+		}
+	}
+	return nil
+}
+
+func (u *AuthService) SkipDescritionEntering(user *entities.User) error {
+	text, err := messages.ReturnMessageByLanguage(messages.TaskDescriptionSkipped, user.Language)
+	if err != nil {
+		log.Println("Помилка отримання тексту повідомлення")
+	}
+	msgToChief := tgbotapi.NewMessage(user.ChatId, text)
+	msgToChief.ReplyMarkup = keyboards.NewAssignToEntireGroupAllSomeEmployees(user)
+	MsgChan <- msgToChief
 	return nil
 }
