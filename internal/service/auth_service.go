@@ -48,7 +48,7 @@ func (u *AuthService) NewUserRegistration(chatId int64) error {
 
 func (u *AuthService) SelectLanguage(user *entities.User, callbackQueryData string) error {
 	msg := tgbotapi.NewMessage(user.ChatId, "")
-	err := errors.New("")
+	var err error
 
 	_, lng, ok := strings.Cut(callbackQueryData, ":")
 	if !ok {
@@ -234,7 +234,7 @@ func (u *AuthService) CreatingNewGroup(user *entities.User, message *tgbotapi.Me
 
 func (u *AuthService) AddingEmployeeToGroup(user *entities.User, message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(user.ChatId, messages.UnknownError)
-	err := errors.New("")
+	var err error
 	//Перевірка чи має код префікс
 	_, codeWithoutPrefix, cutting := strings.Cut(message.Text, keys.ChatIdPrefix)
 	if !cutting {
@@ -342,7 +342,7 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) error {
 		return err
 	}
 
-	if allGroups == nil || len(allGroups) == 0 {
+	if len(allGroups) == 0 {
 		//Якщо немає груп пишемо відповідне повідомлення
 		text, err := messages.ReturnMessageByLanguage(messages.NoGroups, user.Language)
 		if err != nil {
@@ -353,7 +353,7 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) error {
 	} else {
 		for _, g := range allGroups {
 			msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
-			msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, &g)
+			msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, int(g.Id))
 			MsgChan <- msg
 		}
 	}
@@ -374,7 +374,7 @@ func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
 		log.Println(err)
 		return err
 	}
-	if allGroups == nil || len(allGroups) == 0 {
+	if len(allGroups) == 0 {
 		//Якщо немає груп пишемо відповідне повідомлення
 		text, err := messages.ReturnMessageByLanguage(messages.NoGroups, user.Language)
 		if err != nil {
@@ -445,7 +445,7 @@ func (u *AuthService) UpdateGroupName(user *entities.User, newGroupName string) 
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	MsgChan <- msg
 
-	if allEmployees != nil && len(allEmployees) != 0 {
+	if len(allEmployees) != 0 {
 		for _, employee := range allEmployees {
 			messageForEmployee, err := messages.ReturnMessageByLanguage(messages.MessageNewGroupNameAccepted, employee.Language)
 			if err != nil {
@@ -606,6 +606,10 @@ func (u *AuthService) CopyEmployeeToAnotherGroup(user *entities.User, callbackQu
 		return err
 	}
 	groupsWithoutThisEmployee, err := u.repository.GetGroupsWithoutSelectedEmployee(employeeUserIdInt)
+	if err != nil {
+		return err
+	}
+
 	employee, err := u.repository.GetUserByUserId(int64(employeeUserIdInt))
 	if err != nil {
 		log.Println("Помилка отримання даних працівника з БД")
@@ -665,6 +669,9 @@ func (u *AuthService) ConfirmCopyEmployeeToAnotherGroup(user *entities.User, cal
 	}
 
 	employee, err := u.repository.GetUserByUserId(int64(employeeIdInt))
+	if err != nil {
+		return err
+	}
 
 	if err := u.repository.AddEmployeeToGroup(groupIdInt, employeeIdInt); err != nil {
 		log.Println(err)
@@ -750,7 +757,7 @@ func (u *AuthService) DeleteGroup(user *entities.User, callbackQueryData string)
 	MsgChan <- msgToChief
 
 	//Send message to employees
-	if allEmployees != nil && len(allEmployees) != 0 {
+	if len(allEmployees) != 0 {
 		for _, v := range allEmployees {
 			messageToEmployee, err := messages.ReturnMessageByLanguage(messages.GroupIsDeleted, v.Language)
 			if err != nil {

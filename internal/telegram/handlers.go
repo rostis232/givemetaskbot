@@ -221,6 +221,8 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 		if err := b.service.ShowTaskDetails(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
+	case strings.Contains(callbackQuery.Data, keys.ShowAllTasksFromGroupID):
+		//Add functional
 	}
 	return nil
 }

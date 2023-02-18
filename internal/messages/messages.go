@@ -76,7 +76,8 @@ const (
 	ToSeeTaskDetailsKeyTitle                           = "ToSeeTaskDetailsKeyTitle"
 	TaskDescriptionSkipped                             = "TaskDescriptionSkipped"
 	TaskDetailsForEmployees                            = "TaskDetailsForEmployees"
-	NoTaskDescription = "NoTaskDescription"
+	NoTaskDescription                                  = "NoTaskDescription"
+	ShowAllTasksFromGroupKeyTitle                      = "ShowAllTasksFromGroupKeyTitle"
 )
 
 type MessageTitle string
@@ -361,6 +362,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	NoTaskDescription: {
 		EN: "No description available",
 		UA: "Опис відсутній",
+	},
+	ShowAllTasksFromGroupKeyTitle: {
+		EN: "Display group tasks",
+		UA: "Відобразити задачі групи",
 	},
 }
 

@@ -163,35 +163,43 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 }
 
 // NewMenuForEvenGroup returns new inline keyboard for even group after showing all groups in Group Menu
-func NewMenuForEvenGroup(user *entities.User, group *entities.Group) tgbotapi.InlineKeyboardMarkup {
-	//TODO: Add key to create new task from group menu
+func NewMenuForEvenGroup(user *entities.User, groupID int) tgbotapi.InlineKeyboardMarkup {
 	createNewTaskKeyTitle, err := messages.ReturnMessageByLanguage(messages.CreateNewTaskKey, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
-	createNewTaskKeyData := keys.CreateNewTaskKeyData + strconv.Itoa(int(group.Id))
+	createNewTaskKeyData := keys.CreateNewTaskKeyData + strconv.Itoa(groupID)
+
+	showTasksKeyTitle, err := messages.ReturnMessageByLanguage(messages.ShowAllTasksFromGroupKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	showTasksKeyData := keys.ShowAllTasksFromGroupID + strconv.Itoa(groupID)
 
 	changeNameTitle, err := messages.ReturnMessageByLanguage(messages.RenameGroupKey, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
-	changeNameKey := keys.RenameGroupWithId + strconv.Itoa(int(group.Id))
+	changeNameKey := keys.RenameGroupWithId + strconv.Itoa(groupID)
 
 	showEmployeesTitle, err := messages.ReturnMessageByLanguage(messages.ShowAllEmployeesFromGroupWithIdKey, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
-	showEmployeesKey := keys.ShowAllEmployeesFromGroupWithId + strconv.Itoa(int(group.Id))
+	showEmployeesKey := keys.ShowAllEmployeesFromGroupWithId + strconv.Itoa(groupID)
 
 	deleteGroupTitle, err := messages.ReturnMessageByLanguage(messages.DeleteGroupKey, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
-	deleteGroupKey := keys.DeleteGroup + strconv.Itoa(int(group.Id))
+	deleteGroupKey := keys.DeleteGroup + strconv.Itoa(groupID)
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(createNewTaskKeyTitle, createNewTaskKeyData),
+		),
+		tgbotapi.NewInlineKeyboardRow( //Add functional
+			tgbotapi.NewInlineKeyboardButtonData(showTasksKeyTitle, showTasksKeyData),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(changeNameTitle, changeNameKey),
@@ -379,7 +387,7 @@ func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineK
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(toViewTaskDetailsKeyTitle, toViewTaskDetailsKeyData),
-		), // TODO: Implement functionality
+		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
 		),
