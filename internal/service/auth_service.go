@@ -4,6 +4,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
+	"strconv"
+	"strings"
+	"time"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/rostis232/givemetaskbot/internal/entities"
 	"github.com/rostis232/givemetaskbot/internal/keyboards"
@@ -11,9 +16,6 @@ import (
 	"github.com/rostis232/givemetaskbot/internal/messages"
 	"github.com/rostis232/givemetaskbot/internal/repository"
 	"github.com/rostis232/givemetaskbot/internal/state_service"
-	"log"
-	"strconv"
-	"strings"
 )
 
 var MsgChan = make(chan tgbotapi.MessageConfig)
@@ -989,6 +991,7 @@ func (u *AuthService) SkipDescritionEntering(user *entities.User) error {
 }
 
 func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData string) error {
+	//Gettin Task ID from callbasc data
 	_, taskIDString, ok := strings.Cut(callbackQueryData, keys.ToSeeTaskDetailsTaskID)
 	if !ok {
 		log.Println("Помилка отримання group ID")
@@ -999,6 +1002,8 @@ func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData str
 		log.Println("Помилка визначення ID")
 		return err
 	}
+
+	//Getting task entitie from repository
 	task, err := u.repository.GetTaskByID(taskIdInt)
 	if err != nil {
 		return err
@@ -1010,6 +1015,14 @@ func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData str
 	if task.TaskDescription != "no_description" {
 		taskDesc = task.TaskDescription
 	}
+
+	//Geting group entitie from repository
+	group, err := u.repository.GetGroupById(int(task.GroupId))
+	if err != nil {
+		return err
+	}
+
+	//Geting slice of executors from repository and formating string of their names
 	allExecutors, err := u.repository.GetAllExecutors(int(task.Id))
 	if err != nil {
 		return err
@@ -1022,11 +1035,22 @@ func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData str
 		}
 	}
 
+	//Formating creating date
+	createdTime, err := time.Parse(time.RFC3339, task.CreatingTime)
+	if err != nil {
+		log.Println(err)
+	}
+	createdString := createdTime.Format("02.01.2006")
+	if err != nil {
+		createdString = "parsing time error"
+	}
+
+
 	text, err := messages.ReturnMessageByLanguage(messages.TaskDetailsForEmployees, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
-	text = fmt.Sprintf(text, task.TaskName, taskDesc, executorsString)
+	text = fmt.Sprintf(text, task.TaskName, group.GroupName, createdString, taskDesc, executorsString)
 	msg := tgbotapi.NewMessage(user.ChatId, text)
 	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 	MsgChan <- msg
