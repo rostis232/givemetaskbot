@@ -174,7 +174,7 @@ func NewMenuForEvenGroup(user *entities.User, groupID int) tgbotapi.InlineKeyboa
 	if err != nil {
 		log.Println(err)
 	}
-	showTasksKeyData := keys.ShowAllTasksFromGroupID + strconv.Itoa(groupID)
+	showTasksKeyData := keys.ShowAllTasksByGorupID + strconv.Itoa(groupID)
 
 	changeNameTitle, err := messages.ReturnMessageByLanguage(messages.RenameGroupKey, user.Language)
 	if err != nil {
@@ -198,7 +198,7 @@ func NewMenuForEvenGroup(user *entities.User, groupID int) tgbotapi.InlineKeyboa
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(createNewTaskKeyTitle, createNewTaskKeyData),
 		),
-		tgbotapi.NewInlineKeyboardRow( //Add functional
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(showTasksKeyTitle, showTasksKeyData),
 		),
 		tgbotapi.NewInlineKeyboardRow(
@@ -296,9 +296,20 @@ func NewMenuForEvenGroupForEmployee(lng messages.Language, groupID int64) tgbota
 	leaveKey, err := messages.ReturnMessageByLanguage(messages.ExitFromTheGroup, lng)
 	if err != nil {
 		log.Println(err)
+		leaveKey = "Error key title parsing"
 	}
 	leaveData := keys.LeaveGroupID + strconv.Itoa(int(groupID))
+
+	showTasksKeyTitle, err := messages.ReturnMessageByLanguage(messages.ShowAllTasksFromGroupKeyTitle, lng)
+	if err != nil {
+		log.Println(err)
+		showTasksKeyTitle = "Error key title parsing"
+	}
+	showTaskData := keys.ShowAllTasksByGorupID + strconv.Itoa(int(groupID))
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(showTasksKeyTitle, showTaskData),
+		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(leaveKey, leaveData),
 		),
@@ -395,6 +406,7 @@ func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineK
 	return keyboard
 }
 
+//It`ll be needed when implementing time control
 func NewTimeZonesKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(

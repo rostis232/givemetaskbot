@@ -32,6 +32,6 @@ const (
 	AddSomeEmployeesToTaskKeyData   = "AddSomeEmployeesToTaskKeyData"
 	AssignToEmployeeWithID          = "AssignToEmployeeWithID-"
 	ToSeeTaskDetailsTaskID          = "ToSeeTaskDetailsTaskID-"
-	ShowAllTasksFromGroupID         = "ShowAllTasksFromGroupID-"
 	TimeZone                        = "time_zone_"
+	ShowAllTasksByGorupID           = "ShowAllTasksByGorupID-"
 )

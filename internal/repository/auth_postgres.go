@@ -213,5 +213,11 @@ func (a *AuthPostgres) GetAllExecutors(taskID int) ([]entities.User, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id IN (SELECT employee_user_id FROM %s WHERE task_id = $1);", UserTable, TaskEmployeeTable)
 	err := a.db.Select(&allExecutors, query, taskID)
 	return allExecutors, err
+}
 
+func (a *AuthPostgres) GetAllTasksByGroupID(groupID int64) ([]entities.Task, error) {
+	var tasks []entities.Task
+	query := fmt.Sprintf("SELECT * FROM %s WHERE group_id = $1;", TaskTable)
+	err := a.db.Select(&tasks, query, groupID)
+	return tasks, err
 }

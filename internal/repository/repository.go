@@ -37,6 +37,7 @@ type Authorisation interface {
 	AddEmployeeToTask(taskID, employeeID int) error
 	GetEmployeesWhichAreInTheGroupButNotAssignedToTheTask(taskID int) ([]entities.User, error)
 	GetAllExecutors(taskID int) ([]entities.User, error)
+	GetAllTasksByGroupID(groupID int64) ([]entities.Task, error) 
 }
 
 type Repository struct {

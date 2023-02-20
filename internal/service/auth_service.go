@@ -1056,3 +1056,30 @@ func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData str
 	MsgChan <- msg
 	return nil
 }
+
+//ShowAllGroupTasks shows all tasks from selected group
+func (u *AuthService) ShowAllGroupTasks(user *entities.User, callbackQueryData string) error {
+	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.ShowAllTasksByGorupID)
+	if !ok {
+		log.Println("Помилка отримання group ID")
+		return errors.New("error while getting group ID")
+	}
+	groupIdInt, err := strconv.Atoi(groupIdString)
+	if err != nil {
+		log.Println("Помилка визначення ID")
+		return err
+	}
+	tasks, err := u.repository.GetAllTasksByGroupID(int64(groupIdInt))
+	if err != nil {
+		return err
+	}
+
+	for _, task := range tasks {
+		text := fmt.Sprintf(task.TaskName)
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.SeeTaskDetailsForEmployee(user, int(task.Id))
+		MsgChan <- msg
+	}
+
+	return nil
+}
