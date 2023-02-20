@@ -394,3 +394,65 @@ func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineK
 	)
 	return keyboard
 }
+
+func NewTimeZonesKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("-12", keys.TimeZone+"-1200"),
+			tgbotapi.NewInlineKeyboardButtonData("-11", keys.TimeZone+"-1100"),
+			tgbotapi.NewInlineKeyboardButtonData("-10", keys.TimeZone+"-1000"),
+			tgbotapi.NewInlineKeyboardButtonData("-9:30", keys.TimeZone+"-0930"),
+			tgbotapi.NewInlineKeyboardButtonData("-9", keys.TimeZone+"-0900"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("-8", keys.TimeZone+"-0800"),
+			tgbotapi.NewInlineKeyboardButtonData("-7", keys.TimeZone+"-0700"),
+			tgbotapi.NewInlineKeyboardButtonData("-6", keys.TimeZone+"-0600"),
+			tgbotapi.NewInlineKeyboardButtonData("-5", keys.TimeZone+"-0500"),
+			tgbotapi.NewInlineKeyboardButtonData("-4:30", keys.TimeZone+"-0430"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("-4", keys.TimeZone+"-0400"),
+			tgbotapi.NewInlineKeyboardButtonData("-3:30", keys.TimeZone+"-0330"),
+			tgbotapi.NewInlineKeyboardButtonData("-3", keys.TimeZone+"-0300"),
+			tgbotapi.NewInlineKeyboardButtonData("-2", keys.TimeZone+"-0200"),
+			tgbotapi.NewInlineKeyboardButtonData("-1", keys.TimeZone+"-0100"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("0", keys.TimeZone+"+0000"),
+			tgbotapi.NewInlineKeyboardButtonData("+1", keys.TimeZone+"+0100"),
+			tgbotapi.NewInlineKeyboardButtonData("+2", keys.TimeZone+"+0200"),
+			tgbotapi.NewInlineKeyboardButtonData("+3", keys.TimeZone+"+0300"),
+			tgbotapi.NewInlineKeyboardButtonData("+3:30", keys.TimeZone+"+0330"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("+4", keys.TimeZone+"+0400"),
+			tgbotapi.NewInlineKeyboardButtonData("+4:30", keys.TimeZone+"+0430"),
+			tgbotapi.NewInlineKeyboardButtonData("+5", keys.TimeZone+"+0500"),
+			tgbotapi.NewInlineKeyboardButtonData("+5:30", keys.TimeZone+"+0530"),
+			tgbotapi.NewInlineKeyboardButtonData("+5:45", keys.TimeZone+"+0545"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("+6", keys.TimeZone+"+0600"),
+			tgbotapi.NewInlineKeyboardButtonData("+6:30", keys.TimeZone+"+0630"),
+			tgbotapi.NewInlineKeyboardButtonData("+7", keys.TimeZone+"+0700"),
+			tgbotapi.NewInlineKeyboardButtonData("+8", keys.TimeZone+"+0800"),
+			tgbotapi.NewInlineKeyboardButtonData("+9", keys.TimeZone+"+0900"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("+9:30", keys.TimeZone+"+0930"),
+			tgbotapi.NewInlineKeyboardButtonData("+10", keys.TimeZone+"+1000"),
+			tgbotapi.NewInlineKeyboardButtonData("+10:30", keys.TimeZone+"+1030"),
+			tgbotapi.NewInlineKeyboardButtonData("+11", keys.TimeZone+"+1100"),
+			tgbotapi.NewInlineKeyboardButtonData("+11:30", keys.TimeZone+"+1130"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("+12", keys.TimeZone+"+1200"),
+			tgbotapi.NewInlineKeyboardButtonData("+12:45", keys.TimeZone+"+1245"),
+			tgbotapi.NewInlineKeyboardButtonData("+13", keys.TimeZone+"+1300"),
+			tgbotapi.NewInlineKeyboardButtonData("+13:45", keys.TimeZone+"+1345"),
+			tgbotapi.NewInlineKeyboardButtonData("+14", keys.TimeZone+"+1400"),
+		),
+	)
+	return keyboard
+}

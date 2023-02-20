@@ -33,4 +33,5 @@ const (
 	AssignToEmployeeWithID          = "AssignToEmployeeWithID-"
 	ToSeeTaskDetailsTaskID          = "ToSeeTaskDetailsTaskID-"
 	ShowAllTasksFromGroupID         = "ShowAllTasksFromGroupID-"
+	TimeZone                        = "time_zone_"
 )

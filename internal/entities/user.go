@@ -9,7 +9,8 @@ type User struct {
 	ChatId      int64             `db:"chat_id" binding:"required"`
 	UserName    string            `db:"user_name,omitempty"`
 	Language    messages.Language `db:"language,omitempty"`
-	Status      int               `db:"status,omitempty"`
+	Status      uint8             `db:"status,omitempty"`
 	ActiveGroup int               `db:"active_group,omitempty"`
 	ActiveTask  int               `db:"active_task,omitempty"`
+	TimeZone    string            `db:"time_zone"`
 }

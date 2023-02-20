@@ -5,4 +5,5 @@ type Task struct {
 	TaskName        string `db:"task_name"`
 	TaskDescription string `db:"task_description"`
 	GroupId         int64  `db:"group_id"`
+	CreatingTime    string `db:"creating_time"`
 }

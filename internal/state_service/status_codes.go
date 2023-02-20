@@ -14,4 +14,5 @@ const (
 	Adding_employee_to_group
 	Adding_employee_to_task
 	MainMenu
+	Expecting_time_zone //It`ll be need to be used when implementing time control
 )

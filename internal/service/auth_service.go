@@ -46,6 +46,7 @@ func (u *AuthService) NewUserRegistration(chatId int64) error {
 	return nil
 }
 
+////It`ll be  need to be used when implementing time control
 func (u *AuthService) SelectLanguage(user *entities.User, callbackQueryData string) error {
 	msg := tgbotapi.NewMessage(user.ChatId, "")
 	var err error
