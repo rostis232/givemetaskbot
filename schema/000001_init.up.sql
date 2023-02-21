@@ -21,7 +21,8 @@ CREATE TABLE tasks (
     task_name VARCHAR(50) DEFAULT 'no_name' NOT NULL,
     task_description TEXT DEFAULT 'no_description' NOT NULL,
     group_id INT NOT NULL,
-    creating_time timestamp (0) with time zone DEFAULT NOW(),
+    creating_time timestamp (0) with time zone DEFAULT NOW() NOT NULL,
+    closed BOOLEAN DEFAULT 'false' NOT NULL,
     FOREIGN KEY (group_id) REFERENCES groups (group_id) ON DELETE CASCADE
 );
 
@@ -29,6 +30,7 @@ CREATE TABLE task_employee (
     task_employee_id SERIAL PRIMARY KEY,
     task_id INT NOT NULL,
     employee_user_id INT NOT NULL,
+    closing_request BOOLEAN DEFAULT 'false' NOT NULL,
     FOREIGN KEY (task_id) REFERENCES tasks (task_id) ON DELETE CASCADE,
     FOREIGN KEY (employee_user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );

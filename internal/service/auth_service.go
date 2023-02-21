@@ -48,7 +48,7 @@ func (u *AuthService) NewUserRegistration(chatId int64) error {
 	return nil
 }
 
-////It`ll be  need to be used when implementing time control
+// //It`ll be  need to be used when implementing time control
 func (u *AuthService) SelectLanguage(user *entities.User, callbackQueryData string) error {
 	msg := tgbotapi.NewMessage(user.ChatId, "")
 	var err error
@@ -945,9 +945,9 @@ func (u *AuthService) AddAllEmployeesToTask(user *entities.User) error {
 		MsgChan <- msgToEmployee
 	}
 	text, err := messages.ReturnMessageByLanguage(messages.AllEmployeesFromGroupSuccessfullyAddedToTask, user.Language)
-		if err != nil {
-			log.Println(err)
-		}
+	if err != nil {
+		log.Println(err)
+	}
 	text = fmt.Sprintf(text, task.TaskName, group.GroupName)
 	msgToChief := tgbotapi.NewMessage(user.ChatId, text)
 	msgToChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
@@ -1030,7 +1030,7 @@ func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData str
 	executorsString := ""
 	for index, executor := range allExecutors {
 		executorsString += executor.UserName
-		if index != len(allExecutors) - 1 {
+		if index != len(allExecutors)-1 {
 			executorsString += "\n"
 		}
 	}
@@ -1045,7 +1045,6 @@ func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData str
 		createdString = "parsing time error"
 	}
 
-
 	text, err := messages.ReturnMessageByLanguage(messages.TaskDetailsForEmployees, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -1057,9 +1056,9 @@ func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData str
 	return nil
 }
 
-//ShowAllGroupTasks shows all tasks from selected group
-func (u *AuthService) ShowAllGroupTasks(user *entities.User, callbackQueryData string) error {
-	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.ShowAllTasksByGorupID)
+// ShowAllGroupTasks shows all tasks from selected group
+func (u *AuthService) ShowAllGroupTasksForChief(user *entities.User, callbackQueryData string) error {
+	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.ShowAllTasksByGorupIDForChief)
 	if !ok {
 		log.Println("Помилка отримання group ID")
 		return errors.New("error while getting group ID")
@@ -1074,10 +1073,57 @@ func (u *AuthService) ShowAllGroupTasks(user *entities.User, callbackQueryData s
 		return err
 	}
 
-	for _, task := range tasks {
-		text := fmt.Sprintf(task.TaskName)
+	if len(tasks) != 0 {
+		for _, task := range tasks {
+			text := fmt.Sprintf(task.TaskName)
+			msg := tgbotapi.NewMessage(user.ChatId, text)
+			msg.ReplyMarkup = keyboards.SeeTaskDetailsForEmployee(user, int(task.Id))
+			MsgChan <- msg
+		}
+	} else {
+		text, err := messages.ReturnMessageByLanguage(messages.NoTasksForGroup, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
 		msg := tgbotapi.NewMessage(user.ChatId, text)
-		msg.ReplyMarkup = keyboards.SeeTaskDetailsForEmployee(user, int(task.Id))
+		//TODO:This keyboard is only for Chief, but shows to employyes too!
+		msg.ReplyMarkup = keyboards.CreateNewTaskKeyboard(user, groupIdInt)
+		MsgChan <- msg
+	}
+
+	return nil
+}
+
+func (u *AuthService) ShowAllGroupTasksForEmployee(user *entities.User, callbackQueryData string) error {
+	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.ShowAllTasksByGorupIDForEmployee)
+	if !ok {
+		log.Println("Помилка отримання group ID")
+		return errors.New("error while getting group ID")
+	}
+	groupIdInt, err := strconv.Atoi(groupIdString)
+	if err != nil {
+		log.Println("Помилка визначення ID")
+		return err
+	}
+	tasks, err := u.repository.GetAllTasksByGroupID(int64(groupIdInt))
+	if err != nil {
+		return err
+	}
+
+	if len(tasks) != 0 {
+		for _, task := range tasks {
+			text := fmt.Sprintf(task.TaskName)
+			msg := tgbotapi.NewMessage(user.ChatId, text)
+			msg.ReplyMarkup = keyboards.SeeTaskDetailsForEmployee(user, int(task.Id))
+			MsgChan <- msg
+		}
+	} else {
+		text, err := messages.ReturnMessageByLanguage(messages.NoTasksForGroup, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		MsgChan <- msg
 	}
 

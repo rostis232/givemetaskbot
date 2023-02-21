@@ -6,4 +6,5 @@ type Task struct {
 	TaskDescription string `db:"task_description"`
 	GroupId         int64  `db:"group_id"`
 	CreatingTime    string `db:"creating_time"`
+	Closed          bool   `db:"closed"`
 }

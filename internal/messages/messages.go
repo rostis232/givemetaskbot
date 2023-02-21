@@ -78,6 +78,7 @@ const (
 	TaskDetailsForEmployees                            = "TaskDetailsForEmployees"
 	NoTaskDescription                                  = "NoTaskDescription"
 	ShowAllTasksFromGroupKeyTitle                      = "ShowAllTasksFromGroupKeyTitle"
+	NoTasksForGroup = "NoTasksForGroup"
 )
 
 type MessageTitle string
@@ -366,6 +367,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	ShowAllTasksFromGroupKeyTitle: {
 		EN: "Display group tasks",
 		UA: "Відобразити задачі групи",
+	},
+	NoTasksForGroup: {
+		EN: "No tasks",
+		UA: "Задачі відсутні",
 	},
 }
 
