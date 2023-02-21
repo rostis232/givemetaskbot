@@ -1117,7 +1117,7 @@ func (u *AuthService) ShowTaskDetailsForChief(user *entities.User, callbackQuery
 	}
 	text = fmt.Sprintf(text, task.TaskName, group.GroupName, createdString, taskDesc, executorsString)
 	msg := tgbotapi.NewMessage(user.ChatId, text)
-	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	msg.ReplyMarkup = keyboards.TaskDetailsKeyboardForChief(user, taskIdInt)
 	MsgChan <- msg
 	return nil
 }

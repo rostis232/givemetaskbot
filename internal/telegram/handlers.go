@@ -233,6 +233,14 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 		if err := b.service.ShowAllGroupTasksForEmployee(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
+	case strings.Contains(callbackQuery.Data, keys.MarkTaskAsClosedForChiefKeyData):
+		//TODO:Implement
+	case strings.Contains(callbackQuery.Data, keys.DeleteTaskForChiefKeyData):
+		//TODO:Implement
+	case strings.Contains(callbackQuery.Data, keys.AddExecutorForChiefKeyData):
+		//TODO:Implement
+	case strings.Contains(callbackQuery.Data, keys.DeleteTaskForChiefKeyData):
+		//TODO:Implement
 	}
 	return nil
 }

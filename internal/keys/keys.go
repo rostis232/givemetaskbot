@@ -36,4 +36,8 @@ const (
 	TimeZone                          = "time_zone_"
 	ShowAllTasksByGorupIDForChief     = "ShowAllTasksByGorupIDForChief-"
 	ShowAllTasksByGorupIDForEmployee  = "ShowAllTasksByGorupIDForEmployee-"
+	MarkTaskAsClosedForChiefKeyData   = "MarkTaskAsClosedForChiefKeyData-"
+	DeleteTaskForChiefKeyData         = "DeleteTaskForChiefKeyData-"
+	AddExecutorForChiefKeyData        = "AddExecutorForChiefKeyData-"
+	RemoveExecutorForChiefKeyData     = "RemoveExecutorForChiefKeyData-"
 )

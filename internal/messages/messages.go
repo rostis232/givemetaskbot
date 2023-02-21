@@ -78,7 +78,11 @@ const (
 	TaskDetailsForEmployees                            = "TaskDetailsForEmployees"
 	NoTaskDescription                                  = "NoTaskDescription"
 	ShowAllTasksFromGroupKeyTitle                      = "ShowAllTasksFromGroupKeyTitle"
-	NoTasksForGroup = "NoTasksForGroup"
+	NoTasksForGroup                                    = "NoTasksForGroup"
+	MarkTaskAsClosedForChiefKeyTitle                   = "MarkTaskAsClosedForChiefKeyTitle"
+	DeleteTaskForChiefKeyTitle                         = "DeleteTaskForChiefKeyTitle"
+	AddExecutorForChiefKeyTitle                        = "AddExecutorForChiefKeyTitle"
+	RemoveExecutorForChiefKeyTitle                     = "RemoveExecutorForChiefKeyTitle"
 )
 
 type MessageTitle string
@@ -371,6 +375,22 @@ var Messages = map[MessageTitle]map[Language]string{
 	NoTasksForGroup: {
 		EN: "No tasks",
 		UA: "Задачі відсутні",
+	},
+	MarkTaskAsClosedForChiefKeyTitle: {
+		EN: "Mark as done",
+		UA: "Позначити як виконану",
+	},
+	DeleteTaskForChiefKeyTitle: {
+		EN: "Delete",
+		UA: "Видалити",
+	},
+	AddExecutorForChiefKeyTitle: {
+		EN: "Add an executor",
+		UA: "Додати виконавця",
+	},
+	RemoveExecutorForChiefKeyTitle: {
+		EN: "Remove an executor",
+		UA: "Прибрати виконавця",
 	},
 }
 

@@ -511,3 +511,52 @@ func CreateNewTaskKeyboard(user *entities.User, groupID int) tgbotapi.InlineKeyb
 	)
 	return keyboard
 }
+
+func TaskDetailsKeyboardForChief(user *entities.User, taskID int) tgbotapi.InlineKeyboardMarkup {
+	markAsDoneKeyTitle, err := messages.ReturnMessageByLanguage(messages.MarkTaskAsClosedForChiefKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	markAsDoneKeyData := keys.MarkTaskAsClosedForChiefKeyData + strconv.Itoa(taskID)
+
+	deleteKeyTitle, err := messages.ReturnMessageByLanguage(messages.DeleteTaskForChiefKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	deleteKeyData := keys.DeleteTaskForChiefKeyData + strconv.Itoa(taskID)
+
+	addExecutorKeyTitle, err := messages.ReturnMessageByLanguage(messages.AddExecutorForChiefKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	addExecutorKeyData := keys.AddExecutorForChiefKeyData + strconv.Itoa(taskID)
+
+	removeExecutorKeyTitle, err := messages.ReturnMessageByLanguage(messages.RemoveExecutorForChiefKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	removeExecutorKeyData := keys.RemoveExecutorForChiefKeyData + strconv.Itoa(taskID)
+
+	mainMenuKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(markAsDoneKeyTitle, markAsDoneKeyData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(deleteKeyTitle, deleteKeyData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(addExecutorKeyTitle, addExecutorKeyData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(removeExecutorKeyTitle, removeExecutorKeyData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKeyTitle, keys.GoToMainMenu),
+		),
+	)
+	return keyboard
+}
