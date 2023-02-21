@@ -234,13 +234,21 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 			log.Println(err)
 		}
 	case strings.Contains(callbackQuery.Data, keys.MarkTaskAsClosedForChiefKeyData):
-		//TODO:Implement
+		if err := b.service.MarkTaskAsComplete(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
 	case strings.Contains(callbackQuery.Data, keys.DeleteTaskForChiefKeyData):
-		//TODO:Implement
-	case strings.Contains(callbackQuery.Data, keys.AddExecutorForChiefKeyData):
-		//TODO:Implement
+		if err := b.service.DeleteTask(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
+	case callbackQuery.Data == keys.AddExecutorForChiefKeyData:
+		if err := b.service.AddSomeEmployeesToTaskShowList(&user); err != nil {
+			log.Println(err)
+		}
 	case strings.Contains(callbackQuery.Data, keys.DeleteTaskForChiefKeyData):
-		//TODO:Implement
+		if err := b.service.DeleteExecutors(&user, callbackQuery.Data); err != nil {
+			log.Println(err)
+		}
 	}
 	return nil
 }

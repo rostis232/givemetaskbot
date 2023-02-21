@@ -1069,6 +1069,13 @@ func (u *AuthService) ShowTaskDetailsForChief(user *entities.User, callbackQuery
 		return err
 	}
 
+	//Writing to user state active task ID
+	user.ActiveTask = taskIdInt
+	err = u.repository.UpdateStatus(user)
+	if err != nil {
+		return err
+	}
+
 	//Getting task entitie from repository
 	task, err := u.repository.GetTaskByID(taskIdInt)
 	if err != nil {
@@ -1193,5 +1200,20 @@ func (u *AuthService) ShowAllGroupTasksForEmployee(user *entities.User, callback
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		MsgChan <- msg
 	}
+	return nil
+}
+
+func (u *AuthService) MarkTaskAsComplete(user *entities.User, callbackQueryData string) error {
+	// TODO: Implement
+	return nil
+}
+
+func (u *AuthService) DeleteTask(user *entities.User, callbackQueryData string) error {
+	// TODO: Implement
+	return nil
+}
+
+func (u *AuthService) DeleteExecutors(user *entities.User, callbackQueryData string) error {
+	// TODO: Implement
 	return nil
 }

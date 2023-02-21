@@ -529,7 +529,6 @@ func TaskDetailsKeyboardForChief(user *entities.User, taskID int) tgbotapi.Inlin
 	if err != nil {
 		log.Println(err)
 	}
-	addExecutorKeyData := keys.AddExecutorForChiefKeyData + strconv.Itoa(taskID)
 
 	removeExecutorKeyTitle, err := messages.ReturnMessageByLanguage(messages.RemoveExecutorForChiefKeyTitle, user.Language)
 	if err != nil {
@@ -549,7 +548,7 @@ func TaskDetailsKeyboardForChief(user *entities.User, taskID int) tgbotapi.Inlin
 			tgbotapi.NewInlineKeyboardButtonData(deleteKeyTitle, deleteKeyData),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(addExecutorKeyTitle, addExecutorKeyData),
+			tgbotapi.NewInlineKeyboardButtonData(addExecutorKeyTitle, keys.AddExecutorForChiefKeyData),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(removeExecutorKeyTitle, removeExecutorKeyData),

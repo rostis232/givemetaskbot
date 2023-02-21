@@ -38,6 +38,6 @@ const (
 	ShowAllTasksByGorupIDForEmployee  = "ShowAllTasksByGorupIDForEmployee-"
 	MarkTaskAsClosedForChiefKeyData   = "MarkTaskAsClosedForChiefKeyData-"
 	DeleteTaskForChiefKeyData         = "DeleteTaskForChiefKeyData-"
-	AddExecutorForChiefKeyData        = "AddExecutorForChiefKeyData-"
+	AddExecutorForChiefKeyData        = "AddExecutorForChiefKeyData"
 	RemoveExecutorForChiefKeyData     = "RemoveExecutorForChiefKeyData-"
 )
