@@ -39,7 +39,8 @@ type Authorisation interface {
 	AddAllEmployeesToTask(user *entities.User) error
 	AddSomeEmployeesToTaskShowList(user *entities.User) error
 	SkipDescritionEntering(user *entities.User) error
-	ShowTaskDetails(user *entities.User, callbackQueryData string) error
+	ShowTaskDetailsForEmployee(user *entities.User, callbackQueryData string) error
+	ShowTaskDetailsForChief(user *entities.User, callbackQueryData string) error
 	ShowAllGroupTasksForChief(user *entities.User, callbackQueryData string) error
 	ShowAllGroupTasksForEmployee(user *entities.User, callbackQueryData string) error
 }

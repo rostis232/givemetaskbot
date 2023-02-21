@@ -990,9 +990,9 @@ func (u *AuthService) SkipDescritionEntering(user *entities.User) error {
 	return nil
 }
 
-func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData string) error {
+func (u *AuthService) ShowTaskDetailsForEmployee(user *entities.User, callbackQueryData string) error {
 	//Gettin Task ID from callbasc data
-	_, taskIDString, ok := strings.Cut(callbackQueryData, keys.ToSeeTaskDetailsTaskID)
+	_, taskIDString, ok := strings.Cut(callbackQueryData, keys.ToSeeTaskDetailsTaskIDForEmployee)
 	if !ok {
 		log.Println("Помилка отримання group ID")
 		return errors.New("error while getting group ID")
@@ -1056,7 +1056,73 @@ func (u *AuthService) ShowTaskDetails(user *entities.User, callbackQueryData str
 	return nil
 }
 
-// ShowAllGroupTasks shows all tasks from selected group
+func (u *AuthService) ShowTaskDetailsForChief(user *entities.User, callbackQueryData string) error {
+	//Gettin Task ID from callback data
+	_, taskIDString, ok := strings.Cut(callbackQueryData, keys.ToSeeTaskDetailsTaskIDForChief)
+	if !ok {
+		log.Println("Помилка отримання group ID")
+		return errors.New("error while getting group ID")
+	}
+	taskIdInt, err := strconv.Atoi(taskIDString)
+	if err != nil {
+		log.Println("Помилка визначення ID")
+		return err
+	}
+
+	//Getting task entitie from repository
+	task, err := u.repository.GetTaskByID(taskIdInt)
+	if err != nil {
+		return err
+	}
+	taskDesc, err := messages.ReturnMessageByLanguage(messages.NoTaskDescription, user.Language)
+	if err != nil {
+		return err
+	}
+	if task.TaskDescription != "no_description" {
+		taskDesc = task.TaskDescription
+	}
+
+	//Geting group entitie from repository
+	group, err := u.repository.GetGroupById(int(task.GroupId))
+	if err != nil {
+		return err
+	}
+
+	//Geting slice of executors from repository and formating string of their names
+	allExecutors, err := u.repository.GetAllExecutors(int(task.Id))
+	if err != nil {
+		return err
+	}
+	executorsString := ""
+	for index, executor := range allExecutors {
+		executorsString += executor.UserName
+		if index != len(allExecutors)-1 {
+			executorsString += "\n"
+		}
+	}
+
+	//Formating creating date
+	createdTime, err := time.Parse(time.RFC3339, task.CreatingTime)
+	if err != nil {
+		log.Println(err)
+	}
+	createdString := createdTime.Format("02.01.2006")
+	if err != nil {
+		createdString = "parsing time error"
+	}
+
+	text, err := messages.ReturnMessageByLanguage(messages.TaskDetailsForEmployees, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	text = fmt.Sprintf(text, task.TaskName, group.GroupName, createdString, taskDesc, executorsString)
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msg
+	return nil
+}
+
+// ShowAllGroupTasksForChief shows all tasks from selected group for Chief
 func (u *AuthService) ShowAllGroupTasksForChief(user *entities.User, callbackQueryData string) error {
 	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.ShowAllTasksByGorupIDForChief)
 	if !ok {
@@ -1077,7 +1143,7 @@ func (u *AuthService) ShowAllGroupTasksForChief(user *entities.User, callbackQue
 		for _, task := range tasks {
 			text := fmt.Sprintf(task.TaskName)
 			msg := tgbotapi.NewMessage(user.ChatId, text)
-			msg.ReplyMarkup = keyboards.SeeTaskDetailsForEmployee(user, int(task.Id))
+			msg.ReplyMarkup = keyboards.SeeTaskDetailsForChief(user, int(task.Id))
 			MsgChan <- msg
 		}
 	} else {
@@ -1094,6 +1160,7 @@ func (u *AuthService) ShowAllGroupTasksForChief(user *entities.User, callbackQue
 	return nil
 }
 
+// ShowAllGroupTasksForEmployee shows all tasks from selected group for Employees
 func (u *AuthService) ShowAllGroupTasksForEmployee(user *entities.User, callbackQueryData string) error {
 	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.ShowAllTasksByGorupIDForEmployee)
 	if !ok {
@@ -1126,6 +1193,5 @@ func (u *AuthService) ShowAllGroupTasksForEmployee(user *entities.User, callback
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		MsgChan <- msg
 	}
-
 	return nil
 }

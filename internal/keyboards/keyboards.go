@@ -390,7 +390,7 @@ func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineK
 	if err != nil {
 		log.Println(err)
 	}
-	toViewTaskDetailsKeyData := keys.ToSeeTaskDetailsTaskID + strconv.Itoa(taskID)
+	toViewTaskDetailsKeyData := keys.ToSeeTaskDetailsTaskIDForEmployee + strconv.Itoa(taskID)
 	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -406,7 +406,28 @@ func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineK
 	return keyboard
 }
 
-//TODO: It`ll be needed when implementing time control
+func SeeTaskDetailsForChief(user *entities.User, taskID int) tgbotapi.InlineKeyboardMarkup {
+	toViewTaskDetailsKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToSeeTaskDetailsKeyTitle, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	toViewTaskDetailsKeyData := keys.ToSeeTaskDetailsTaskIDForChief + strconv.Itoa(taskID)
+	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(toViewTaskDetailsKeyTitle, toViewTaskDetailsKeyData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
+		),
+	)
+	return keyboard
+}
+
+//It`ll be needed when implementing time control
 // func NewTimeZonesKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 // 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 // 		tgbotapi.NewInlineKeyboardRow(
