@@ -37,7 +37,8 @@ type Authorisation interface {
 	CreateNewTaskGotTitle(user *entities.User, taskTitle string) error
 	UpdateTaskDescription(user *entities.User, taskDesc string) error
 	AddAllEmployeesToTask(user *entities.User) error
-	AddSomeEmployeesToTaskShowList(user *entities.User) error
+	AddSomeEmployeesToTaskShowList(user *entities.User, callbackQueryData string) error
+	AssignEmployee(user *entities.User, callbackQueryData string) error
 	SkipDescritionEntering(user *entities.User) error
 	ShowTaskDetailsForEmployee(user *entities.User, callbackQueryData string) error
 	ShowTaskDetailsForChief(user *entities.User, callbackQueryData string) error

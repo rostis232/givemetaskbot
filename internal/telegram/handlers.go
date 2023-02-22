@@ -210,7 +210,11 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 			log.Println(err)
 		}
 	case callbackQuery.Data == keys.AddSomeEmployeesToTaskKeyData:
-		if err := b.service.AddSomeEmployeesToTaskShowList(&user); err != nil {
+		if err := b.service.AddSomeEmployeesToTaskShowList(&user, ""); err != nil {
+			log.Println(err)
+		}
+	case strings.Contains(callbackQuery.Data, keys.AssignToEmployeeWithID):
+		if err := b.service.AssignEmployee(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
 	case callbackQuery.Data == keys.SkipDescritionEntering:
@@ -241,8 +245,8 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 		if err := b.service.DeleteTask(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
-	case callbackQuery.Data == keys.AddExecutorForChiefKeyData:
-		if err := b.service.AddSomeEmployeesToTaskShowList(&user); err != nil {
+	case strings.Contains(callbackQuery.Data, keys.AddExecutorForChiefKeyData):
+		if err := b.service.AddSomeEmployeesToTaskShowList(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
 	case strings.Contains(callbackQuery.Data, keys.DeleteTaskForChiefKeyData):

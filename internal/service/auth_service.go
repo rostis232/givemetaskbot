@@ -921,6 +921,7 @@ func (u *AuthService) AddAllEmployeesToTask(user *entities.User) error {
 		return err
 	}
 	if len(allEmployees) == 0 {
+		// Message to chief in case when there aren`t employees in the group
 		text, err := messages.ReturnMessageByLanguage(messages.NoEmployeesInTheGroup, user.Language)
 		if err != nil {
 			log.Println(err)
@@ -935,6 +936,7 @@ func (u *AuthService) AddAllEmployeesToTask(user *entities.User) error {
 		if err := u.repository.AddEmployeeToTask(int(task.Id), int(employee.UserId)); err != nil {
 			log.Println(err)
 		}
+		//Message to employee
 		textToEmployee, err := messages.ReturnMessageByLanguage(messages.YouHaveBeenAssignedTheTask, employee.Language)
 		if err != nil {
 			log.Println(err)
@@ -955,12 +957,31 @@ func (u *AuthService) AddAllEmployeesToTask(user *entities.User) error {
 	return nil
 }
 
-func (u *AuthService) AddSomeEmployeesToTaskShowList(user *entities.User) error {
-	allEmployees, err := u.repository.GetEmployeesWhichAreInTheGroupButNotAssignedToTheTask(user.ActiveTask)
+func (u *AuthService) AddSomeEmployeesToTaskShowList(user *entities.User, callbackQueryData string) error {
+	var taskID int
+	if user.ActiveTask != 0 {
+		taskID = user.ActiveTask
+	} else if callbackQueryData != "" {
+		_, taskIdString, ok := strings.Cut(callbackQueryData, keys.AddExecutorForChiefKeyData)
+		if !ok {
+			log.Println("Помилка отримання group ID")
+			return errors.New("error while getting group ID")
+		}
+		taskIdInt, err := strconv.Atoi(taskIdString)
+		if err != nil {
+			log.Println("Помилка визначення ID")
+			return err
+		}
+		taskID = taskIdInt
+	} else {
+		return fmt.Errorf("cannot parse task ID")
+	}
+
+	allEmployees, err := u.repository.GetEmployeesWhichAreInTheGroupButNotAssignedToTheTask(taskID)
 	if err != nil {
 		return err
 	}
-	if allEmployees == nil {
+	if len(allEmployees) == 0 {
 		//In case if there are no employees
 		text, err := messages.ReturnMessageByLanguage(messages.NoEmployeesToAssignToTheTask, user.Language)
 		if err != nil {
@@ -972,10 +993,61 @@ func (u *AuthService) AddSomeEmployeesToTaskShowList(user *entities.User) error 
 	} else {
 		for _, e := range allEmployees {
 			msg := tgbotapi.NewMessage(user.ChatId, e.UserName)
-			msg.ReplyMarkup = keyboards.NewAssignKeyboard(user, int(e.UserId))
+			msg.ReplyMarkup = keyboards.NewAssignKeyboard(user, int(e.UserId), taskID)
 			MsgChan <- msg
 		}
 	}
+	return nil
+}
+
+func (u *AuthService) AssignEmployee(user *entities.User, callbackQueryData string) error {
+	taskIDString, employeeIDString, ok := strings.Cut(callbackQueryData, keys.AssignToEmployeeWithID)
+	if !ok {
+		return errors.New("error while getting group ID")
+	}
+	taskIdInt, err := strconv.Atoi(taskIDString)
+	if err != nil {
+		return err
+	}
+
+	task, err := u.repository.GetTaskByID(taskIdInt)
+	if err != nil {
+		return err
+	}
+
+	employeeIDInt, err := strconv.Atoi(employeeIDString)
+	if err != nil {
+		return err
+	}
+
+	employee, err := u.repository.GetUserByUserId(int64(employeeIDInt))
+	if err != nil {
+		return err
+	}
+
+	err = u.repository.AddEmployeeToTask(taskIdInt, employeeIDInt)
+	if err != nil {
+		return err
+	}
+	//make message to chief
+	text, err := messages.ReturnMessageByLanguage(messages.EmployeeAddedToTheTaskMessage, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	text = fmt.Sprintf(text, task.TaskName, employee.UserName)
+	msgToChief := tgbotapi.NewMessage(user.ChatId, text)
+	msgToChief.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msgToChief
+
+	//make message to employee
+	textToEmployee, err := messages.ReturnMessageByLanguage(messages.YouHaveBeenAssignedTheTask, employee.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	textToEmployee = fmt.Sprintf(textToEmployee, task.TaskName)
+	msgToEmployee := tgbotapi.NewMessage(employee.ChatId, textToEmployee)
+	msgToEmployee.ReplyMarkup = keyboards.SeeTaskDetailsForEmployee(&employee, int(task.Id))
+	MsgChan <- msgToEmployee
 	return nil
 }
 
@@ -1066,13 +1138,6 @@ func (u *AuthService) ShowTaskDetailsForChief(user *entities.User, callbackQuery
 	taskIdInt, err := strconv.Atoi(taskIDString)
 	if err != nil {
 		log.Println("Помилка визначення ID")
-		return err
-	}
-
-	//Writing to user state active task ID
-	user.ActiveTask = taskIdInt
-	err = u.repository.UpdateStatus(user)
-	if err != nil {
 		return err
 	}
 

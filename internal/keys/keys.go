@@ -30,7 +30,7 @@ const (
 	SkipDescritionEntering            = "SkipDescritionEntering"
 	AddWholeGroupToTaskKeyData        = "AddWholeGroupToTaskKeyData"
 	AddSomeEmployeesToTaskKeyData     = "AddSomeEmployeesToTaskKeyData"
-	AssignToEmployeeWithID            = "AssignToEmployeeWithID-"
+	AssignToEmployeeWithID            = "-AssignToEmployeeWithID-"
 	ToSeeTaskDetailsTaskIDForEmployee = "ToSeeTaskDetailsTaskIDForEmployee-"
 	ToSeeTaskDetailsTaskIDForChief    = "ToSeeTaskDetailsTaskIDForChief-"
 	TimeZone                          = "time_zone_"
@@ -38,6 +38,6 @@ const (
 	ShowAllTasksByGorupIDForEmployee  = "ShowAllTasksByGorupIDForEmployee-"
 	MarkTaskAsClosedForChiefKeyData   = "MarkTaskAsClosedForChiefKeyData-"
 	DeleteTaskForChiefKeyData         = "DeleteTaskForChiefKeyData-"
-	AddExecutorForChiefKeyData        = "AddExecutorForChiefKeyData"
+	AddExecutorForChiefKeyData        = "AddExecutorForChiefKeyData-"
 	RemoveExecutorForChiefKeyData     = "RemoveExecutorForChiefKeyData-"
 )

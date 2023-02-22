@@ -83,6 +83,7 @@ const (
 	DeleteTaskForChiefKeyTitle                         = "DeleteTaskForChiefKeyTitle"
 	AddExecutorForChiefKeyTitle                        = "AddExecutorForChiefKeyTitle"
 	RemoveExecutorForChiefKeyTitle                     = "RemoveExecutorForChiefKeyTitle"
+	EmployeeAddedToTheTaskMessage                      = "EmployeeAddedToTheTaskMessage"
 )
 
 type MessageTitle string
@@ -391,6 +392,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	RemoveExecutorForChiefKeyTitle: {
 		EN: "Remove an executor",
 		UA: "Прибрати виконавця",
+	},
+	EmployeeAddedToTheTaskMessage: {
+		EN: "Task '%s' has been assigned to '%s'.",
+		UA: "Виконання задачі '%s' доручено '%s'.",
 	},
 }
 

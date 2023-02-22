@@ -371,12 +371,12 @@ func NewAssignToEntireGroupAllSomeEmployees(user *entities.User) tgbotapi.Inline
 	return keyboard
 }
 
-func NewAssignKeyboard(user *entities.User, employeeID int) tgbotapi.InlineKeyboardMarkup {
+func NewAssignKeyboard(user *entities.User, employeeID int, taskID int) tgbotapi.InlineKeyboardMarkup {
 	assignKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToAssignKeyTitle, user.Language)
 	if err != nil {
 		log.Println(err)
 	}
-	assignKeyData := keys.AssignToEmployeeWithID + strconv.Itoa(employeeID)
+	assignKeyData := strconv.Itoa(taskID) + keys.AssignToEmployeeWithID + strconv.Itoa(employeeID)
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(assignKeyTitle, assignKeyData),
@@ -529,6 +529,7 @@ func TaskDetailsKeyboardForChief(user *entities.User, taskID int) tgbotapi.Inlin
 	if err != nil {
 		log.Println(err)
 	}
+	addExecutorKeyData := keys.AddExecutorForChiefKeyData + strconv.Itoa(taskID)
 
 	removeExecutorKeyTitle, err := messages.ReturnMessageByLanguage(messages.RemoveExecutorForChiefKeyTitle, user.Language)
 	if err != nil {
@@ -548,7 +549,7 @@ func TaskDetailsKeyboardForChief(user *entities.User, taskID int) tgbotapi.Inlin
 			tgbotapi.NewInlineKeyboardButtonData(deleteKeyTitle, deleteKeyData),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(addExecutorKeyTitle, keys.AddExecutorForChiefKeyData),
+			tgbotapi.NewInlineKeyboardButtonData(addExecutorKeyTitle, addExecutorKeyData),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(removeExecutorKeyTitle, removeExecutorKeyData),
