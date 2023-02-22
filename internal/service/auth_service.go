@@ -354,21 +354,6 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) error {
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		MsgChan <- msg
 	} else {
-		//Old code
-		// for _, g := range allGroups {
-		// 	msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
-		// 	msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, int(g.Id))
-		// 	MsgChan <- msg
-		// }
-		// text, err := messages.ReturnMessageByLanguage(messages.AddNewGroupFromGroupListMenu, user.Language)
-		// if err != nil {
-		// 	log.Println(err)
-		// }
-		// msg := tgbotapi.NewMessage(user.ChatId, text)
-		// msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
-		// MsgChan <- msg
-
-		//New code
 		text, err := messages.ReturnMessageByLanguage(messages.ShowAllChiefsGroupsMessage, user.Language)
 		if err != nil {
 			log.Println(err)
@@ -403,7 +388,7 @@ func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
 			log.Println(err)
 		}
 		msg := tgbotapi.NewMessage(user.ChatId, text)
-		msg.ReplyMarkup = keyboards.NewGroupListKeyboardForChief(user, allGroups)
+		msg.ReplyMarkup = keyboards.NewGroupListKeyboardForEmployee(user, allGroups)
 		MsgChan <- msg
 	}
 	return nil
@@ -1215,12 +1200,10 @@ func (u *AuthService) ShowTaskDetailsForChief(user *entities.User, callbackQuery
 func (u *AuthService) ShowAllGroupTasksForChief(user *entities.User, callbackQueryData string) error {
 	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.ShowAllTasksByGorupIDForChief)
 	if !ok {
-		log.Println("Помилка отримання group ID")
 		return errors.New("error while getting group ID")
 	}
 	groupIdInt, err := strconv.Atoi(groupIdString)
 	if err != nil {
-		log.Println("Помилка визначення ID")
 		return err
 	}
 	tasks, err := u.repository.GetAllTasksByGroupID(int64(groupIdInt))
@@ -1228,20 +1211,27 @@ func (u *AuthService) ShowAllGroupTasksForChief(user *entities.User, callbackQue
 		return err
 	}
 
+	group, err := u.repository.GetGroupById(groupIdInt)
+	if err != nil {
+		return err
+	}
+
 	if len(tasks) != 0 {
-		for _, task := range tasks {
-			text := fmt.Sprintf(task.TaskName)
-			msg := tgbotapi.NewMessage(user.ChatId, text)
-			msg.ReplyMarkup = keyboards.SeeTaskDetailsForChief(user, int(task.Id))
-			MsgChan <- msg
+		text, err := messages.ReturnMessageByLanguage(messages.TasksOfTheGroup, user.Language)
+		if err != nil {
+			log.Println(err)
 		}
+		text = fmt.Sprintf(text, group.GroupName)
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewTaskListKeyboardForChief(user, tasks)
+		MsgChan <- msg
+		
 	} else {
 		text, err := messages.ReturnMessageByLanguage(messages.NoTasksForGroup, user.Language)
 		if err != nil {
 			log.Println(err)
 		}
 		msg := tgbotapi.NewMessage(user.ChatId, text)
-		//TODO:This keyboard is only for Chief, but shows to employyes too!
 		msg.ReplyMarkup = keyboards.CreateNewTaskKeyboard(user, groupIdInt)
 		MsgChan <- msg
 	}
@@ -1266,13 +1256,20 @@ func (u *AuthService) ShowAllGroupTasksForEmployee(user *entities.User, callback
 		return err
 	}
 
+	group, err := u.repository.GetGroupById(groupIdInt)
+	if err != nil {
+		return err
+	}
+
 	if len(tasks) != 0 {
-		for _, task := range tasks {
-			text := fmt.Sprintf(task.TaskName)
-			msg := tgbotapi.NewMessage(user.ChatId, text)
-			msg.ReplyMarkup = keyboards.SeeTaskDetailsForEmployee(user, int(task.Id))
-			MsgChan <- msg
+		text, err := messages.ReturnMessageByLanguage(messages.TasksOfTheGroup, user.Language)
+		if err != nil {
+			log.Println(err)
 		}
+		text = fmt.Sprintf(text, group.GroupName)
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewTaskListKeyboardForEmployee(user, tasks)
+		MsgChan <- msg
 	} else {
 		text, err := messages.ReturnMessageByLanguage(messages.NoTasksForGroup, user.Language)
 		if err != nil {

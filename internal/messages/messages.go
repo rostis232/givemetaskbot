@@ -88,6 +88,7 @@ const (
 	NoGroupsEmployee                                   = "NoGroupsEmployee"
 	ShowAllEmployeesGroupsMessage                      = "ShowAllEmployeesGroupsMessage"
 	MenuOfTheGroup                                     = "MenuOfTheGroup"
+	TasksOfTheGroup                                    = "TasksOfTheGroup"
 )
 
 type MessageTitle string
@@ -118,8 +119,8 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Вітаю, тепер ваше ім'я:\n%s\nвоно буде відображатись у інших учасників цього боту. Для повернення до головного меню нажміть кнопку.",
 	},
 	ToMainMenuKey: {
-		EN: "Main Menu",
-		UA: "Головне меню",
+		EN: "Go to Main Menu",
+		UA: "До Головного меню",
 	},
 	CreateNewGroupKey: {
 		EN: "Create New Group",
@@ -416,6 +417,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	MenuOfTheGroup: {
 		EN: "Menu of the group: %s",
 		UA: "Меню групи: %s",
+	},
+	TasksOfTheGroup: {
+		EN: "Tasks of the group: %s",
+		UA: "Задачі групи: %s",
 	},
 }
 

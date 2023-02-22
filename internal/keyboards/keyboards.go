@@ -229,6 +229,11 @@ func NewMenuForEvenGroup(user *entities.User, groupID int) tgbotapi.InlineKeyboa
 	}
 	deleteGroupKey := keys.DeleteGroup + strconv.Itoa(groupID)
 
+	toMainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(createNewTaskKeyTitle, createNewTaskKeyData),
@@ -244,6 +249,9 @@ func NewMenuForEvenGroup(user *entities.User, groupID int) tgbotapi.InlineKeyboa
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(deleteGroupTitle, deleteGroupKey),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(toMainMenuKey, keys.GoToMainMenu),
 		),
 	)
 	return keyboard
@@ -341,12 +349,21 @@ func NewMenuForEvenGroupForEmployee(lng messages.Language, groupID int64) tgbota
 		showTasksKeyTitle = "Error key title parsing"
 	}
 	showTaskData := keys.ShowAllTasksByGorupIDForEmployee + strconv.Itoa(int(groupID))
+
+	toMainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, lng)
+	if err != nil {
+		log.Println(err)
+	}
+
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(showTasksKeyTitle, showTaskData),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(leaveKey, leaveData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(toMainMenuKey, keys.GoToMainMenu),
 		),
 	)
 
@@ -430,27 +447,6 @@ func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineK
 		log.Println(err)
 	}
 	toViewTaskDetailsKeyData := keys.ToSeeTaskDetailsTaskIDForEmployee + strconv.Itoa(taskID)
-	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
-	if err != nil {
-		log.Println(err)
-	}
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(toViewTaskDetailsKeyTitle, toViewTaskDetailsKeyData),
-		),
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(mainMenuKey, keys.GoToMainMenu),
-		),
-	)
-	return keyboard
-}
-
-func SeeTaskDetailsForChief(user *entities.User, taskID int) tgbotapi.InlineKeyboardMarkup {
-	toViewTaskDetailsKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToSeeTaskDetailsKeyTitle, user.Language)
-	if err != nil {
-		log.Println(err)
-	}
-	toViewTaskDetailsKeyData := keys.ToSeeTaskDetailsTaskIDForChief + strconv.Itoa(taskID)
 	mainMenuKey, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -598,4 +594,40 @@ func TaskDetailsKeyboardForChief(user *entities.User, taskID int) tgbotapi.Inlin
 		),
 	)
 	return keyboard
+}
+
+func NewTaskListKeyboardForChief(user *entities.User, allTasks []entities.Task) tgbotapi.InlineKeyboardMarkup {
+	var keyboard [][]tgbotapi.InlineKeyboardButton
+		for _, t := range allTasks{
+			taskDetailsKeyData := keys.ToSeeTaskDetailsTaskIDForChief + strconv.Itoa(int(t.Id))
+			button := tgbotapi.NewInlineKeyboardButtonData(t.TaskName, taskDetailsKeyData)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		}
+		toMainMenuKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		button := tgbotapi.NewInlineKeyboardButtonData(toMainMenuKeyTitle, keys.GoToMainMenu)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		return tgbotapi.InlineKeyboardMarkup{InlineKeyboard: keyboard}
+}
+
+func NewTaskListKeyboardForEmployee(user *entities.User, allTasks []entities.Task) tgbotapi.InlineKeyboardMarkup {
+	var keyboard [][]tgbotapi.InlineKeyboardButton
+		for _, t := range allTasks{
+			taskDetailsKeyData := keys.ToSeeTaskDetailsTaskIDForEmployee + strconv.Itoa(int(t.Id))
+			button := tgbotapi.NewInlineKeyboardButtonData(t.TaskName, taskDetailsKeyData)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		}
+		toMainMenuKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		button := tgbotapi.NewInlineKeyboardButtonData(toMainMenuKeyTitle, keys.GoToMainMenu)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		return tgbotapi.InlineKeyboardMarkup{InlineKeyboard: keyboard}
 }
