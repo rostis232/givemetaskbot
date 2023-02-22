@@ -47,6 +47,8 @@ type Authorisation interface {
 	MarkTaskAsComplete(user *entities.User, callbackQueryData string) error
 	DeleteTask(user *entities.User, callbackQueryData string) error 
 	DeleteExecutors(user *entities.User, callbackQueryData string) error
+	ShowGroupDetailsForChief(user *entities.User, callbackQueryData string) error
+	ShowGroupDetailsForEmployee(user *entities.User, callbackQueryData string) error
 }
 
 type Service struct {

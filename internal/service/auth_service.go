@@ -1299,3 +1299,59 @@ func (u *AuthService) DeleteExecutors(user *entities.User, callbackQueryData str
 	// TODO: Implement
 	return nil
 }
+
+func (u *AuthService) ShowGroupDetailsForChief(user *entities.User, callbackQueryData string) error {
+	//Parse Group ID from callbackQueryData
+	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.GroupDetailsForChief)
+	if !ok {
+		return errors.New("error while getting group ID")
+	}
+	//Convert GroupId from string to int
+	groupIdInt, err := strconv.Atoi(groupIdString)
+	if err != nil {
+		return err
+	}
+	//Get group info from repo
+	group, err := u.repository.GetGroupById(groupIdInt)
+	if err != nil {
+		log.Println(err)
+	}
+	//get text for message and send it
+	text, err := messages.ReturnMessageByLanguage(messages.MenuOfTheGroup, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	text = fmt.Sprintf(text, group.GroupName)
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, int(group.Id))
+	MsgChan <- msg
+	return nil
+}
+
+func (u *AuthService) ShowGroupDetailsForEmployee(user *entities.User, callbackQueryData string) error {
+	//Parse Group ID from callbackQueryData
+	_, groupIdString, ok := strings.Cut(callbackQueryData, keys.GroupDetailsForEmployee)
+	if !ok {
+		return errors.New("error while getting group ID")
+	}
+	//Convert GroupId from string to int
+	groupIdInt, err := strconv.Atoi(groupIdString)
+	if err != nil {
+		return err
+	}
+	//Get group info from repo
+	group, err := u.repository.GetGroupById(groupIdInt)
+	if err != nil {
+		log.Println(err)
+	}
+	//get text for message and send it
+	text, err := messages.ReturnMessageByLanguage(messages.MenuOfTheGroup, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	text = fmt.Sprintf(text, group.GroupName)
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewMenuForEvenGroupForEmployee(user.Language, group.Id)
+	MsgChan <- msg
+	return nil
+}

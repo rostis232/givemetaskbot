@@ -253,6 +253,14 @@ func (b *Bot) handleCallback(callbackQuery *tgbotapi.CallbackQuery) error {
 		if err := b.service.DeleteExecutors(&user, callbackQuery.Data); err != nil {
 			log.Println(err)
 		}
+	case strings.Contains(callbackQuery.Data, keys.GroupDetailsForChief):
+		if err := b.service.ShowGroupDetailsForChief(&user, callbackQuery.Data); err != nil {
+			return err
+		}
+	case strings.Contains(callbackQuery.Data, keys.GroupDetailsForEmployee):
+		if err := b.service.ShowGroupDetailsForEmployee(&user, callbackQuery.Data); err != nil {
+			return err
+		}
 	}
 	return nil
 }

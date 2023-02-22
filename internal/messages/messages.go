@@ -87,6 +87,7 @@ const (
 	ShowAllChiefsGroupsMessage                         = "ShowAllChiefsGroupsMessage"
 	NoGroupsEmployee                                   = "NoGroupsEmployee"
 	ShowAllEmployeesGroupsMessage                      = "ShowAllEmployeesGroupsMessage"
+	MenuOfTheGroup                                     = "MenuOfTheGroup"
 )
 
 type MessageTitle string
@@ -411,6 +412,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	ShowAllEmployeesGroupsMessage: {
 		EN: "All groups (as a member).",
 		UA: "Всі групи (як учасник).",
+	},
+	MenuOfTheGroup: {
+		EN: "Menu of the group: %s",
+		UA: "Меню групи: %s",
 	},
 }
 
