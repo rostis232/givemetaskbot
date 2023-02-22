@@ -71,7 +71,6 @@ const (
 	AddSomeEmployeesToTaskKeyTitle                     = "AddSomeEmployeesToTaskKeyTitle"
 	AllEmployeesFromGroupSuccessfullyAddedToTask       = "AllEmployeesFromGroupSuccessfullyAddedToTask"
 	NoEmployeesToAssignToTheTask                       = "NoEmployeesToAssignToTheTask"
-	ToAssignKeyTitle                                   = "ToAssignKeyTitle"
 	YouHaveBeenAssignedTheTask                         = "YouHaveBeenAssignedTheTask"
 	ToSeeTaskDetailsKeyTitle                           = "ToSeeTaskDetailsKeyTitle"
 	TaskDescriptionSkipped                             = "TaskDescriptionSkipped"
@@ -84,6 +83,7 @@ const (
 	AddExecutorForChiefKeyTitle                        = "AddExecutorForChiefKeyTitle"
 	RemoveExecutorForChiefKeyTitle                     = "RemoveExecutorForChiefKeyTitle"
 	EmployeeAddedToTheTaskMessage                      = "EmployeeAddedToTheTaskMessage"
+	Assignexecution                                    = "Assignexecution"
 )
 
 type MessageTitle string
@@ -345,10 +345,6 @@ var Messages = map[MessageTitle]map[Language]string{
 		EN: "There are no employees who can be entrusted with this task",
 		UA: "Відсутні працівники, яким можна доручити виконання цієї задачі",
 	},
-	ToAssignKeyTitle: {
-		EN: "Assign",
-		UA: "Доручити",
-	},
 	YouHaveBeenAssignedTheTask: {
 		EN: "You have been assigned the following task:\n'%s'.",
 		UA: "Вам доручено виконання задачі:\n'%s'.",
@@ -396,6 +392,10 @@ var Messages = map[MessageTitle]map[Language]string{
 	EmployeeAddedToTheTaskMessage: {
 		EN: "Task '%s' has been assigned to '%s'.",
 		UA: "Виконання задачі '%s' доручено '%s'.",
+	},
+	Assignexecution: {
+		EN: "Assign execution to:",
+		UA: "Доручити виконання:",
 	},
 }
 

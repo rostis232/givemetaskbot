@@ -371,18 +371,15 @@ func NewAssignToEntireGroupAllSomeEmployees(user *entities.User) tgbotapi.Inline
 	return keyboard
 }
 
-func NewAssignKeyboard(user *entities.User, employeeID int, taskID int) tgbotapi.InlineKeyboardMarkup {
-	assignKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToAssignKeyTitle, user.Language)
-	if err != nil {
-		log.Println(err)
-	}
-	assignKeyData := strconv.Itoa(taskID) + keys.AssignToEmployeeWithID + strconv.Itoa(employeeID)
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(assignKeyTitle, assignKeyData),
-		), //TODO: Implement functionality
-	)
-	return keyboard
+func NewAssignKeyboard(user *entities.User, allEmployees []entities.User, taskID int) tgbotapi.InlineKeyboardMarkup {
+	var keyboard [][]tgbotapi.InlineKeyboardButton
+		for _, e := range allEmployees{
+			assignKeyData := strconv.Itoa(taskID) + keys.AssignToEmployeeWithID + strconv.Itoa(int(e.UserId))
+			button := tgbotapi.NewInlineKeyboardButtonData(e.UserName, assignKeyData)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		}
+		return tgbotapi.InlineKeyboardMarkup{InlineKeyboard: keyboard}
 }
 
 func SeeTaskDetailsForEmployee(user *entities.User, taskID int) tgbotapi.InlineKeyboardMarkup {

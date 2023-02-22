@@ -991,11 +991,14 @@ func (u *AuthService) AddSomeEmployeesToTaskShowList(user *entities.User, callba
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		MsgChan <- msg
 	} else {
-		for _, e := range allEmployees {
-			msg := tgbotapi.NewMessage(user.ChatId, e.UserName)
-			msg.ReplyMarkup = keyboards.NewAssignKeyboard(user, int(e.UserId), taskID)
-			MsgChan <- msg
+		//New code
+		text, err := messages.ReturnMessageByLanguage(messages.Assignexecution, user.Language)
+		if err != nil {
+			log.Println(err)
 		}
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewAssignKeyboard(user, allEmployees, taskID)
+		MsgChan <- msg
 	}
 	return nil
 }
