@@ -84,6 +84,9 @@ const (
 	RemoveExecutorForChiefKeyTitle                     = "RemoveExecutorForChiefKeyTitle"
 	EmployeeAddedToTheTaskMessage                      = "EmployeeAddedToTheTaskMessage"
 	Assignexecution                                    = "Assignexecution"
+	ShowAllChiefsGroupsMessage                         = "ShowAllChiefsGroupsMessage"
+	NoGroupsEmployee                                   = "NoGroupsEmployee"
+	ShowAllEmployeesGroupsMessage                      = "ShowAllEmployeesGroupsMessage"
 )
 
 type MessageTitle string
@@ -222,6 +225,10 @@ var Messages = map[MessageTitle]map[Language]string{
 		UA: "Перемістити учасника до іншої групи",
 	},
 	NoGroups: {
+		EN: "There are no groups. To create a new group, enter its name or return to the main menu.",
+		UA: "Групи відсутні. Щоб створити нову групу введіть її назву або поверніться до головного меню.",
+	},
+	NoGroupsEmployee: {
 		EN: "There are no groups.",
 		UA: "Групи відсутні.",
 	},
@@ -396,6 +403,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	Assignexecution: {
 		EN: "Assign execution to:",
 		UA: "Доручити виконання:",
+	},
+	ShowAllChiefsGroupsMessage: {
+		EN: "All groups (as a leader). To create a new group, enter its name or return to the main menu.",
+		UA: "Всі групи (як керівник). Щоб створити нову групу введіть її назву або поверніться до головного меню.",
+	},
+	ShowAllEmployeesGroupsMessage: {
+		EN: "All groups (as a member).",
+		UA: "Всі групи (як учасник).",
 	},
 }
 

@@ -162,7 +162,42 @@ func NewGroupMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
 	return keyboard
 }
 
-// NewMenuForEvenGroup returns new inline keyboard for even group after showing all groups in Group Menu
+func NewGroupListKeyboardForChief(user *entities.User, allGroups []entities.Group) tgbotapi.InlineKeyboardMarkup {
+	var keyboard [][]tgbotapi.InlineKeyboardButton
+		for _, g := range allGroups{
+			groupDetailsKeyData := keys.GroupDetailsForChief + strconv.Itoa(int(g.Id))
+			button := tgbotapi.NewInlineKeyboardButtonData(g.GroupName, groupDetailsKeyData)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		}
+		toMainMenuKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		button := tgbotapi.NewInlineKeyboardButtonData(toMainMenuKeyTitle, keys.GoToMainMenu)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		return tgbotapi.InlineKeyboardMarkup{InlineKeyboard: keyboard}
+}
+
+func NewGroupListKeyboardForEmployee(user *entities.User, allGroups []entities.Group) tgbotapi.InlineKeyboardMarkup {
+	var keyboard [][]tgbotapi.InlineKeyboardButton
+		for _, g := range allGroups{
+			groupDetailsKeyData := keys.GroupDetailsForEmployee + strconv.Itoa(int(g.Id))
+			button := tgbotapi.NewInlineKeyboardButtonData(g.GroupName, groupDetailsKeyData)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		}
+		toMainMenuKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		button := tgbotapi.NewInlineKeyboardButtonData(toMainMenuKeyTitle, keys.GoToMainMenu)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
+		return tgbotapi.InlineKeyboardMarkup{InlineKeyboard: keyboard}
+}
+
 func NewMenuForEvenGroup(user *entities.User, groupID int) tgbotapi.InlineKeyboardMarkup {
 	createNewTaskKeyTitle, err := messages.ReturnMessageByLanguage(messages.CreateNewTaskKey, user.Language)
 	if err != nil {
@@ -379,6 +414,13 @@ func NewAssignKeyboard(user *entities.User, allEmployees []entities.User, taskID
 			row := tgbotapi.NewInlineKeyboardRow(button)
 			keyboard = append(keyboard, row)
 		}
+		toMainMenuKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, user.Language)
+		if err != nil {
+			log.Println(err)
+		}
+		button := tgbotapi.NewInlineKeyboardButtonData(toMainMenuKeyTitle, keys.GoToMainMenu)
+			row := tgbotapi.NewInlineKeyboardRow(button)
+			keyboard = append(keyboard, row)
 		return tgbotapi.InlineKeyboardMarkup{InlineKeyboard: keyboard}
 }
 

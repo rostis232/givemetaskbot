@@ -48,7 +48,6 @@ func (u *AuthService) NewUserRegistration(chatId int64) error {
 	return nil
 }
 
-// //It`ll be  need to be used when implementing time control
 func (u *AuthService) SelectLanguage(user *entities.User, callbackQueryData string) error {
 	msg := tgbotapi.NewMessage(user.ChatId, "")
 	var err error
@@ -352,22 +351,33 @@ func (u *AuthService) ShowAllChiefsGroups(user *entities.User) error {
 			log.Println(err)
 		}
 		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		MsgChan <- msg
 	} else {
-		for _, g := range allGroups {
-			msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
-			msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, int(g.Id))
-			MsgChan <- msg
+		//Old code
+		// for _, g := range allGroups {
+		// 	msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
+		// 	msg.ReplyMarkup = keyboards.NewMenuForEvenGroup(user, int(g.Id))
+		// 	MsgChan <- msg
+		// }
+		// text, err := messages.ReturnMessageByLanguage(messages.AddNewGroupFromGroupListMenu, user.Language)
+		// if err != nil {
+		// 	log.Println(err)
+		// }
+		// msg := tgbotapi.NewMessage(user.ChatId, text)
+		// msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		// MsgChan <- msg
+
+		//New code
+		text, err := messages.ReturnMessageByLanguage(messages.ShowAllChiefsGroupsMessage, user.Language)
+		if err != nil {
+			log.Println(err)
 		}
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewGroupListKeyboardForChief(user, allGroups)
+		MsgChan <- msg
 	}
-	//Пропозиція додати нову групу чи повернутись до головного меню
-	text, err := messages.ReturnMessageByLanguage(messages.AddNewGroupFromGroupListMenu, user.Language)
-	if err != nil {
-		log.Println(err)
-	}
-	msg := tgbotapi.NewMessage(user.ChatId, text)
-	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
-	MsgChan <- msg
+
 	return err
 }
 
@@ -379,18 +389,22 @@ func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
 	}
 	if len(allGroups) == 0 {
 		//Якщо немає груп пишемо відповідне повідомлення
-		text, err := messages.ReturnMessageByLanguage(messages.NoGroups, user.Language)
+		text, err := messages.ReturnMessageByLanguage(messages.NoGroupsEmployee, user.Language)
 		if err != nil {
 			log.Println(err)
 		}
 		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		MsgChan <- msg
 	} else {
-		for _, g := range allGroups {
-			msg := tgbotapi.NewMessage(user.ChatId, g.GroupName)
-			msg.ReplyMarkup = keyboards.NewMenuForEvenGroupForEmployee(user.Language, g.Id)
-			MsgChan <- msg
+		//New code
+		text, err := messages.ReturnMessageByLanguage(messages.ShowAllEmployeesGroupsMessage, user.Language)
+		if err != nil {
+			log.Println(err)
 		}
+		msg := tgbotapi.NewMessage(user.ChatId, text)
+		msg.ReplyMarkup = keyboards.NewGroupListKeyboardForChief(user, allGroups)
+		MsgChan <- msg
 	}
 	return nil
 }

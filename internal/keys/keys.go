@@ -40,4 +40,6 @@ const (
 	DeleteTaskForChiefKeyData         = "DeleteTaskForChiefKeyData-"
 	AddExecutorForChiefKeyData        = "AddExecutorForChiefKeyData-"
 	RemoveExecutorForChiefKeyData     = "RemoveExecutorForChiefKeyData-"
+	GroupDetailsForChief              = "GroupDetailsForChief-"
+	GroupDetailsForEmployee           = "GroupDetailsForEmployee-"
 )
