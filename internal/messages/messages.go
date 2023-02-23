@@ -91,6 +91,8 @@ const (
 	TasksOfTheGroup                                    = "TasksOfTheGroup"
 	MessageForChiefBeforeTaskDeleting                  = "MessageForChiefBeforeTaskDeleting"
 	ConfirmTaskDeleting                                = "ConfirmTaskDeleting"
+	MessageTaskDeletedForChief                                 = "MessageTaskDeletedForChief"
+	MessageTaskDeletedForEmployee = "MessageTaskDeletedForEmployee"
 )
 
 type MessageTitle string
@@ -431,6 +433,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	ConfirmTaskDeleting: {
 		EN: "Confirm the deletion",
 		UA: "Підтвердити видалення",
+	},
+	MessageTaskDeletedForChief: {
+		EN: "Task '%s' has been deleted.",
+		UA: "Задачу '%s' видалено.",
+	},
+	MessageTaskDeletedForEmployee: {
+		EN: "Task '%s' has been deleted by the leader.",
+		UA: "Задачу '%s' видалено керівником.",
 	},
 }
 

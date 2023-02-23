@@ -1313,6 +1313,57 @@ func (u *AuthService) BeforeTaskDeleting(user *entities.User, callbackQueryData 
 	return nil
 }
 
+func (u *AuthService) DeleteTask(user *entities.User, callbackQueryData string) error {
+	//task ID parsing
+	_, taskIDString, ok := strings.Cut(callbackQueryData, keys.ConfirmTaskDeleting)
+	if !ok {
+		return fmt.Errorf("parsing taskID error")
+	}
+	taskIDInt, err := strconv.Atoi(taskIDString)
+	if err != nil {
+		return err
+	}
+	//get task
+	task, err := u.repository.GetTaskByID(taskIDInt)
+	if err != nil {
+		return err
+	}
+	//get employees
+	employees, err := u.repository.GetAllExecutors(taskIDInt)
+	if err != nil {
+		return err
+	}
+	
+	//repo
+	if err := u.repository.DeleteTask(taskIDInt); err != nil {
+		return err
+	}
+
+	//Message to Chief
+	textForChief, err := messages.ReturnMessageByLanguage(messages.MessageTaskDeletedForChief, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	textForChief = fmt.Sprintf(textForChief, task.TaskName)
+	msg := tgbotapi.NewMessage(user.ChatId, textForChief)
+	msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+	MsgChan <- msg
+	
+	//Message to employees
+	textForEmployee, err := messages.ReturnMessageByLanguage(messages.MessageTaskDeletedForEmployee, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	textForEmployee = fmt.Sprintf(textForEmployee, task.TaskName)
+	for _, e := range employees {
+		msg := tgbotapi.NewMessage(e.ChatId, textForEmployee)
+		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
+		MsgChan <- msg
+	}
+
+	return nil
+}
+
 func (u *AuthService) DeleteExecutors(user *entities.User, callbackQueryData string) error {
 	// TODO: Implement
 	return nil

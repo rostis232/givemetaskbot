@@ -45,7 +45,8 @@ type Authorisation interface {
 	ShowAllGroupTasksForChief(user *entities.User, callbackQueryData string) error
 	ShowAllGroupTasksForEmployee(user *entities.User, callbackQueryData string) error
 	MarkTaskAsComplete(user *entities.User, callbackQueryData string) error
-	BeforeTaskDeleting(user *entities.User, callbackQueryData string) error 
+	BeforeTaskDeleting(user *entities.User, callbackQueryData string) error
+	DeleteTask(user *entities.User, callbackQueryData string) error
 	DeleteExecutors(user *entities.User, callbackQueryData string) error
 	ShowGroupDetailsForChief(user *entities.User, callbackQueryData string) error
 	ShowGroupDetailsForEmployee(user *entities.User, callbackQueryData string) error
