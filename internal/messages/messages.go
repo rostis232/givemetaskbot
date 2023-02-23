@@ -89,6 +89,8 @@ const (
 	ShowAllEmployeesGroupsMessage                      = "ShowAllEmployeesGroupsMessage"
 	MenuOfTheGroup                                     = "MenuOfTheGroup"
 	TasksOfTheGroup                                    = "TasksOfTheGroup"
+	MessageForChiefBeforeTaskDeleting                  = "MessageForChiefBeforeTaskDeleting"
+	ConfirmTaskDeleting                                = "ConfirmTaskDeleting"
 )
 
 type MessageTitle string
@@ -421,6 +423,14 @@ var Messages = map[MessageTitle]map[Language]string{
 	TasksOfTheGroup: {
 		EN: "Tasks of the group: %s",
 		UA: "Задачі групи: %s",
+	},
+	MessageForChiefBeforeTaskDeleting: {
+		EN: "Are you sure you want to delete the task: %s?",
+		UA: "Ви впевнені, що хочете видалити задачу: %s?",
+	},
+	ConfirmTaskDeleting: {
+		EN: "Confirm the deletion",
+		UA: "Підтвердити видалення",
 	},
 }
 

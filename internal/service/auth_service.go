@@ -382,7 +382,6 @@ func (u *AuthService) ShowAllEmployeeGroups(user *entities.User) error {
 		msg.ReplyMarkup = keyboards.NewToMainMenuKeyboard(user)
 		MsgChan <- msg
 	} else {
-		//New code
 		text, err := messages.ReturnMessageByLanguage(messages.ShowAllEmployeesGroupsMessage, user.Language)
 		if err != nil {
 			log.Println(err)
@@ -1287,8 +1286,30 @@ func (u *AuthService) MarkTaskAsComplete(user *entities.User, callbackQueryData 
 	return nil
 }
 
-func (u *AuthService) DeleteTask(user *entities.User, callbackQueryData string) error {
-	// TODO: Implement
+func (u *AuthService) BeforeTaskDeleting(user *entities.User, callbackQueryData string) error {
+	_, taskIDString, ok := strings.Cut(callbackQueryData, keys.DeleteTaskForChiefKeyData)
+	if !ok {
+		return fmt.Errorf("parsing taskID error")
+	}
+	taskIDInt, err := strconv.Atoi(taskIDString)
+	if err != nil {
+		return err
+	}
+	//get task
+	task, err := u.repository.GetTaskByID(taskIDInt)
+	if err != nil {
+		return err
+	}
+	//message to Chief
+	text, err := messages.ReturnMessageByLanguage(messages.MessageForChiefBeforeTaskDeleting, user.Language)
+	if err != nil {
+		log.Println(err)
+	}
+	text = fmt.Sprintf(text, task.TaskName)
+	msg := tgbotapi.NewMessage(user.ChatId, text)
+	msg.ReplyMarkup = keyboards.NewKeyboardConfirmTaskDeleting(user.Language, taskIDInt)
+	MsgChan <- msg
+
 	return nil
 }
 

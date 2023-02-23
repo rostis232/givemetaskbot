@@ -221,3 +221,12 @@ func (a *AuthPostgres) GetAllTasksByGroupID(groupID int64) ([]entities.Task, err
 	err := a.db.Select(&tasks, query, groupID)
 	return tasks, err
 }
+
+func (a *AuthPostgres) DeleteTask(taskID int) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE task_id = $1;", TaskTable)
+	row := a.db.QueryRow(query, taskID)
+	if err := row.Err(); err != nil {
+		return err
+	}
+	return nil
+}

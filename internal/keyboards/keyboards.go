@@ -62,7 +62,6 @@ func NewKeyboardChooseCreateOrJoinGroup(user *entities.User) tgbotapi.InlineKeyb
 
 // NewMainMenuKeyboard returns new inline keyboard for Main Menu
 func NewMainMenuKeyboard(user *entities.User) tgbotapi.InlineKeyboardMarkup {
-	//TODO: Add key to adding new task from Main Menu
 	userMenuTitle, err := messages.ReturnMessageByLanguage(messages.UserSettingsMenuTitle, user.Language)
 	if err != nil {
 		log.Println(err)
@@ -630,4 +629,27 @@ func NewTaskListKeyboardForEmployee(user *entities.User, allTasks []entities.Tas
 			row := tgbotapi.NewInlineKeyboardRow(button)
 			keyboard = append(keyboard, row)
 		return tgbotapi.InlineKeyboardMarkup{InlineKeyboard: keyboard}
+}
+
+func NewKeyboardConfirmTaskDeleting (lng messages.Language, taskID int) tgbotapi.InlineKeyboardMarkup {
+	confirmKeyTitle, err := messages.ReturnMessageByLanguage(messages.ConfirmTaskDeleting, lng)
+	if err != nil {
+		log.Println(err)
+	}
+	confirmData := keys.ConfirmTaskDeleting + strconv.Itoa(taskID)
+
+	mainMenuKeyTitle, err := messages.ReturnMessageByLanguage(messages.ToMainMenuKey, lng)
+	if err != nil {
+		log.Println(err)
+	}
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(confirmKeyTitle, confirmData),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(mainMenuKeyTitle, keys.GoToMainMenu),
+		),
+	)
+	return keyboard
 }

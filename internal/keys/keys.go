@@ -42,4 +42,5 @@ const (
 	RemoveExecutorForChiefKeyData     = "RemoveExecutorForChiefKeyData-"
 	GroupDetailsForChief              = "GroupDetailsForChief-"
 	GroupDetailsForEmployee           = "GroupDetailsForEmployee-"
+	ConfirmTaskDeleting               = "ConfirmTaskDeleting-"
 )
