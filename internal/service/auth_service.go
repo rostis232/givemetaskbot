@@ -42,7 +42,7 @@ func (u *AuthService) NewUserRegistration(chatId int64) error {
 		log.Printf("Error while new user registration: %s", err)
 		return err
 	}
-	msg := tgbotapi.NewMessage(chatId, "Choose your language:\nОберіть мову:")
+	msg := tgbotapi.NewMessage(chatId, "Choose your language:\nОберіть мову:\n!!!BOT IS UNDER CONSTRUCTION!!!")
 	msg.ReplyMarkup = keyboards.LanguageKeyboard
 	MsgChan <- msg
 	return nil
